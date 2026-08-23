@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Skillful Means — Lesson 0002</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/quiz.js" defer></script>
+<script src="../assets/softmax.js" defer></script>
+<script src="../assets/knn.js" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="../index.html">Sage's lessons</a> · STOR 323, Lecture 3 · <a href="../../index.html">switch to the other version</a></nav>
+<p class="kicker">Lesson 0002</p>
+<h1>Skillful means</h1>
+<p class="subtitle">Last time: every model is a finger, never the moon. This time — there's more than one kind of finger, and choosing among them is itself a discipline.</p>
+
+<h2>The method must fit the situation</h2>
+<p>
+In the Lotus Sūtra, the Buddha is described teaching the same truth through many different methods — parables, similes, gradual instruction — chosen not arbitrarily but because each audience, each moment, called for a different vehicle to the same understanding. This is <em>upāya</em>: skillful means. The teaching that awakens one student can leave another untouched, not because the truth changed, but because the method wasn't matched to the situation.
+</p>
+<div class="parallel">
+  <div class="parallel-label">The idea in one line</div>
+  There is no single correct method independent of what you're trying to reach. The right means is <em>relative to the aim</em> — chosen after the aim is clear, never before.
+</div>
+<p>
+STOR 323 makes the identical move, in its own vocabulary: <strong>"output space first, model family second."</strong> Before reaching for linear regression, softmax regression, or k-nearest-neighbors, you have to know what shape a correct answer even takes. Reach for the wrong vehicle — treat an unordered category as if it were a number on a scale — and you get nonsense, the same way a parable told to the wrong audience lands as noise instead of insight.
+</p>
+
+<h2>Two ways of holding what you've learned</h2>
+<p>
+Recall <em>samskara</em> from the last lesson — experience compressed into a lasting impression. That compression is one way of holding what's been learned. It isn't the only way.
+</p>
+<div class="card-pair">
+  <div class="card hidden">
+    <span class="card-icon">📜</span>
+    <div class="card-title">Compressed teaching — jñāna</div>
+    A small number of principles, distilled from many encounters, that now stand in for the encounters themselves. Linear and softmax regression work this way: a handful of coefficients replace the entire dataset. You could discard the original data and the model still works.
+  </div>
+  <div class="card guess">
+    <span class="card-icon">👣</span>
+    <div class="card-title">Direct memory — anubhava</div>
+    Nothing is distilled away. Every particular encounter is kept, and understanding a new situation means going back and consulting the actual prior instances directly. k-nearest-neighbors works this way — its "model" <em>is</em> the stored data.
+  </div>
+</div>
+<p>
+Neither is superior in the abstract — this is the same <em>upāya</em> logic as before. A teaching compressed into principle travels light and generalizes; direct memory of particulars stays faithful to nuance a principle might smooth over. STOR 323 calls this split <strong>parametric vs. nonparametric</strong>. You now already know it by two other names.
+</p>
+
+<h2>Softmax: nothing means anything alone</h2>
+<p>
+When STOR 323 needs to choose among several unordered categories — which digit, which condition — it uses softmax regression. Each category gets a raw score, and softmax converts the scores into probabilities. The mechanism is worth sitting with:
+</p>
+<div class="parallel">
+  <div class="parallel-label">Primary source — Saṃyutta Nikāya</div>
+  "If this exists, that exists. If this ceases to exist, that also ceases to exist." <em>Pratītyasamutpāda</em> — dependent origination: nothing in this teaching has independent, self-standing existence. Everything arises only in relation to everything else.
+  <cite><a href="https://encyclopediaofbuddhism.org/wiki/Pratityasamutpada" target="_blank" rel="noopener">Pratītyasamutpāda — Encyclopedia of Buddhism</a></cite>
+</div>
+<p>
+A raw softmax score means nothing by itself — "3.4" isn't a probability, isn't even meaningfully large or small until it's placed against the other scores. Softmax's normalization (dividing by the sum of all the exponentials) is a mechanical enactment of that same insight: every category's probability is <em>defined only in relation to</em> every other category's. Push one score up, and every other probability shifts — not because anything about them changed, but because their meaning was never independent to begin with.
+</p>
+
+<div id="softmax-1" class="softmax-wrap"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initSoftmax("softmax-1", {
+      categories: [
+        { label: "digit 7", init: 3.4, min: -5, max: 5 },
+        { label: "digit 1", init: 0.3, min: -5, max: 5 },
+        { label: "digit 9", init: 0.1, min: -5, max: 5 }
+      ]
+    });
+  });
+</script>
+<div class="reflect">
+  <div class="reflect-label">Sit with this</div>
+  Drag one slider up and watch the others fall, even though you never touched them. Is this different in kind from the way raising one belief's confidence necessarily lowers your confidence in its alternatives — or is it the same structure, just made numerically explicit?
+</div>
+
+<h2>kNN: you are read through your company</h2>
+<p>
+k-nearest-neighbors makes no claim about a general rule at all. Asked to classify a new point, it looks at the K nearest existing points and takes a vote. Its entire method is: <em>judge this by what surrounds it.</em>
+</p>
+<div class="parallel">
+  <div class="parallel-label">The concept — satsaṅga</div>
+  <em>Sat</em> (truth, being) + <em>saṅga</em> (association) — "the company of the wise." The tradition holds that character and understanding are shaped, often decisively, by the company one keeps: proximity to the wise draws a person toward wisdom, proximity to confusion draws a person toward confusion.
+  <cite><a href="https://www.hinduwebsite.com/hinduism/concepts/satsang.asp" target="_blank" rel="noopener">Satsang — The Power of Spiritual Association</a></cite>
+</div>
+<p>
+kNN doesn't ask "what is the general rule for this category of thing?" It asks "who is nearby, and what are they?" — the same wager satsaṅga makes about people: that you are legible through your neighbors, not despite them. Try it below.
+</p>
+
+<div id="knn-1" class="knn-wrap"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initKNN("knn-1", {
+      points: [
+        { x: 60, y: 220, label: "a" }, { x: 90, y: 180, label: "a" }, { x: 70, y: 140, label: "a" },
+        { x: 110, y: 200, label: "a" }, { x: 130, y: 150, label: "a" }, { x: 150, y: 190, label: "a" },
+        { x: 220, y: 120, label: "b" }, { x: 250, y: 90, label: "b" }, { x: 270, y: 140, label: "b" },
+        { x: 300, y: 110, label: "b" }, { x: 230, y: 180, label: "b" }, { x: 260, y: 200, label: "b" },
+        { x: 190, y: 150, label: "b" }
+      ],
+      nameA: "one community",
+      nameB: "another community",
+      kMax: 7,
+      queryInit: { x: 170, y: 165 }
+    });
+  });
+</script>
+<div class="reflect">
+  <div class="reflect-label">Sit with this</div>
+  When you widen K, you're asking more neighbors for their opinion before deciding. Is that wisdom (a broader counsel) or dilution (drowning a clear signal in average opinion) — and does the answer depend on how trustworthy the nearest few actually were?
+</div>
+
+<h2>All three, side by side</h2>
+<table>
+<tr><th>Model family</th><th>How it holds what it learned</th><th>Its <em>upāya</em></th></tr>
+<tr><td>Linear regression</td><td>jñāna — a few coefficients</td><td>The answer is one number on a continuous scale</td></tr>
+<tr><td>Softmax regression</td><td>jñāna — one coefficient set per category</td><td>The answer is one of several unordered, mutually-defining categories</td></tr>
+<tr><td>k-nearest-neighbors</td><td>anubhava — the data itself, kept whole</td><td>The answer is best read through immediate company</td></tr>
+</table>
+
+<h2>Check what's actually landed</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory before checking.</p>
+
+<div class="quiz" data-answer="jnana|jñāna">
+  <div class="q">What's the term for compressing experience into a small, portable teaching — the STOR 323 term is "parametric"?</div>
+  <input type="text" placeholder="one word">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="dependent origination">
+  <div class="q">What's the Buddhist name for "nothing has meaning independent of everything else" — the idea behind softmax's normalization?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="majority vote">
+  <div class="q">What mechanism does kNN use among its K nearest neighbors to decide?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Go deeper</h2>
+<p>
+Formal side: <a href="https://www.statlearning.com/" target="_blank" rel="noopener">An Introduction to Statistical Learning</a>, Ch. 4, on multi-class classification and kNN. Philosophical side: the Lotus Sūtra's parable of the burning house is the classic <em>upāya</em> text if you want the fuller story behind "skillful means"; the <a href="https://encyclopediaofbuddhism.org/wiki/Pratityasamutpada" target="_blank" rel="noopener">dependent origination</a> and <a href="https://www.hinduwebsite.com/hinduism/concepts/satsang.asp" target="_blank" rel="noopener">satsaṅga</a> links above are worth reading in full. See <a href="../RESOURCES.md">RESOURCES.md</a>.
+</p>
+
+<div class="ask-agent">
+Same standard as last time: if the satsaṅga or dependent-origination parallel felt stretched rather than exact, push back — that's more useful to me than politeness. Next lesson: the Gita's teaching on action and its fruits, applied to choosing a threshold.
+</div>
+
+<div class="footer-links">
+  <a href="0001-the-finger-and-the-moon.html">&larr; Lesson 0001</a>
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Action and Its Fruits — Lesson 0003</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/quiz.js" defer></script>
+<script src="../assets/threshold.js" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="../index.html">Sage's lessons</a> · STOR 323, Lecture 3 · <a href="../../index.html">switch to the other version</a></nav>
+<p class="kicker">Lesson 0003</p>
+<h1>Action and its fruits</h1>
+<p class="subtitle">The model is finished. Now: how do you know if it's good — and good <em>for what</em>? This is where knowing stops being enough and someone has to act.</p>
+
+<h2>The measure fits the thing measured</h2>
+<p>
+A scale weighs; a clock times; neither can do the other's job, and asking a clock "how heavy" is a category error, not a hard question. STOR 323 makes the same point about evaluating models: <strong>the metric follows the object being evaluated.</strong> A number gets measured by how far off it is (MSE). A ranking gets measured by how well-ordered it is (ROC/AUC). A yes-or-no decision gets measured by which specific errors it makes (the confusion matrix). Using the wrong one doesn't just give a worse answer — it answers a question nobody asked.
+</p>
+<p>
+MSE you've effectively already met: back in lesson 1, the "error" number that dropped as you tuned the impression-line was exactly this — the average squared distance between the impression and what actually happened. It answers "how far off," and nothing more. The richer question is what comes next.
+</p>
+
+<h2>The threshold is an action, not a fact</h2>
+<p>
+A screening test returns a score between 0 and 1 — call it the model's honest best guess. But a number alone refers no one for treatment. Someone has to draw a line: score above this, act; below, don't. That line is a threshold, <em>t</em>, and choosing it is not a discovery about the world. It's a decision.
+</p>
+<div class="parallel">
+  <div class="parallel-label">Primary source — Bhagavad Gītā 2.47</div>
+  "You have a right to your actions, but never to the fruits of your actions." <em>Karmaṇy-evādhikāras te mā phaleṣu kadācana</em> — Kṛṣṇa's counsel to Arjuna, facing a decision with real consequences he cannot fully control.
+  <cite><a href="https://vedabase.io/en/library/bg/2/47/" target="_blank" rel="noopener">Bhagavad-gītā 2.47</a> · <a href="https://www.wisdomlib.org/hinduism/book/shrimad-bhagavad-gita/d/doc419785.html" target="_blank" rel="noopener">comparative translations</a></cite>
+</div>
+<p>
+Choosing t is precisely this kind of act. You have the right to set the threshold — that part is yours. You do not have the right to which specific patient turns out to be a false alarm or a missed case — the fruits. Move the threshold below to see the shape of the choice:
+</p>
+
+<div id="threshold-1" class="threshold-wrap"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initThreshold("threshold-1", {
+      positives: [0.05, 0.20, 0.32, 0.40, 0.50, 0.62, 0.78, 0.90],
+      negatives: [0.02, 0.06, 0.10, 0.14, 0.18, 0.22, 0.26, 0.30, 0.34, 0.45, 0.58, 0.70],
+      posName: "sick",
+      negName: "healthy",
+      tInit: 0.30
+    });
+  });
+</script>
+
+<div class="callout warn">
+Notice: you can shift where the errors fall, but you cannot make both kinds of error disappear at once. That tension isn't a flaw in your choice of t — it's a fact about the model's ranking, prior to any action at all. What Gītā 2.47 asks of you is exactly this: commit fully to the choice of t, without the illusion that committing to it lets you also control which case becomes the false alarm.
+</div>
+
+<h2>Stepping back from any one threshold</h2>
+<p>
+Every choice of t gives one confusion matrix, one pair of error rates. But there's a question underneath all of them: <em>independent of where you draw the line, is this model any good at ranking the sick above the healthy at all?</em> Sweeping t across its whole range traces the ROC curve; AUC compresses that whole sweep into a single number.
+</p>
+<div class="parallel">
+  <div class="parallel-label">The concept — sākṣī bhāva</div>
+  In Advaita Vedānta, the <em>sākṣī</em> is the witness — pure awareness that observes the mind's changing states without being any one of them, without being pulled into or identified with a single passing state.
+  <cite><a href="https://en.wikipedia.org/wiki/Sakshi_(witness)" target="_blank" rel="noopener">Sakshi (witness) — overview</a></cite>
+</div>
+<p>
+Look at the small plot beside the sliders above: as you swept t, it traced a trail — not one point, the whole curve. That trail is what a witness's view of the model looks like: not attached to any single threshold's verdict, but taking in the entire range of what the model could say. AUC is what remains when you refuse to over-identify with any one decision. It answers "how good is the seeing," not "what was decided" — and, tellingly, it cannot tell you where to set t. That question is still yours; sākṣī bhāva was never a substitute for acting, only for clarity before acting.
+</p>
+
+<h2>One rule, unevenly felt</h2>
+<p>
+Here is the sharpest turn in the lecture. Apply the exact same threshold — the exact same rule — to two different groups of patients. Group A: 40% of healthy patients get a false alarm. Group B: 20%. Same model, same t, same intention. Different real burden.
+</p>
+<div class="parallel">
+  <div class="parallel-label">The concept — adhikāra-bheda</div>
+  Classical Vedānta holds that the same teaching cannot be given identically to every student — <em>adhikāra</em>, readiness or fitness, differs person to person, and what serves one student's understanding may miss another's entirely. A single uniform instruction, applied without regard to differing starting conditions, does not land the same way twice.
+  <cite><a href="https://en.wikipedia.org/wiki/Adhikari-bheda" target="_blank" rel="noopener">Adhikari-bheda — overview</a></cite>
+</div>
+<p>
+Adhikāra-bheda is a claim about teaching, not about statistics — the mechanism here is different (base rates and score distributions, not spiritual readiness). But the structural insight transfers cleanly: <strong>uniform treatment, applied without attention to differing starting conditions, does not produce uniform outcomes.</strong> "Same rule for everyone" sounds like fairness. It is not the same claim as "same burden for everyone," and STOR 323 states this as plainly as the tradition does: <strong>equal rule ≠ equal burden.</strong>
+</p>
+
+<h2>Check what's actually landed</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory before checking.</p>
+
+<div class="quiz" data-answer="decision threshold|threshold t">
+  <div class="q">What's the STOR 323 term for the cutoff — your "right to action" — that turns a score into a decision?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="confusion matrix">
+  <div class="q">What's the name for the TP/FP/FN/TN grid produced by one fixed threshold — the record of "the fruits" you don't get to choose?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="equal burden">
+  <div class="q">Fill in the blank: equal rule ≠ equal ____</div>
+  <input type="text" placeholder="one word">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Go deeper</h2>
+<p>
+Formal side: <a href="https://www.statlearning.com/" target="_blank" rel="noopener">An Introduction to Statistical Learning</a> Ch. 4 on ROC curves, and <a href="https://fairmlbook.org/" target="_blank" rel="noopener">Fairness and Machine Learning</a> for the group-fairness material properly developed. Philosophical side: the Gītā's second chapter in full is worth reading past verse 2.47 — the whole chapter is Kṛṣṇa building the case for right action under uncertainty. See <a href="../RESOURCES.md">RESOURCES.md</a>.
+</p>
+
+<div class="ask-agent">
+If adhikāra-bheda felt like the weakest parallel of the three lessons so far, say so directly — I flagged above that the mechanism doesn't match exactly, only the structural insight, and that's a judgment call worth checking with you rather than assuming. Next: a single exercise that puts all three lessons together into one decision, played out step by step.
+</div>
+
+<div class="footer-links">
+  <a href="0002-skillful-means.html">&larr; Lesson 0002</a>
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>

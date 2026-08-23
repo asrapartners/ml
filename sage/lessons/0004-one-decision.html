@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>One Decision — Lesson 0004</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/pathgame.js" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="../index.html">Sage's lessons</a> · STOR 323, Lecture 3 · <a href="../../index.html">switch to the other version</a></nav>
+<p class="kicker">Lesson 0004 · Exercise</p>
+<h1>One decision</h1>
+<p class="subtitle">No new material. Three lessons, one decision, played through step by step. Each wrong turn here is you forgetting something you already met — the feedback will tell you which.</p>
+
+<p>
+Past patients: symptoms in, known outcome out. A new patient arrives. Build the system that decides whether to flag them for follow-up testing — from the shape of a correct answer, all the way to whether the deployed rule lands the same way on everyone. The options at each step are unlabeled on purpose. Some are real mistakes drawn from the last three lessons, not arbitrary wrong answers — if one goes wrong, you'll see exactly which principle you lost sight of.
+</p>
+
+<div id="policy-game"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initPathGame("policy-game", {
+      winTitle: "One decision, fully made",
+      winBody: "You matched the means to the aim before choosing a model, held the score as knowledge distinct from the act of deciding, took full ownership of the threshold without grasping at its fruits, and refused to call the rule fair just because it was uniform.",
+      winLinks: [
+        { label: "Lesson 1", href: "0001-the-finger-and-the-moon.html" },
+        { label: "Lesson 2", href: "0002-skillful-means.html" },
+        { label: "Lesson 3", href: "0003-action-and-its-fruits.html" },
+      ],
+      forks: [
+        { id: 'output-space', icon: '?',
+          scenario: 'Before reaching for any model, the shape of a correct answer has to be clear first — the upāya has to match the aim.',
+          ask: "What shape should the model's output take?",
+          options: [
+            { label: 'A plain number, like a lab value', correct: false, tag: 'Grasping the wrong finger',
+              title: 'The finger was never shaped like the moon',
+              body: 'A number on an open scale can\'t stand in for "sick or not?" — same mistake as mistaking the pointing finger for the moon itself. You reached for a vehicle before checking what it needed to carry.' },
+            { label: 'A probability between 0 and 1', correct: true,
+              note: 'Right — the aim was clear first, and the means followed it.' },
+            { label: 'Unordered categories, like low / medium / high', correct: false, tag: 'Wrong upāya',
+              title: 'A method chosen for a different situation',
+              body: 'This problem has two outcomes, not several unordered ones — and buckets discard the continuous score you\'ll need later to draw a threshold. The means didn\'t fit this aim.' },
+          ] },
+
+        { id: 'model-family', icon: 'ƒ',
+          scenario: "The aim is settled: the output is a probability.",
+          ask: 'Which approach actually produces one?',
+          options: [
+            { label: 'Linear regression, then clip the output to [0, 1]', correct: false, tag: 'A patched compression',
+              title: 'jñāna repaired after the fact isn\'t jñāna',
+              body: 'The compression (the coefficients) was never trained to hold a probability\'s meaning — clamping the number afterward changes its appearance, not what it actually encodes.' },
+            { label: 'Softmax regression, built to output probabilities directly', correct: true,
+              note: 'Right — the compression was shaped for this aim from the start.' },
+            { label: 'Softmax regression, then immediately report the top label', correct: false, tag: 'Collapsing too soon',
+              title: 'You skipped past the relation entirely',
+              body: 'Jumping straight to the winning label treats the softmax step as if it never mattered — you never sat with the probabilities themselves, or asked what threshold you actually meant by "top."' },
+          ] },
+
+        { id: 'deploy-score', icon: 's',
+          scenario: 'The model now returns a probability for each new patient — knowledge, not yet action.',
+          ask: 'What do you do with it?',
+          options: [
+            { label: 'Report the raw probability to the doctor and stop there', correct: false, tag: 'Knowledge without action',
+              title: 'You held the knowing and never chose the doing',
+              body: 'A number describes risk; it doesn\'t refer anyone for testing. Someone still has to exercise the right to act — stopping at knowledge leaves the actual decision unmade.' },
+            { label: "Flag whoever has today's single highest score", correct: false, tag: 'Mistaking the witness for the actor',
+              title: 'An impartial view isn\'t a decision',
+              body: 'Ranking everyone against each other is the witness\'s wide view (what ROC/AUC is for) — it isn\'t how one person\'s case gets decided. Every patient needs their own act, not a place in today\'s ranking.' },
+            { label: 'Pick a threshold t, and flag everyone scoring ≥ t', correct: true,
+              note: 'Right — a threshold is where knowing turns into an actual act.' },
+          ] },
+
+        { id: 'pick-threshold', icon: 't',
+          scenario: 'At t = 0.30: catches 90% of sick patients, but flags 30% of healthy ones too.',
+          ask: 'Someone asks: "is this the right threshold?" How do you answer?',
+          options: [
+            { label: 'Yes — catching 90% of sick patients is clearly good', correct: false, tag: 'Attachment to the fruit',
+              title: 'You claimed the outcome you liked and ignored the rest',
+              body: 'You have the right to choose t — you were never promised only the fruit you wanted. Naming the 90% while ignoring the accompanying 30% is grasping at one fruit and pretending the other doesn\'t exist.' },
+            { label: 'It depends — what do the errors cost, and who decides that trade-off?', correct: true,
+              note: 'Right — committing to the choice fully, without claiming the fruits are yours to control too.' },
+            { label: 'Yes — 0.30 is the default most examples use', correct: false, tag: "Borrowed adhikāra",
+              title: 'A threshold suited to someone else\'s readiness',
+              body: 'A default carried over from an unrelated example reflects some other situation\'s conditions, not this one\'s costs. The right threshold has to be answerable to what\'s actually true here.' },
+          ] },
+
+        { id: 'fairness-check', icon: '⚖',
+          scenario: 'Before deploying: Group A gets a 40% false-alarm rate, Group B gets 20% — same threshold, same model.',
+          ask: 'What does this mean?',
+          options: [
+            { label: "Nothing to worry about — same rule for everyone, so it's fair", correct: false, tag: 'Ignoring adhikāra-bheda',
+              title: 'Uniform instruction, unevenly received',
+              body: 'The same rule, given without regard to differing starting conditions, does not land the same way twice. "Same rule" and "same burden" were never the same claim.' },
+            { label: 'Group A must have worse doctors — a staffing issue, not a model issue', correct: false, tag: 'Avidyā',
+              title: 'Mistaking an assumption for a seeing',
+              body: 'That\'s a cause asserted, not observed — an act of ignorance (avidyā) dressed as an explanation. The gap could come from base rates, from how the threshold meets each group\'s distribution, or elsewhere; you haven\'t looked yet.' },
+            { label: 'The same rule is landing very differently by group — surface this before deploying', correct: true,
+              note: 'Right — this is adhikāra-bheda held honestly: uniform treatment checked for uneven effect before it ships.' },
+          ] },
+      ]
+    });
+  });
+</script>
+
+<div class="ask-agent">
+This is the last lesson from this deck. If a fallacy tag above felt like a stretch rather than a real echo of the lesson it points back to, that's exactly the kind of thing worth telling me — the whole point was that each one should genuinely be the same mistake in a new setting, not a label pasted on.
+</div>
+
+<div class="footer-links">
+  <a href="0003-action-and-its-fruits.html">&larr; Lesson 0003</a>
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>
