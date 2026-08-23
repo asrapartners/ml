@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Other Model Families — Lesson 0002</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/quiz.js" defer></script>
+<script src="../assets/softmax.js" defer></script>
+<script src="../assets/knn.js" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0001-from-data-to-decisions.html">&larr; Lesson 0001</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0002</p>
+<h1>Beyond the straight line</h1>
+<p class="subtitle">You already have a feel for linear regression — one straight line, fitted by sliding two knobs. This lesson builds a feel for two more model families the same way: play first, name it after.</p>
+
+<h2>Are other model families "dependent on the data"?</h2>
+<p>
+Short answer: the <em>shape</em> you're willing to consider is a decision you make before touching any data — same as choosing "only straight lines" was for linear regression. What differs is <strong>how much of the data each family keeps around after training.</strong> That split is the one new idea this lesson is really about.
+</p>
+<div class="card-pair">
+  <div class="card hidden">
+    <span class="card-icon">🗜️</span>
+    <div class="card-title">Parametric — compresses the data</div>
+    Squeezes everything it learned into a small, fixed number of values. Once trained, you could throw away the original dataset and it would still work exactly the same. Linear regression and softmax regression are both like this.
+  </div>
+  <div class="card guess">
+    <span class="card-icon">🗂️</span>
+    <div class="card-title">Nonparametric — keeps the data</div>
+    Doesn't compress anything. The training examples themselves <em>are</em> the fitted model. Every prediction means going back and looking at the stored examples again. kNN is like this.
+  </div>
+</div>
+
+<h2 id="output-space">Why softmax regression has to exist: output space first</h2>
+<p>
+Before picking any model family, the slides insist on one rule: <strong>figure out the shape of a correct answer before you go looking for a family to produce it.</strong> Think of a kids' shape-sorter toy — round hole, star hole, square hole. You look at your block's shape first, then find the matching hole. Nobody jams a star block through the round hole and hopes for the best.
+</p>
+<div class="card-pair">
+  <div class="card hidden">
+    <span class="card-icon">⭐➡️⚪</span>
+    <div class="card-title">Wrong order: model first</div>
+    Reach for linear regression out of habit and force MNIST digits (0–9) through it. It's built to output "any number on a continuous scale," so it happily returns something like <strong>6.4</strong>. What digit is that? Nonsense — the model quietly assumed 1 is "closer" to 2 than to 9, but digit labels aren't a scale at all. Wrong shape, jammed through anyway.
+  </div>
+  <div class="card guess">
+    <span class="card-icon">⭐➡️⭐</span>
+    <div class="card-title">Right order: output space first</div>
+    Ask first: "what does a correct answer here actually look like?" For MNIST, it's <em>one of 10 unordered categories</em> — not a number, a label. <em>Only then</em> go pick a family whose output has that exact shape. Softmax regression is built specifically to output "a probability for each of several unordered categories" — the matching hole.
+  </div>
+</div>
+<p>
+That's the whole reason softmax regression exists as a separate family rather than just reusing linear regression: the output space <code>S</code> is part of what a model family even <em>is</em> (recall <code>𝓕 = {f : X → S}</code> from the notation decoder) — get <code>S</code> right first, and the choice of family follows from it, not the other way around.
+</p>
+
+<h2 id="softmax">Softmax regression: scoring a talent show</h2>
+<p>
+Linear regression predicts one number. But MNIST digit recognition isn't "how much" — it's "which one of 10 categories." Picture a talent show with judges: each contestant (each possible digit) gets a raw score reflecting how much evidence there is for them. A high score isn't a percentage yet — it's just "more evidence than the others." <strong>Softmax</strong> is the rule that turns those raw scores into percentages that always add up to 100%, so you can compare them directly.
+</p>
+<p>
+Below are the actual raw scores from the slides for a handwritten "7" being classified — drag them and watch the probabilities update. Notice the total always lands on 100%, no matter what you set the sliders to.
+</p>
+
+<div id="softmax-1" class="softmax-wrap"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initSoftmax("softmax-1", {
+      categories: [
+        { label: "digit 7", init: 3.4, min: -5, max: 5 },
+        { label: "digit 1", init: 0.3, min: -5, max: 5 },
+        { label: "digit 9", init: 0.1, min: -5, max: 5 }
+      ]
+    });
+  });
+</script>
+
+<div class="callout">
+Two things worth noticing as you drag: (1) raising one slider pulls the other bars <em>down</em> even though you didn't touch them — because they all have to share 100% between them. (2) The green bar (the model's actual prediction) is just <strong>argmax</strong> from the earlier lesson — whichever bar ends up tallest. Softmax gives you the percentages; argmax picks the winner.
+</div>
+
+<h3>Fitted state: still just numbers</h3>
+<p>
+Softmax regression is parametric, same family as linear regression — it just needs <em>one set of coefficients per category</em> instead of one overall. Ten digits means ten small coefficient vectors, but still a small, fixed, data-independent-in-size bundle of numbers. Compress, store, discard the original data.
+</p>
+
+<h2 id="knn">kNN: asking your neighbors</h2>
+<p>
+Now for something structurally different. Imagine houses on a map, colored by neighborhood type — blue for one kind, orange for another. You want to guess the type of a brand-new address just dropped on the map (the ring outline). <strong>kNN's rule: look at its K closest existing neighbors, and go with whichever color wins the majority vote among them.</strong> No coefficients, no formula fitting — just "who's nearby, and what are they?"
+</p>
+<p>
+Click anywhere on the map below to drop the query point, and drag K to change how many neighbors get a vote.
+</p>
+
+<div id="knn-1" class="knn-wrap"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initKNN("knn-1", {
+      points: [
+        { x: 60, y: 220, label: "a" }, { x: 90, y: 180, label: "a" }, { x: 70, y: 140, label: "a" },
+        { x: 110, y: 200, label: "a" }, { x: 130, y: 150, label: "a" }, { x: 150, y: 190, label: "a" },
+        { x: 220, y: 120, label: "b" }, { x: 250, y: 90, label: "b" }, { x: 270, y: 140, label: "b" },
+        { x: 300, y: 110, label: "b" }, { x: 230, y: 180, label: "b" }, { x: 260, y: 200, label: "b" },
+        { x: 190, y: 150, label: "b" }
+      ],
+      nameA: "blue neighborhood",
+      nameB: "orange neighborhood",
+      kMax: 7,
+      queryInit: { x: 170, y: 165 }
+    });
+  });
+</script>
+
+<div class="callout">
+Drop the query point right in the contested zone between the two clusters, then flip K between 1 and 7. The prediction can flip back and forth — that's not a bug, it's the whole mechanism. K=1 means "trust only your single closest neighbor" (jumpy, sensitive to one weird example). A larger K averages over more opinions (steadier, but can blur real boundaries). Choosing K is itself a structural decision, same category as "how many features" or "which distance to use" — made before training, same as everything else in the model family.
+</div>
+
+<h3>Fitted state: the data itself</h3>
+<p>
+Unlike the two regressions above, kNN's "training" barely does anything — it just remembers the dataset (plus the choices you made: how many neighbors K, which distance measure, how ties are broken). All the real work happens at prediction time, walking through the stored examples fresh for every query. That's why it's nonparametric: nothing was compressed away.
+</p>
+
+<h2>All three, side by side</h2>
+<table>
+<tr><th>Model family</th><th>Fitted state</th><th>Parametric?</th></tr>
+<tr><td>Linear regression</td><td>a handful of coefficients</td><td>Yes — compresses data away</td></tr>
+<tr><td>Softmax regression</td><td>one coefficient vector per category</td><td>Yes — compresses data away</td></tr>
+<tr><td>kNN</td><td>the training data itself</td><td>No — keeps everything</td></tr>
+</table>
+
+<h2>Check your recall</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Try from memory first.</p>
+
+<div class="quiz" data-answer="parametric model">
+  <div class="q">What do we call a model that compresses its training data into a small, fixed set of numbers?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="nonparametric model">
+  <div class="q">What do we call a model whose fitted state is the entire training dataset itself?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="majority vote">
+  <div class="q">What mechanism does kNN use among its K nearest neighbors to make a prediction?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Go deeper</h2>
+<p>
+<a href="https://www.statlearning.com/" target="_blank" rel="noopener">An Introduction to Statistical Learning</a> covers kNN classification in Ch. 2 and 4, and multi-class/softmax regression in Ch. 4 — the free official PDF. See <a href="../RESOURCES.md">RESOURCES.md</a> for more, including StatQuest videos that walk through the same ideas visually if you want a second explanation.
+</p>
+
+<div class="ask-agent">
+Want to try different data placements in the kNN map, or see what happens with a 4th softmax category? Just ask.
+</div>
+
+<div class="footer-links">
+  <a href="0001-from-data-to-decisions.html">&larr; Lesson 0001</a>
+  <a href="0003-evaluation.html">Next: evaluation &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+  <a href="../MISSION.md">Mission</a>
+</div>
+
+</body>
+</html>

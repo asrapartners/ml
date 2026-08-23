@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Notation Decoder</title>
+<meta name="description" content="The ML pipeline's math symbols, explained with real-world examples and pictures.">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/linefit.js" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="../lessons/0001-from-data-to-decisions.html">&larr; Lesson 0001</a> · <a href="glossary.html">Glossary</a></nav>
+<p class="kicker">Reference · STOR 323</p>
+<h1>Notation decoder</h1>
+<p class="subtitle">The math symbols the slides use, explained with real-world examples and pictures instead of code. Read once, come back whenever a formula looks like noise.</p>
+
+<h2 id="hat">The hat: ˆ</h2>
+<p>
+Imagine you're guessing a stranger's weight just by looking at them. There's their <em>actual</em> weight (a real number, but you don't get to see it). And there's <em>your guess</em>, based on what you observed. The hat symbol is math's way of writing "my guess," so it never gets confused with "the real thing."
+</p>
+<div class="card-pair">
+  <div class="card hidden">
+    <span class="card-icon">🎯</span>
+    <div class="card-title">f — the true rule</div>
+    Hidden. Unknown. Maybe nobody will ever know it exactly. "The perfect, real function connecting house size to house price."
+  </div>
+  <div class="card guess">
+    <span class="card-icon">🎩</span>
+    <div class="card-title">f̂ — our guess</div>
+    What you built by looking at examples. It's an estimate, and the hat is math's way of saying "estimate, not the real thing" out loud.
+  </div>
+</div>
+<p>Same trick everywhere: <code>β</code> (the true, unknowable number) vs. <code>β̂</code> (our estimate of it).</p>
+
+<h2>Subscripts: f̂<sub>D</sub></h2>
+<p>
+Picture two different weather forecasters. One trained their forecasting method on ten years of local rainfall data. The other used a different city's data. They'll come up with <em>different</em> guesses — different f̂'s. The little <code>D</code> underneath just labels <em>which batch of data produced this particular guess</em>, the same way you'd label two jars of homemade jam with the date they were made.
+</p>
+<div class="funnel">
+  <div class="stage">Dataset D₁</div>
+  <div class="arrow">→</div>
+  <div class="stage result">Guess f̂<sub>D₁</sub></div>
+</div>
+<div class="funnel">
+  <div class="stage">Dataset D₂</div>
+  <div class="arrow">→</div>
+  <div class="stage result">Guess f̂<sub>D₂</sub></div>
+</div>
+<p>Different data in, different guess out. The subscript just keeps track of which data made which guess.</p>
+
+<h2>Arrow notation: D --A--&gt; f̂<sub>D</sub></h2>
+<p>Think of baking a cake:</p>
+<div class="pipeline">
+  <span class="node">🥚 Ingredients (D)</span>
+  <span class="arrow">--baking process (A)--&gt;</span>
+  <span class="node">🍰 The cake (f̂_D)</span>
+</div>
+<p>
+The arrow just means "goes through." <em>D</em> is your raw data (ingredients). <em>A</em> is the fixed process that never changes (the recipe steps — mix, pour, bake at 350°). What comes out — <em>f̂_D</em> — depends entirely on what ingredients you put in. Same recipe, different ingredients, different cake.
+</p>
+
+<h2 id="setbuilder">Set-builder notation &amp; "model family" — the big one</h2>
+<p>
+This is the one that trips people up, so let's build it by hand instead of just reading it.
+</p>
+<p>
+Real-world setup: you're pricing houses. You believe bigger houses cost more, and you believe the relationship is a <strong>straight line</strong> — some starting price, plus a bit more for every extra square foot. You don't know the exact numbers yet. So <strong>before</strong> looking at any data, you've already made a decision: "I will only ever consider straight-line pricing rules." That decision — "only straight lines allowed" — <em>is</em> the model family. It's the shape of every rule you're willing to consider, before you've picked the specific one.
+</p>
+<p>
+Below, <strong>you</strong> are the machine. Drag the two sliders to move the red line until it passes as close as possible through all five real house sales (the dots). Watch the error number drop as you get closer.
+</p>
+
+<div id="linefit-1" class="linefit-wrap"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initLineFit("linefit-1", {
+      points: [[900, 190], [1100, 230], [1350, 270], [1500, 300], [1700, 355]],
+      xRange: [800, 1800],
+      yRange: [150, 450],
+      xLabel: "House size (sq. ft.)",
+      yLabel: "Price ($000s)",
+      unit: "$",
+      b0Init: 60,
+      b1Init: 0.10,
+      b0Max: 150,
+      b1Max: 0.35
+    });
+  });
+</script>
+
+<p>
+What you just did by hand is <em>exactly</em> what a training algorithm does automatically, just faster and more precisely. Now here's what the notation is really saying:
+</p>
+<div class="callout">
+<strong>{ every possible line : starting price and rate-of-increase can be anything }</strong><br>
+That whole set of infinitely many possible lines — every position those two sliders could ever be in — is the <strong>model family</strong>. Training doesn't invent a new kind of rule; it just searches through that family (slides the two sliders) until it finds the one line with the smallest error. That one winning line is your <code>f̂_D</code>.
+</div>
+<p>
+So the "useful information" packed into the notation is: (1) what shape every candidate is allowed to have (a straight line, not a curve), (2) exactly which knobs are adjustable (here, just two: starting price and rate-of-increase), and (3) that "training" literally means searching those knobs for the setting with the least error — which is the game you just played.
+</p>
+
+<h2>Sum notation: Σ</h2>
+<p>Think of a grocery receipt — you add up every item to get the total. That's all Σ means: "add these all up."</p>
+<div class="receipt">
+  <div class="line"><span>Item 1</span><span>$4</span></div>
+  <div class="line"><span>Item 2</span><span>$7</span></div>
+  <div class="line"><span>Item 3</span><span>$2</span></div>
+  <div class="line total"><span>Total (Σ)</span><span>$13</span></div>
+</div>
+<p><code>Σ<sub>i=1</sub><sup>n</sup> x_i</code> just means "add up x₁ through xₙ" — walk down the receipt and total it.</p>
+
+<h2>Argmax</h2>
+<p>
+Imagine a talent show where the audience claps for each contestant, and a meter measures how loud the applause is. <strong>Argmax doesn't tell you how loud the loudest clap was</strong> — it tells you <em>who</em> got it.
+</p>
+<div class="barchart">
+  <div class="bar" style="height:35%"><span class="bar-val">0.10</span></div>
+  <div class="bar" style="height:20%"><span class="bar-val">0.05</span></div>
+  <div class="bar winner" style="height:90%"><span class="bar-val">0.72</span></div>
+  <div class="bar" style="height:45%"><span class="bar-val">0.13</span></div>
+</div>
+<div class="barchart-labels">
+  <span>Contestant A</span><span>Contestant B</span><span>Contestant C</span><span>Contestant D</span>
+</div>
+<p><code>argmax</code> of these four scores is <strong>Contestant C</strong> — the name/label of the winner, not the 0.72.</p>
+
+<h2>Probability notation: ℙ(Y = 1 | x)</h2>
+<p>
+Read the bar <code>|</code> as the word <strong>"given."</strong> "What's the chance of snow, <em>given</em> it's below freezing?" You're not asking about all days ever — you've already narrowed the world down to freezing days first, then asking about snow within just that narrower group.
+</p>
+<div class="funnel">
+  <div class="stage">All days</div>
+  <div class="arrow">→</div>
+  <div class="stage">Given: below freezing</div>
+  <div class="arrow">→</div>
+  <div class="stage result">Chance of snow</div>
+</div>
+<p><code>ℙ(Y = 1 | x)</code> = "the chance the label is 1, given that we've already observed input x" — same funnel, just with x as the narrowing condition instead of "below freezing."</p>
+
+<h2 id="group">Stacked conditions: FPR<sub>g</sub>(t) = ℙ(δ<sub>t</sub>(S) = 1 | Y = 0, G = g)</h2>
+<p>
+Story first, from the hospital screening slide. One hospital uses one screening rule — <em>refer for follow-up if the test score is ≥ 0.30</em> — on everyone. It applies that exact same rule to two neighborhoods, Group A and Group B. Here's what actually happened to the people who were <strong>not</strong> sick:
+</p>
+<div class="compare-grid">
+  <div class="compare-col">
+    <div class="compare-title">Group A</div>
+    <div class="barchart">
+      <div class="bar fn" style="height:25%"><span class="bar-val">10%</span></div>
+      <div class="bar fp" style="height:100%"><span class="bar-val">40%</span></div>
+    </div>
+    <div class="barchart-labels"><span>missed (FNR)</span><span>false alarm (FPR)</span></div>
+  </div>
+  <div class="compare-col">
+    <div class="compare-title">Group B</div>
+    <div class="barchart">
+      <div class="bar fn" style="height:25%"><span class="bar-val">10%</span></div>
+      <div class="bar fp" style="height:50%"><span class="bar-val">20%</span></div>
+    </div>
+    <div class="barchart-labels"><span>missed (FNR)</span><span>false alarm (FPR)</span></div>
+  </div>
+</div>
+<p>
+Same test, same threshold, same rule for everybody. And yet: a healthy person in Group A is <strong>twice as likely</strong> to get a false alarm (40% vs. 20%) as a healthy person in Group B. Nobody changed the rule between groups — the disparity was hiding inside a single "false positive rate" number until you split it by group. That's the concrete thing. Now the label for it:
+</p>
+<div class="funnel">
+  <div class="stage">Everyone</div>
+  <div class="arrow">→</div>
+  <div class="stage">Given: actually healthy (Y=0)</div>
+  <div class="arrow">→</div>
+  <div class="stage">Given: in Group g</div>
+  <div class="arrow">→</div>
+  <div class="stage result">Chance flagged anyway</div>
+</div>
+<p>
+That four-stage funnel, read right to left in the formula, is exactly <code>FPR_g(t) = ℙ(δ_t(S) = 1 | Y = 0, G = g)</code>:
+</p>
+<ul>
+<li><code>δ_t(S) = 1</code> — "the rule flagged this person" (the thing we're asking the chance of)</li>
+<li><code>| Y = 0, G = g</code> — "given" two conditions stacked together: this person is actually healthy, <em>and</em> they're in group g. Commas inside the conditioning bar just mean "and."</li>
+<li>The subscript <code>g</code> on <code>FPR_g</code> is the same labeling trick as <code>f̂_D</code> earlier — it just says <em>which group</em> this particular rate was computed for.</li>
+</ul>
+<p>
+<code>FNR_g(t)</code> is the mirror image — same funnel, but starting from "given: actually sick (Y=1)" and asking the chance the rule <em>missed</em> them (δ_t(S) = 0). That's the "missed" bar in the charts above.
+</p>
+<div class="callout warn">
+<strong>Equal rule ≠ equal burden.</strong> The formula's whole point is that you can't tell whether a rule is fair by looking at one overall number — you have to compute it separately <em>within</em> each group, which is exactly why the group shows up as a condition inside the ℙ(...), not as an afterthought.
+</div>
+
+<div class="ask-agent">Any of this still fuzzy, or want a different real-world example? Just ask — that's what your teaching agent is for.</div>
+
+<div class="footer-links">
+  <a href="../lessons/0001-from-data-to-decisions.html">Lesson 0001</a>
+  <a href="glossary.html">Glossary</a>
+  <a href="../MISSION.md">Mission</a>
+</div>
+
+</body>
+</html>

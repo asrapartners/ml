@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Build the Policy — Lesson 0004</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/pathgame.js" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0003-evaluation.html">&larr; Lesson 0003</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0004 · Exercise</p>
+<h1>Build the policy</h1>
+<p class="subtitle">No new material here — just the whole Lecture 3 arc, played out as one decision at a time. Five steps, five chances to reason wrong before you reason right.</p>
+
+<p>
+You have data on past patients: symptoms, plus whether they turned out to have the disease. A new patient walks in. Build the system that decides whether to flag them for follow-up testing — from choosing what a valid answer looks like, all the way to checking the deployed rule is fair.
+</p>
+<p>
+Each step below gives you a few options. They're deliberately unlabeled — some are tempting mistakes pulled straight from the last three lessons, not random wrong answers. Pick one; if it's wrong you'll see exactly which reasoning error it was and get sent back to try again. Only one full sequence reaches the end.
+</p>
+
+<div id="policy-game"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initPathGame("policy-game", {
+      winTitle: "Deployable policy assembled",
+      winBody: "You checked the output shape first, picked a model built for it, turned the score into a threshold decision, questioned the trade-off, and caught a fairness gap before deploying.",
+      winLinks: [
+        { label: "Lesson 1", href: "0001-from-data-to-decisions.html" },
+        { label: "Lesson 2", href: "0002-model-families.html" },
+        { label: "Lesson 3", href: "0003-evaluation.html" },
+      ],
+      forks: [
+        { id: 'output-space', icon: '?',
+          scenario: 'Before picking any model, decide what a correct answer even looks like.',
+          ask: "What shape should the model's output take?",
+          options: [
+            { label: 'A plain number, like a lab value', correct: false, tag: 'Category error',
+              title: 'A number alone doesn\'t answer "sick or not?"',
+              body: 'If risk = 1.8, is that flagged or not? Numbers on an open scale can\'t be compared to a 0/1 diagnosis without another decision layered on top — same mistake as predicting a digit is "6.4."' },
+            { label: 'A probability between 0 and 1', correct: true,
+              note: 'Right — a probability is exactly the shape a yes/no screening decision needs.' },
+            { label: 'Unordered categories, like low / medium / high', correct: false, tag: 'Loss of granularity',
+              title: 'Buckets threw away the knob you need later',
+              body: 'This problem only has two outcomes. Relabeling risk as buckets doesn\'t help, and it discards the continuous score you\'ll need a few steps from now to set a threshold.' },
+          ] },
+
+        { id: 'model-family', icon: 'ƒ',
+          scenario: "You've settled on: the output should be a probability.",
+          ask: 'Which approach actually gets you a valid probability?',
+          options: [
+            { label: 'Linear regression, then clip the output to [0, 1]', correct: false, tag: 'Post-hoc patch',
+              title: "Clipping after training doesn't make it a probability",
+              body: 'The model was never trained to produce calibrated confidence — it minimized squared error on an unbounded scale. Clamping the output afterward makes the number look like a probability without behaving like one.' },
+            { label: 'Softmax regression, built to output probabilities directly', correct: true,
+              note: 'Right — its output space is literally "a probability," matched to what you need.' },
+            { label: 'Softmax regression, then immediately report the top label', correct: false, tag: 'Skipped a step',
+              title: 'You answered a question nobody asked yet',
+              body: "Jumping to the single most likely label (argmax) silently assumes a 50%-style cutoff. You haven't decided a threshold yet — get the probability first, decide the policy next." },
+          ] },
+
+        { id: 'deploy-score', icon: 's',
+          scenario: 'Your model now outputs a probability score for each new patient.',
+          ask: 'What do you do with it?',
+          options: [
+            { label: 'Report the raw probability to the doctor and stop there', correct: false, tag: 'Description ≠ decision',
+              title: "A number isn't a policy",
+              body: 'You\'ve described the risk, not decided anything. Someone still has to say "at what probability do we act?" — skipping the score → rule → action step.' },
+            { label: 'Flag whoever has the single highest score today', correct: false, tag: 'Batch vs. live',
+              title: 'Every patient needs an independent decision',
+              body: "Ranking \"riskiest today\" is a batch/evaluation question (that's what ROC is for) — not how a live system decides. Every new patient needs their own call, regardless of who else walked in." },
+            { label: 'Pick a threshold t, and flag everyone scoring ≥ t', correct: true,
+              note: 'Right — a threshold is what turns a score into an actual yes/no action.' },
+          ] },
+
+        { id: 'pick-threshold', icon: 't',
+          scenario: 'At t = 0.30: catches 90% of sick patients (TPR), but flags 30% of healthy ones (FPR).',
+          ask: 'Someone asks: "is this the right threshold?" How do you answer?',
+          options: [
+            { label: 'Yes — catching 90% of sick patients is clearly good', correct: false, tag: 'Cherry-picking',
+              title: 'You quoted the flattering rate and ignored its partner',
+              body: "TPR and FPR are a package deal. Catching 90% of sick patients cost a 30% false-alarm rate — whether that trade is \"right\" depends on costs you haven't named yet." },
+            { label: 'It depends — what do the errors cost, and who decides that trade-off?', correct: true,
+              note: 'Right — the threshold is a policy choice grounded in real costs, not a property of the model alone.' },
+            { label: 'Yes — 0.30 is the default most examples use', correct: false, tag: 'Appeal to convention',
+              title: 'A borrowed default says nothing about your costs',
+              body: '"Examples usually use it" carries no information about what a false alarm or missed diagnosis costs here. The right threshold is a policy choice, not an inherited number.' },
+          ] },
+
+        { id: 'fairness-check', icon: '⚖',
+          scenario: 'Before deploying: Group A gets a 40% false-alarm rate, Group B gets 20% — same threshold, same model.',
+          ask: 'What does this mean?',
+          options: [
+            { label: "Nothing to worry about — same rule for everyone, so it's fair", correct: false, tag: 'Equal rule ≠ equal burden',
+              title: "Procedurally identical isn't equally felt",
+              body: 'Same threshold for everyone is procedurally fair — the outcome isn\'t. A healthy person in Group A is twice as likely to get a false alarm. "Same rule" and "same impact" are different claims.' },
+            { label: 'Group A must have worse doctors — a staffing issue, not a model issue', correct: false, tag: 'Unsupported cause',
+              title: 'You invented an explanation with no evidence',
+              body: "That's an unchecked causal claim. The gap could come from base rates, from how the threshold interacts with each group's distribution, or elsewhere — investigate before blaming." },
+            { label: 'The same rule is landing very differently by group — surface this before deploying', correct: true,
+              note: 'Right — and this is exactly the check "equal rule ≠ equal burden" asks you to run before shipping.' },
+          ] },
+      ]
+    });
+  });
+</script>
+
+<div class="ask-agent">
+Got stuck on a step, or want a harder version — more options per step, or a different worked example entirely? Just ask.
+</div>
+
+<div class="footer-links">
+  <a href="0003-evaluation.html">&larr; Lesson 0003</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+  <a href="../MISSION.md">Mission</a>
+</div>
+
+</body>
+</html>

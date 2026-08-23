@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>From Data to Decisions — Lesson 0001</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a> · STOR 323, Lecture 3</nav>
+<p class="kicker">Lesson 0001</p>
+<h1>From data to decisions</h1>
+<p class="subtitle">The one diagram that everything else in this course hangs off. If you remember only one thing from Lecture 3, remember this.</p>
+
+<h2>What "learning" means</h2>
+<p>
+STOR 323 defines machine learning operationally: <strong>performance on a task T improves through experience E</strong>, measured by performance P. For MNIST digit recognition: T = recognize a handwritten digit, E = labeled examples, P = error on new digits. Nothing mystical — just data in, better performance out.
+</p>
+
+<h2>Two phases, two different objects</h2>
+<p>
+The whole course splits into two phases that are easy to blur together if you don't separate them explicitly. <strong>Training</strong> happens once, ahead of time. <strong>Deployment</strong> happens over and over, on new inputs.
+</p>
+
+<div class="pipeline">
+  <span class="node">D</span>
+  <span class="arrow">--A--&gt;</span>
+  <span class="node">f̂<sub>D</sub></span>
+</div>
+<p style="margin-top:-0.6rem; color:var(--ink-soft); font-size:0.9rem;">Training: a fixed learning algorithm A reads a dataset D and returns a fitted model f̂<sub>D</sub>.</p>
+
+<div class="pipeline">
+  <span class="node">x</span>
+  <span class="arrow">--f̂<sub>D</sub>--&gt;</span>
+  <span class="node">s</span>
+  <span class="arrow">--δ--&gt;</span>
+  <span class="node">a</span>
+</div>
+<p style="margin-top:-0.6rem; color:var(--ink-soft); font-size:0.9rem;">Deployment: a new input x is <em>predicted</em> into a score s, then <em>decided</em> by a rule δ into an action a.</p>
+
+<div class="callout">
+<strong>The load-bearing distinction:</strong> A (the algorithm) is a fixed procedure — it doesn't change. f̂<sub>D</sub> (the fitted model) is data-dependent state — it changes whenever D changes. δ (the decision rule) and a (the action) belong to the <em>deployed system</em>, not to the model itself. Three different things can each change independently, and STOR 323 will keep asking you to say which one moved.
+</div>
+
+<h2>Why this matters later</h2>
+<p>
+Every later topic in this deck is really a question about one arrow in this diagram:
+</p>
+<table>
+<tr><th>Question</th><th>Which arrow</th></tr>
+<tr><td>Which functions could f̂<sub>D</sub> possibly be? (linear regression, softmax regression, kNN)</td><td><code>D --A--&gt; f̂_D</code> — the <strong>model family</strong> constrains A</td></tr>
+<tr><td>How good is f̂<sub>D</sub>'s prediction s? (MSE, ROC/AUC, confusion matrix)</td><td><code>x --f̂_D--&gt; s</code></td></tr>
+<tr><td>What action should a score trigger, and who bears the cost of a wrong one?</td><td><code>s --δ--&gt; a</code></td></tr>
+</table>
+<p>
+The deck's punchline (slide 21): <strong>the model is fixed; the policy is not.</strong> You can swap δ — change a threshold, change who gets referred for a test — without retraining anything. That's a deployment-time decision, not a modeling one. Future lessons will dig into model families and evaluation metrics separately; this lesson is just about being able to place any concept on this diagram without hesitation.
+</p>
+
+<h2>Check your recall</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory before checking — that effort is what makes it stick.</p>
+
+<div class="quiz" data-answer="fitted model">
+  <div class="q">In D --A--&gt; f̂_D, what do we call the object f̂_D itself?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="decision rule">
+  <div class="q">What do we call the δ that maps a score s to an action a?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="model family">
+  <div class="q">What do we call the set of candidate functions chosen before any data is seen?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Go deeper</h2>
+<p>
+Primary source for this lecture's formalism: <a href="https://www.statlearning.com/" target="_blank" rel="noopener">An Introduction to Statistical Learning</a> (James, Witten, Hastie, Tibshirani) — free official PDF, Ch. 2 covers exactly this train/predict framing. See <a href="../RESOURCES.md">RESOURCES.md</a> for more.
+</p>
+
+<div class="ask-agent">
+Stuck on anything above? Just ask your teaching agent — it can explain any piece of this differently.
+</div>
+
+<div class="footer-links">
+  <a href="0002-model-families.html">Next: model families &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>

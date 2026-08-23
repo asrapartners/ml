@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Evaluation — Lesson 0003</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/quiz.js" defer></script>
+<script src="../assets/threshold.js" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0002-model-families.html">&larr; Lesson 0002</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0003</p>
+<h1>Evaluation: how good is "good"?</h1>
+<p class="subtitle">The model is done training. Now: how do you know if it's any good — and "good for what"?</p>
+
+<h2>The tool depends on what you're measuring</h2>
+<p>
+You wouldn't use a bathroom scale to check someone's temperature, or a ruler to weigh a suitcase. The right measuring tool depends entirely on <em>what kind of thing</em> you're measuring. Model evaluation works the same way — the slides put it as: <strong>evaluation follows the object being evaluated.</strong>
+</p>
+<table>
+<tr><th>What the model outputs</th><th>Question you're asking</th><th>Right tool</th><th>What it misses</th></tr>
+<tr><td>A number (house price)</td><td>How far off?</td><td>MSE</td><td>Whether the downstream action was any good</td></tr>
+<tr><td>A score or ranking</td><td>How well-ordered?</td><td>ROC / AUC</td><td>Error costs, capacity limits</td></tr>
+<tr><td>A yes/no decision at threshold t</td><td>Which errors happen?</td><td>Confusion matrix</td><td>Who actually bears each error</td></tr>
+</table>
+<p>No single metric answers every question — that's not a limitation to work around, it's the whole point of matching the tool to the object.</p>
+
+<h2 id="mse">Numeric predictions: MSE</h2>
+<p>
+You already met this one. Back in <a href="0001-from-data-to-decisions.html">lesson 0001</a>'s house-price slider, the "total error" number ticking up and down as you dragged the sliders — that <em>was</em> MSE the whole time. It's just the average of every dot's squared miss: predict $305k, actual sale was $300k, that one point misses by $5k, squared to 25 (in $000s²). Add up every point's squared miss, divide by how many points — that's the whole idea. Simple, but it only ever answers "how far off, on average" — it has nothing to say about what happens *after* the prediction, which is exactly where the next two tools pick up.
+</p>
+
+<h2 id="confusion-matrix">Yes/no decisions: the confusion matrix, and the threshold that creates it</h2>
+<p>
+Picture a doctor's screening test. The model outputs a score from 0 (probably healthy) to 1 (probably sick) for each patient. But at some point, someone has to actually decide: refer this person for a follow-up, or not? That decision needs a cutoff — a <strong>threshold t</strong>. Everyone scoring at or above t gets flagged; everyone below doesn't. Move the threshold below, and drag it around:
+</p>
+
+<div id="threshold-1" class="threshold-wrap"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initThreshold("threshold-1", {
+      positives: [0.05, 0.20, 0.32, 0.40, 0.50, 0.62, 0.78, 0.90],
+      negatives: [0.02, 0.06, 0.10, 0.14, 0.18, 0.22, 0.26, 0.30, 0.34, 0.45, 0.58, 0.70],
+      posName: "sick",
+      negName: "healthy",
+      tInit: 0.30
+    });
+  });
+</script>
+
+<p>
+Four things can happen to any one person, and they have names: flag someone who's actually sick — a <strong>true positive (TP)</strong>, good; flag someone who's actually healthy — a <strong>false positive (FP)</strong>, a wasted follow-up; miss someone who's actually sick — a <strong>false negative (FN)</strong>, a missed diagnosis; correctly clear someone healthy — a <strong>true negative (TN)</strong>, good. That 2×2 grid of counts is the <strong>confusion matrix</strong>. <code>TPR = TP/(TP+FN)</code> asks "of everyone actually sick, what fraction did we catch?" <code>FPR = FP/(FP+TN)</code> asks "of everyone actually healthy, what fraction did we wrongly alarm?"
+</p>
+
+<div class="callout warn">
+Drag the threshold slider all the way left, then all the way right. Notice you can't win both at once — pushing the threshold up (fewer alarms) always trades away some true positives for fewer false positives. That tension is unavoidable; it's a property of the model's ranking, not a bug in how you set the threshold. <strong>Who decides where on that trade-off to sit — and what principle they use — is a policy question, not a modeling one.</strong>
+</div>
+
+<h2 id="roc">Scores and rankings: ROC / AUC</h2>
+<p>
+Notice the little plot next to the sliders. Every time you move the threshold, you get one (FPR, TPR) point — and as you sweep the threshold across its whole range, those points trace out a curve. That curve is the <strong>ROC curve</strong> (receiver operating characteristic — an old radar-engineering name that stuck). It answers a different question than any single confusion matrix does: <em>not</em> "how good is this one threshold," but <strong>"how well does this model rank sick patients above healthy ones, across every possible threshold at once?"</strong>
+</p>
+<p>
+A model that's a coin-flip would trace the diagonal dashed line — no better than guessing. A model that ranks perfectly (every sick patient scored higher than every healthy one) would hug the top-left corner. <strong>AUC</strong> (area under that curve) compresses the whole curve into one number: 0.5 is coin-flip, 1.0 is perfect ranking. It's a great "is this model any good at all" summary — but notice it never tells you which single threshold to actually deploy. That's still a separate decision.
+</p>
+
+<h2 id="fairness-gap">The part evaluation alone can't answer</h2>
+<p>
+Look back at the "what it misses" column in the first table. MSE, ROC/AUC, and the confusion matrix all describe the <em>model</em> — but none of them say who should bear the cost of an error, or which threshold is fair to deploy. We already worked through a concrete case of this in the <a href="../reference/notation.html#group">notation decoder</a>: the exact same threshold, applied to the exact same model, produced a false-alarm rate of 40% in one group and 20% in another. <strong>Equal rule ≠ equal burden</strong> — and no metric on this page can tell you that on its own. You have to go looking for it, by group.
+</p>
+
+<h2 id="arc">The whole arc, in one line</h2>
+<div class="pipeline">
+  <span class="node">fitted model</span>
+  <span class="arrow">→</span>
+  <span class="node">score/probability</span>
+  <span class="arrow">→</span>
+  <span class="node">metric + rule</span>
+  <span class="arrow">→</span>
+  <span class="node">action</span>
+  <span class="arrow">→</span>
+  <span class="node">affected people</span>
+</div>
+<p>
+This closes the loop from <a href="0001-from-data-to-decisions.html">lesson 0001</a>: <code>f̂_D</code> is fixed once training ends. Everything from "score" onward — which metric you check, where you set the threshold, what action follows — is still an open, ongoing choice. <strong>The model is fixed; the policy is not.</strong> The slides end Lecture 3 on two open questions worth sitting with: <em>who chooses the rule, and using what principle?</em> There's no formula for that — it's a judgment call, made by whoever deploys the system.
+</p>
+
+<h2>Check your recall</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Try from memory first.</p>
+
+<div class="quiz" data-answer="confusion matrix">
+  <div class="q">What do we call the 2×2 grid of TP/FP/FN/TN counts produced by one fixed threshold?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="false negative">
+  <div class="q">What do we call it when the rule fails to flag someone who is actually positive?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="decision threshold|threshold t">
+  <div class="q">What do we call the cutoff score that turns a probability into a flagged/not-flagged decision?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Go deeper</h2>
+<p>
+<a href="https://www.statlearning.com/" target="_blank" rel="noopener">An Introduction to Statistical Learning</a>, Ch. 4, covers classification metrics and ROC curves formally. For the fairness/group angle, see <a href="https://fairmlbook.org/" target="_blank" rel="noopener">Fairness and Machine Learning</a> — both are already in <a href="../RESOURCES.md">RESOURCES.md</a>.
+</p>
+
+<div class="ask-agent">
+This closes out the core Lecture 3 content — pipeline, model families, and evaluation. <a href="0004-build-the-policy.html">Lesson 0004</a> is a review exercise pulling all three together into one worked decision, if you want to test it before the next lecture's slides.
+</div>
+
+<div class="footer-links">
+  <a href="0002-model-families.html">&larr; Lesson 0002</a>
+  <a href="0004-build-the-policy.html">Next: exercise &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+  <a href="../MISSION.md">Mission</a>
+</div>
+
+</body>
+</html>

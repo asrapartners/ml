@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Glossary — ML Pipeline</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="crumbs"><a href="../lessons/0001-from-data-to-decisions.html">&larr; Lesson 0001</a></nav>
+<p class="kicker">Reference · STOR 323</p>
+<h1>Glossary: ML Pipeline</h1>
+<p class="subtitle">The compressed vocabulary from Lecture 3. Extend this file as later lectures add terms — don't redefine terms elsewhere.</p>
+
+<h2>Core pipeline</h2>
+<table>
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td><strong>Task T / Experience E / Performance P</strong></td><td>The operational definition of "learning": performance on T improves through experience E, measured by P.</td></tr>
+<tr><td><strong>Learning algorithm A</strong></td><td>A fixed procedure. Reads a dataset D, returns a fitted map: <code>A(D) = f̂_D</code>.</td></tr>
+<tr><td><strong>Fitted model f̂_D</strong></td><td>Data-dependent state produced by training. Stores what was learned; changes when D changes.</td></tr>
+<tr><td><strong>Training</strong></td><td>Phase 1: examples → fit → reusable fitted map. <code>D --A--> f̂_D</code></td></tr>
+<tr><td><strong>Deployment</strong></td><td>Phase 2: new input becomes an action. <code>x --f̂_D--> s --δ--> a</code> (predict, then decide, then act).</td></tr>
+<tr><td><strong>Decision rule δ</strong></td><td>Maps a score/probability s to an action a. Belongs to the deployed system, not the model.</td></tr>
+</table>
+
+<h2>Model families</h2>
+<table>
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td><strong>Model family 𝓕</strong></td><td>The set of candidate functions <code>{f_θ : X → S | θ ∈ Θ}</code> considered before seeing data. Limits what can possibly be learned.</td></tr>
+<tr><td><strong>Fitted state</strong></td><td>What a specific model family stores after training — e.g. coefficients (linear regression), 10 coefficient vectors (softmax regression), or the training set + a metric (kNN).</td></tr>
+<tr><td><strong>Parametric vs. nonparametric</strong></td><td>Parametric models (linear/softmax regression) compress D into a fixed-size parameter vector. Nonparametric models (kNN) keep D itself as the fitted state.</td></tr>
+<tr><td><strong>Softmax</strong></td><td>Converts per-class logit scores z_k(x) into a probability distribution over classes: <code>p_k = e^{z_k} / Σ e^{z_j}</code>.</td></tr>
+<tr><td><strong>Logit</strong></td><td>A raw per-class score before softmax normalization — "evidence, not probability."</td></tr>
+<tr><td><strong>Argmax</strong></td><td>Converts a probability vector into a single predicted label by picking the highest-probability class.</td></tr>
+<tr><td><strong>kNN (k-nearest neighbors)</strong></td><td>Classifies a query point by majority vote among its K nearest training points, under a chosen distance metric.</td></tr>
+</table>
+
+<h2>Evaluation</h2>
+<table>
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td><strong>MSE</strong></td><td>Mean squared error — average squared distance between predicted and actual numeric values. Answers "how far?" Misses downstream action cost.</td></tr>
+<tr><td><strong>ROC / AUC</strong></td><td>Receiver operating characteristic curve / area under it — measures how well a score ranks positives above negatives across all thresholds. Answers "how well ordered?"</td></tr>
+<tr><td><strong>Confusion matrix</strong></td><td>Counts of TP / FP / FN / TN at one fixed decision threshold. Answers "which errors, and how many?"</td></tr>
+<tr><td><strong>Threshold t</strong></td><td>The cutoff on a score s(x) that turns it into a binary action: <code>δ_t(s) = 1{s ≥ t}</code>. Changing t trades TPR against FPR — it does not change the underlying model.</td></tr>
+<tr><td><strong>TPR (true positive rate / sensitivity)</strong></td><td><code>TP / (TP + FN)</code> — fraction of actual positives correctly flagged.</td></tr>
+<tr><td><strong>FPR (false positive rate)</strong></td><td><code>FP / (FP + TN)</code> — fraction of actual negatives incorrectly flagged.</td></tr>
+<tr><td><strong>Group fairness gap</strong></td><td>The same threshold t applied to the same model can produce very different FPR/FNR across subgroups G = g. "Equal rule ≠ equal burden."</td></tr>
+</table>
+
+<div class="ask-agent">Something here unclear, or you spot an error? Ask your teaching agent — that's what it's for.</div>
+
+</body>
+</html>
