@@ -7,15 +7,29 @@ function initThreshold(containerId, opts) {
   const el = document.getElementById(containerId);
   const positives = opts.positives;
   const negatives = opts.negatives;
-  const stripW = 460, stripH = 60, margin = 20;
+  const stripW = 460, stripH = 78, margin = 20;
   const rocSize = 140, rocMargin = 22;
+  const dotY = 42;
 
   function sx(score) { return margin + score * (stripW - 2 * margin); }
 
+  // sort scores so labels can alternate above/below in score order — that's what
+  // actually keeps adjacent, closely-spaced labels from colliding, not the original array order
   function dotsSvg(scores, cls) {
-    return scores.map((s, i) =>
-      `<circle class="th-dot ${cls}" data-score="${s}" cx="${sx(s)}" cy="30" r="7"></circle>`
-    ).join("");
+    const order = scores.map((s, i) => ({ s, i })).sort((a, b) => a.s - b.s);
+    const rank = new Map(order.map((o, r) => [o.i, r]));
+    return scores.map((s, i) => {
+      const cx = sx(s);
+      const above = rank.get(i) % 2 === 0;
+      const labelY = above ? dotY - 15 : dotY + 22;
+      return `<g class="th-dot-group">
+        <circle class="th-dot ${cls}" data-score="${s}" cx="${cx}" cy="${dotY}" r="7">
+          <title>score: ${s.toFixed(2)}</title>
+        </circle>
+        <line class="th-dot-tick" x1="${cx}" y1="${above ? dotY - 8 : dotY + 8}" x2="${cx}" y2="${above ? labelY + 3 : labelY - 6}"/>
+        <text class="th-dot-label" x="${cx}" y="${labelY}">${s.toFixed(2)}</text>
+      </g>`;
+    }).join("");
   }
 
   el.innerHTML = `

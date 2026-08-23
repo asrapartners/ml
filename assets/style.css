@@ -554,6 +554,8 @@ a { color: var(--accent); }
 .th-dot.neg { fill: var(--good-soft); stroke: var(--good); stroke-width: 1.5; }
 .th-dot.pos.flagged { fill: var(--warn); }
 .th-dot.neg.flagged { fill: var(--warn); }
+.th-dot-tick { stroke: var(--rule); stroke-width: 1; }
+.th-dot-label { font-family: var(--mono); font-size: 9px; fill: var(--ink-soft); text-anchor: middle; }
 .th-line { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 3 2; }
 .threshold-axis-label { font-family: var(--sans); font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.3rem; }
 
