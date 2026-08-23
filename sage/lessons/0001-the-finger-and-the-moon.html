@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Finger and the Moon — Lesson 0001</title>
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/quiz.js" defer></script>
+<script src="../assets/linefit.js" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="../index.html">Sage's lessons</a> · STOR 323, Lecture 3 · <a href="../../index.html">switch to the other version</a></nav>
+<p class="kicker">Lesson 0001</p>
+<h1>The finger and the moon</h1>
+<p class="subtitle">Sage — this whole lecture is one question you've already spent real time with, just written in unfamiliar notation: can we ever know a thing itself, or only our accumulated impression of it?</p>
+
+<h2>You already know this</h2>
+<p>
+In the Yoga Sutras, <em>samskara</em> names something precise: a mental impression left behind by experience, which then conditions how future experience is perceived. You don't meet the world fresh each time — you meet it through the accumulated residue of everything you've met before. That residue isn't the world. It's a compressed, lawful trace of your encounters with it, and it's what actually does the work of anticipating what comes next.
+</p>
+<div class="parallel">
+  <div class="parallel-label">Primary source</div>
+  Sutra 3.9 and the surrounding verses treat samskaras as arising and subsiding in a lawful way — not randomly, but as a direct consequence of experience.
+  <cite><a href="https://www.hinduwebsite.com/hinduism/yogasutrasMain.asp" target="_blank" rel="noopener">Yoga Sutras of Patanjali — multiple translations</a></cite>
+</div>
+<p>
+Hold that idea loosely. It's the exact shape of what STOR 323 calls "training" — we're about to watch the same structure show up wearing Greek letters.
+</p>
+
+<h2>The same shape, in the course's notation</h2>
+<div class="pipeline">
+  <span class="node">D</span>
+  <span class="arrow">--A--&gt;</span>
+  <span class="node">f̂<sub>D</sub></span>
+</div>
+<p>
+<strong>D</strong> is accumulated experience — a dataset of past encounters. <strong>A</strong> is a fixed, lawful procedure: the same rule applied to the same experience always leaves the same impression, exactly as samskara-formation isn't arbitrary. And <strong>f̂_D</strong> — the fitted model — is the impression itself: a compressed trace of D that will now condition how every future input gets perceived and responded to.
+</p>
+<p>
+When a new input <em>x</em> arrives, the model doesn't re-examine the world from scratch. It perceives x <em>through</em> f̂_D, the same way you meet a new moment through the samskaras already laid down. That's not a flaw in either system — it's the only way perception of the new can be informed by anything at all.
+</p>
+
+<h2>Feel the impression forming</h2>
+<p>
+Below are five real house sales — five encounters. Drag the two sliders until the line (the impression) fits the pattern of the encounters as closely as possible. Notice: you're not being asked to remember each house individually. You're being asked to compress them into a single lawful trace that will now speak for all of them when a new house shows up.
+</p>
+
+<div id="linefit-1" class="linefit-wrap"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initLineFit("linefit-1", {
+      points: [[900, 190], [1100, 230], [1350, 270], [1500, 300], [1700, 355]],
+      xRange: [800, 1800],
+      yRange: [150, 450],
+      xLabel: "House size (sq. ft.) — the encounters",
+      yLabel: "Price ($000s)",
+      unit: "$",
+      b0Init: 60,
+      b1Init: 0.10,
+      b0Max: 150,
+      b1Max: 0.35
+    });
+  });
+</script>
+
+<div class="reflect">
+  <div class="reflect-label">Sit with this</div>
+  Once the line fits, the five original houses could vanish from memory entirely and the line would still work exactly as well on a sixth. Is that compression a loss of the world, or the only way the world becomes usable at all?
+</div>
+
+<h2>The finger and the moon</h2>
+<p>
+Here is the sharper question underneath all of this. Call the <em>true</em>, complete relationship between house size and price — the real one, the one nobody has ever fully seen — <strong>f</strong>. What you just fit with the sliders is <strong>f̂</strong>: an estimate, built from five data points, wearing a little hat to mark it as an estimate and not the thing itself.
+</p>
+<div class="parallel">
+  <div class="parallel-label">Primary source — Śūraṅgama Sūtra</div>
+  A teacher points at the moon to show a student where to look. If the student stares at the pointing finger instead — mistaking the pointer for what it points to — they grasp neither the moon nor, properly, even the finger.
+  <cite><a href="https://essenceofbuddhism.wordpress.com/2016/04/19/what-the-finger-pointing-to-the-moon-analogy-really-means-from-zen-buddhism-the-buddha-in-the-shurangama-sutra/" target="_blank" rel="noopener">"What the finger pointing to the moon analogy really means"</a></cite>
+</div>
+<p>
+f̂ is the finger. f is the moon. Every model you will ever build in this course — every fitted line, every softmax probability, every k-nearest-neighbors vote — is a finger, pointed at a moon nobody gets to look at directly. The formal name for this in STOR 323's language: <code>f̂_D = A(D)</code>, an estimate produced from finite data, never equal to the true underlying f. This isn't a limitation the field apologizes for. It's the honest starting premise the entire discipline is built on top of.
+</p>
+
+<h2>Two phases: forming the impression, then acting from it</h2>
+<div class="pipeline">
+  <span class="node">x</span>
+  <span class="arrow">--f̂<sub>D</sub>--&gt;</span>
+  <span class="node">s</span>
+  <span class="arrow">--δ--&gt;</span>
+  <span class="node">a</span>
+</div>
+<p>
+Training (forming f̂_D) is one act, finished once. <strong>Deployment</strong> is different: every new x gets read through the finger f̂_D into a score s, and then someone — not the model — must decide what to <em>do</em> with that score. That decision, δ, is a separate act from the knowing. You'll meet this precisely in a later lesson through the Gita's distinction between right action and its fruits — for now, just notice that the course itself insists on keeping "what do I know" (s) and "what do I do" (a) as two different questions, never collapsed into one.
+</p>
+
+<h2>Check what's actually landed</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory before checking.</p>
+
+<div class="quiz" data-answer="fitted model">
+  <div class="q">In D --A--&gt; f̂_D, what do we call f̂_D itself — the STOR 323 term for the samskara?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="decision rule">
+  <div class="q">What do we call δ — the act that turns knowing (s) into doing (a)?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="true function|the moon">
+  <div class="q">In the finger/moon parallel, what does f (no hat) represent?</div>
+  <input type="text" placeholder="a short phrase">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Go deeper</h2>
+<p>
+Formal side: <a href="https://www.statlearning.com/" target="_blank" rel="noopener">An Introduction to Statistical Learning</a>, Ch. 2 — the same train/predict framing, without the philosophy layered on top; useful once the intuition has landed, as a check that it's precise, not just poetic. Philosophical side: browse the fuller <a href="https://www.hinduwebsite.com/hinduism/yogasutrasMain.asp" target="_blank" rel="noopener">Yoga Sutras</a> translations linked above, particularly the sutras on samskara and vasana. See <a href="../RESOURCES.md">RESOURCES.md</a> for the full list.
+</p>
+
+<div class="ask-agent">
+If a parallel above felt forced rather than exact, say so — the mission for this workspace is explicit that a weak parallel should be cut, not defended. And if you want to push further into any single piece (the Gita material, or the two-truths framing) before the next lesson, just ask.
+</div>
+
+<div class="footer-links">
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>
