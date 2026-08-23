@@ -7,9 +7,9 @@ function initThreshold(containerId, opts) {
   const el = document.getElementById(containerId);
   const positives = opts.positives;
   const negatives = opts.negatives;
-  const stripW = 460, stripH = 78, margin = 20;
+  const stripW = 480, stripH = 90, margin = 22;
   const rocSize = 140, rocMargin = 22;
-  const dotY = 42;
+  const dotY = 48;
 
   function sx(score) { return margin + score * (stripW - 2 * margin); }
 
@@ -21,12 +21,12 @@ function initThreshold(containerId, opts) {
     return scores.map((s, i) => {
       const cx = sx(s);
       const above = rank.get(i) % 2 === 0;
-      const labelY = above ? dotY - 15 : dotY + 22;
+      const labelY = above ? dotY - 18 : dotY + 26;
       return `<g class="th-dot-group">
-        <circle class="th-dot ${cls}" data-score="${s}" cx="${cx}" cy="${dotY}" r="7">
+        <circle class="th-dot ${cls}" data-score="${s}" cx="${cx}" cy="${dotY}" r="9">
           <title>score: ${s.toFixed(2)}</title>
         </circle>
-        <line class="th-dot-tick" x1="${cx}" y1="${above ? dotY - 8 : dotY + 8}" x2="${cx}" y2="${above ? labelY + 3 : labelY - 6}"/>
+        <line class="th-dot-tick" x1="${cx}" y1="${above ? dotY - 10 : dotY + 10}" x2="${cx}" y2="${above ? labelY + 3 : labelY - 7}"/>
         <text class="th-dot-label" x="${cx}" y="${labelY}">${s.toFixed(2)}</text>
       </g>`;
     }).join("");
@@ -50,12 +50,6 @@ function initThreshold(containerId, opts) {
       <label>Threshold t = <span class="t-val"></span>
         <input type="range" class="t-slider" min="0" max="1" step="0.01" value="${opts.tInit ?? 0.3}">
       </label>
-      <div class="threshold-counts">
-        <div><span>True positive</span><strong class="c-tp"></strong></div>
-        <div><span>False negative</span><strong class="c-fn"></strong></div>
-        <div><span>False positive</span><strong class="c-fp"></strong></div>
-        <div><span>True negative</span><strong class="c-tn"></strong></div>
-      </div>
       <div class="threshold-rates">
         <div>TPR = <strong class="r-tpr"></strong></div>
         <div>FPR = <strong class="r-fpr"></strong></div>
@@ -68,6 +62,28 @@ function initThreshold(containerId, opts) {
         <circle class="roc-current" cx="0" cy="0" r="4"/>
       </svg>
       <div class="roc-caption">Each drag plots one (FPR, TPR) point — sweep the whole slider and you trace the ROC curve. AUC is the area under that trail.</div>
+    </div>
+    <div class="cm-wrap">
+      <table class="cm-table">
+        <tr>
+          <td class="cm-corner"></td>
+          <th class="cm-col">Flagged<br><span class="cm-sub">score ≥ t</span></th>
+          <th class="cm-col">Not flagged<br><span class="cm-sub">score &lt; t</span></th>
+        </tr>
+        <tr>
+          <th class="cm-row">Actually<br>${opts.posName}</th>
+          <td class="cm-cell correct"><span class="cm-num c-tp"></span><span class="cm-label">true positive</span></td>
+          <td class="cm-cell wrong"><span class="cm-num c-fn"></span><span class="cm-label">false negative</span></td>
+        </tr>
+        <tr>
+          <th class="cm-row">Actually<br>${opts.negName}</th>
+          <td class="cm-cell wrong"><span class="cm-num c-fp"></span><span class="cm-label">false positive</span></td>
+          <td class="cm-cell correct"><span class="cm-num c-tn"></span><span class="cm-label">true negative</span></td>
+        </tr>
+      </table>
+      <p class="cm-rule">
+        Each cell = dots matching <em>both</em> its row and column. <strong>True positive</strong>: actually ${opts.posName}, flagged. <strong>False negative</strong>: actually ${opts.posName}, missed. <strong>False positive</strong>: actually ${opts.negName}, flagged by mistake. <strong>True negative</strong>: actually ${opts.negName}, correctly left alone.
+      </p>
     </div>
   `;
 
