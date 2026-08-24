@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>From Data to Decisions — Lesson 0001</title>
-<link rel="stylesheet" href="../assets/style.css?v=10">
-<script src="../assets/topbar.js?v=10" defer></script>
-<script src="../assets/quiz.js?v=10" defer></script>
-<script src="../assets/classify.js?v=10" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=11">
+<script src="../assets/topbar.js?v=11" defer></script>
+<script src="../assets/quiz.js?v=11" defer></script>
+<script src="../assets/classify.js?v=11" defer></script>
+<script src="../assets/mcq.js?v=11" defer></script>
 </head>
 <body>
 <nav class="crumbs"><a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a> · STOR 323, Lecture 3</nav>
@@ -119,13 +120,20 @@ Don't take the rule on faith — work it. Each case below is a real deployment m
 <p>
 A junior engineer says: <em>"We don't have enough labeled data to retrain this quarter. But we do have a year of deployment logs — every input x, every score s the model gave it. Let's just use the model's own scores as the labels. That's a year of free training data."</em>
 </p>
-<div class="quiz" data-answer="feedback loop">
-  <div class="q">What's the two-word name for the failure mode this plan walks straight into?</div>
-  <input type="text" placeholder="two words">
-  <button onclick="checkQuiz(this)">Check</button>
-  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
-  <div class="feedback"></div>
-</div>
+<div id="mcq-1" class="mcq-wrap"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initMCQ("mcq-1", {
+      question: "If the team does this, what happens to the model's real-world performance over the following months?",
+      options: [
+        { label: "It improves — more training data always helps.", correct: false },
+        { label: "It stays about the same — extra data with no new information has no effect either way.", correct: false },
+        { label: "It looks confident, but the model quietly gets worse — it's now reinforcing its own past guesses instead of learning from reality.", correct: true,
+          explain: "This is a <strong>feedback loop</strong>: the model's scores become its own training labels, so every existing bias gets amplified rather than corrected. Nothing here ever checks the model against the truth — only against itself." }
+      ]
+    });
+  });
+</script>
 
 <div class="big-idea">
   <span class="big-idea-icon">💡</span>
