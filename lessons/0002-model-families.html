@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <title>Other Model Families — Lesson 0002</title>
-<link rel="stylesheet" href="../assets/style.css?v=12">
-<script src="../assets/topbar.js?v=12" defer></script>
-<script src="../assets/quiz.js?v=12" defer></script>
-<script src="../assets/mcq.js?v=12" defer></script>
-<script src="../assets/softmax.js?v=12" defer></script>
-<script src="../assets/knn.js?v=12" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=13">
+<script src="../assets/topbar.js?v=13" defer></script>
+<script src="../assets/quiz.js?v=13" defer></script>
+<script src="../assets/mcq.js?v=13" defer></script>
+<script src="../assets/softmax.js?v=13" defer></script>
+<script src="../assets/knn.js?v=13" defer></script>
 </head>
 <body>
 <nav class="crumbs"><a href="0001-from-data-to-decisions.html">&larr; Lesson 0001</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
@@ -132,6 +132,47 @@ First, the bridge from what you already trust. You've already met <code>β₀ + 
 <p>
 So where does the name come from? A plain <strong>max</strong> would just hand the single largest of those ten scores 100% of the vote and give everyone else 0% — a hard, all-or-nothing cutoff (that's actually what <code>argmax</code> already does, further back in lesson 1). The trouble with a hard cutoff: nudge a score slightly and the winner either doesn't move at all, or flips instantly — there's no "give" to learn from. <strong>Softmax</strong> is the <em>soft</em>, smoothed-out version of that same idea: scores still compete for a shrinking 100%, but a close second place keeps a meaningful share instead of getting zeroed out. That smoothness is exactly what training needs — the same gradual, nudge-and-check fitting process used to find linear regression's coefficients can be used here too, which a hard max would never allow.
 </p>
+<div class="arch-wrap">
+  <svg viewBox="0 0 520 260" class="arch-svg">
+    <line x1="40" y1="130" x2="108" y2="50" class="arch-line"/>
+    <line x1="40" y1="130" x2="108" y2="130" class="arch-line"/>
+    <line x1="40" y1="130" x2="108" y2="210" class="arch-line"/>
+    <circle cx="40" cy="130" r="16" class="arch-x"/>
+    <text x="40" y="134" class="arch-x-label">x</text>
+
+    <rect x="108" y="26" width="130" height="48" rx="6" class="arch-box"/>
+    <text x="173" y="46" class="arch-box-title">linear regression</text>
+    <text x="173" y="64" class="arch-box-sub">for digit 7 &rarr; z(7)</text>
+
+    <rect x="108" y="106" width="130" height="48" rx="6" class="arch-box"/>
+    <text x="173" y="126" class="arch-box-title">linear regression</text>
+    <text x="173" y="144" class="arch-box-sub">for digit 1 &rarr; z(1)</text>
+
+    <rect x="108" y="186" width="130" height="48" rx="6" class="arch-box"/>
+    <text x="173" y="206" class="arch-box-title">linear regression</text>
+    <text x="173" y="224" class="arch-box-sub">for digit 9 &rarr; z(9)</text>
+
+    <line x1="238" y1="50" x2="290" y2="130" class="arch-line"/>
+    <line x1="238" y1="130" x2="290" y2="130" class="arch-line"/>
+    <line x1="238" y1="210" x2="290" y2="130" class="arch-line"/>
+
+    <rect x="290" y="98" width="100" height="64" rx="8" class="arch-softmax"/>
+    <text x="340" y="134" class="arch-softmax-label">softmax</text>
+
+    <line x1="390" y1="130" x2="452" y2="50" class="arch-line"/>
+    <line x1="390" y1="130" x2="452" y2="130" class="arch-line"/>
+    <line x1="390" y1="130" x2="452" y2="210" class="arch-line"/>
+
+    <rect x="452" y="30" width="60" height="40" rx="6" class="arch-out"/>
+    <text x="482" y="55" class="arch-out-label">p(7)</text>
+    <rect x="452" y="110" width="60" height="40" rx="6" class="arch-out"/>
+    <text x="482" y="135" class="arch-out-label">p(1)</text>
+    <rect x="452" y="190" width="60" height="40" rx="6" class="arch-out"/>
+    <text x="482" y="215" class="arch-out-label">p(9)</text>
+  </svg>
+  <p class="arch-caption">Every digit gets its own linear regression, run on the same x. Softmax takes all their raw scores at once and turns them into probabilities — <strong>p(7) + p(1) + p(9) = 100%</strong>, always, no matter what the raw scores were.</p>
+</div>
+
 <p>
 Linear regression predicts one number. But MNIST digit recognition isn't "how much" — it's "which one of 10 categories." Picture a talent show with judges: each contestant (each possible digit) gets a raw score reflecting how much evidence there is for them. A high score isn't a percentage yet — it's just "more evidence than the others." Softmax is the rule that turns those raw scores into percentages that always add up to 100%, so you can compare them directly.
 </p>

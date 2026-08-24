@@ -793,3 +793,25 @@ a { color: var(--accent); }
 .family-badge.out { background: var(--paper); color: var(--ink-soft); border: 1px dashed var(--rule); text-decoration: line-through; }
 .shape-filter-caption { font-family: var(--sans); font-size: 0.82rem; color: var(--ink-soft); text-align: center; margin-top: -0.6rem; }
 
+/* --- "n linear regressions feeding a softmax" architecture diagram --- */
+.arch-wrap {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 1rem 1.2rem 1.2rem;
+  margin: 1.4rem 0;
+  background: var(--paper-raised);
+}
+.arch-svg { width: 100%; height: auto; display: block; }
+.arch-line { stroke: var(--rule); stroke-width: 1.6; }
+.arch-x { fill: var(--ink); }
+.arch-x-label { font-family: var(--sans); font-size: 13px; fill: var(--paper); text-anchor: middle; font-weight: 700; }
+.arch-box { fill: var(--paper); stroke: var(--accent); stroke-width: 1.6; }
+.arch-box-title { font-family: var(--sans); font-size: 11px; fill: var(--ink); text-anchor: middle; font-weight: 700; }
+.arch-box-sub { font-family: var(--mono); font-size: 10.5px; fill: var(--ink-soft); text-anchor: middle; }
+.arch-softmax { fill: var(--accent); }
+.arch-softmax-label { font-family: var(--sans); font-size: 15px; fill: var(--paper); text-anchor: middle; font-weight: 700; }
+.arch-out { fill: var(--good-soft); stroke: var(--good); stroke-width: 1.6; }
+.arch-out-label { font-family: var(--mono); font-size: 13px; fill: var(--good); text-anchor: middle; font-weight: 700; }
+.arch-caption { font-family: var(--sans); font-size: 0.85rem; color: var(--ink-soft); margin: 0.6rem 0 0; text-align: center; }
+.arch-caption strong { color: var(--good); font-family: var(--mono); }
+
