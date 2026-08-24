@@ -162,6 +162,45 @@ nav.crumbs {
 }
 nav.crumbs a { color: var(--accent); }
 
+/* --- Sticky top bar: Home + Foundation/Sage switcher, injected by topbar.js --- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--paper);
+  padding: 0.7rem 0;
+  margin: -3rem 0 1.8rem;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--sans);
+}
+.topbar-home {
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+.topbar-home:hover { color: var(--accent); }
+.topbar-switch { display: flex; gap: 0.4rem; }
+.topbar-pill {
+  padding: 0.32rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-family: var(--sans);
+}
+.topbar-pill.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+  font-weight: 600;
+}
+.topbar-pill:not(.active):hover { border-color: var(--accent); color: var(--accent); }
+
 a { color: var(--accent); }
 
 .footer-links {
