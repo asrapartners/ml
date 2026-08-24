@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <title>From Data to Decisions — Lesson 0001</title>
-<link rel="stylesheet" href="../assets/style.css?v=7">
-<script src="../assets/topbar.js?v=7" defer></script>
-<script src="../assets/quiz.js?v=7" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=8">
+<script src="../assets/topbar.js?v=8" defer></script>
+<script src="../assets/quiz.js?v=8" defer></script>
 </head>
 <body>
 <nav class="crumbs"><a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a> · STOR 323, Lecture 3</nav>
@@ -59,26 +59,28 @@ Here, <strong>x is a single brand-new input, arriving after training is finished
 </p>
 
 <div class="callout">
-<strong>The load-bearing distinction:</strong> f<sup>^</sup><sub>D</sub> = A(D) — the fitted model moves whenever <em>either</em> the algorithm A or the data D moves. It isn't a free-standing thing; it's derived from them. δ (the decision rule) is different in kind: it can change with <strong>zero retraining</strong> — no new data, no new algorithm, just a different action rule applied to the same score. That asymmetry is the whole reason STOR 323 keeps asking "which one moved?" — mix them up and you'll retrain a model to fix what was actually a bad threshold, or leave a bad threshold in place because retraining "didn't help."
+<strong>The load-bearing distinction:</strong> the fitted model depends on the algorithm and the data. The decision rule depends on neither.
 </div>
 
-<div class="knobs-demo">
-  <div class="knobs-row knobs-head">
-    <div>What happened</div><div>A</div><div>f<sup>^</sup><sub>D</sub></div><div>δ, a</div>
-  </div>
-  <div class="knobs-row">
-    <div>New data arrives, you retrain</div>
-    <div class="knob same">unchanged</div>
-    <div class="knob moved">changed</div>
-    <div class="knob same">unchanged</div>
-  </div>
-  <div class="knobs-row">
-    <div>You require a stricter referral threshold</div>
-    <div class="knob same">unchanged</div>
-    <div class="knob same">unchanged</div>
-    <div class="knob moved">changed</div>
-  </div>
+<div class="pipeline">
+  <span class="node">A</span>
+  <span class="arrow">+</span>
+  <span class="node">D</span>
+  <span class="arrow">--both feed--&gt;</span>
+  <span class="node">f<sup>^</sup><sub>D</sub></span>
 </div>
+<p style="margin-top:-0.6rem; color:var(--ink-soft); font-size:0.9rem;">Change A, or change D, and f<sup>^</sup><sub>D</sub> changes too — it's built from both.</p>
+
+<div class="pipeline">
+  <span class="node">δ</span>
+  <span class="arrow" style="color:var(--warn); font-weight:700;">--never touches--&gt;</span>
+  <span class="node">A, D, or f<sup>^</sup><sub>D</sub></span>
+</div>
+<p style="margin-top:-0.6rem; color:var(--ink-soft); font-size:0.9rem;">δ only acts on the score s, <em>after</em> the model is already fixed. Changing it retrains nothing — no new data, no new algorithm, not even a new f<sup>^</sup><sub>D</sub>.</p>
+
+<p>
+That's why STOR 323 keeps asking "which one moved?" — mix them up and you'll retrain a model to fix what was actually a bad threshold, or leave a bad threshold in place because retraining "didn't help."
+</p>
 
 <h2>Why this matters later</h2>
 <p>

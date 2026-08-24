@@ -655,39 +655,3 @@ a { color: var(--accent); }
 .cm-rule { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.5; max-width: 42rem; }
 .cm-rule strong { color: var(--ink); }
 
-/* --- "What moved?" comparison (knobs-demo) --- */
-.knobs-demo {
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  overflow: hidden;
-  margin: 0 0 1.4rem;
-  font-family: var(--sans);
-  font-size: 0.88rem;
-}
-.knobs-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 1px;
-  background: var(--rule);
-}
-.knobs-row > div {
-  background: var(--paper);
-  padding: 0.6rem 0.8rem;
-  display: flex;
-  align-items: center;
-}
-.knobs-head {
-  font-size: 0.78rem;
-  color: var(--ink-soft);
-  font-weight: 700;
-}
-.knobs-head > div { background: var(--paper-raised); justify-content: center; }
-.knobs-row:not(.knobs-head) > div:not(:first-child) { justify-content: center; }
-.knob {
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
-}
-.knob.same { color: var(--ink-soft); background: var(--paper-raised); }
-.knob.moved { color: var(--paper); background: var(--accent); }
