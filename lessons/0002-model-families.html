@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="../assets/style.css?v=12">
 <script src="../assets/topbar.js?v=12" defer></script>
 <script src="../assets/quiz.js?v=12" defer></script>
+<script src="../assets/mcq.js?v=12" defer></script>
 <script src="../assets/softmax.js?v=12" defer></script>
 <script src="../assets/knn.js?v=12" defer></script>
 </head>
@@ -46,6 +47,46 @@ Hold onto that discomfort — it's the right instinct, and this lesson resolves 
   </div>
 </div>
 <p class="shape-filter-caption">No data collected yet in either case — just the problem statement.</p>
+
+<h3>Sharpen your pencil: name the shape</h3>
+<p>
+Five more problems, zero data attached to any of them. For each, pick the shape a correct answer has to take — a plain number, a probability between 0 and 1, or one of several unordered categories.
+</p>
+
+<div id="mcq-shape-1" class="mcq-wrap"></div>
+<div id="mcq-shape-2" class="mcq-wrap"></div>
+<div id="mcq-shape-3" class="mcq-wrap"></div>
+<div id="mcq-shape-4" class="mcq-wrap"></div>
+<div id="mcq-shape-5" class="mcq-wrap"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const shapeOptions = (correctIndex, notes) => [
+      { label: "A plain number", correct: correctIndex === 0, explain: notes },
+      { label: "A probability between 0 and 1", correct: correctIndex === 1, explain: notes },
+      { label: "One of several unordered categories", correct: correctIndex === 2, explain: notes },
+    ];
+    initMCQ("mcq-shape-1", {
+      question: "Predict how many minutes until the next bus arrives.",
+      options: shapeOptions(0, "A number on an open scale — could be 2 minutes or 47. No natural upper bound, no categories to choose among.")
+    });
+    initMCQ("mcq-shape-2", {
+      question: "Estimate the chance a loan applicant will default.",
+      options: shapeOptions(1, "Bounded between 0 and 1, and specifically about the likelihood of one particular outcome — that's the shape a probability has, not an open-ended number.")
+    });
+    initMCQ("mcq-shape-3", {
+      question: "Identify which of 5 languages a paragraph is written in.",
+      options: shapeOptions(2, "Five options, none \"greater\" or \"less\" than another — French isn't more or less than Japanese. Unordered categories, same shape as the MNIST digits.")
+    });
+    initMCQ("mcq-shape-4", {
+      question: "Predict a car's fuel efficiency in miles per gallon.",
+      options: shapeOptions(0, "Still an open-ended number, even though it's always positive in practice — nothing about it is a 0–1 probability or a set of categories.")
+    });
+    initMCQ("mcq-shape-5", {
+      question: "Decide which of 3 warehouses should fulfill an order.",
+      options: shapeOptions(2, "Three warehouses, no inherent order between them — unordered categories again, just with 3 options instead of 5 or 10.")
+    });
+  });
+</script>
 
 <h2>So what actually differs between model families?</h2>
 <p>
