@@ -37,4 +37,24 @@
       '<a href="' + sageHref + '" class="topbar-pill' + (inSage ? " active" : "") + '">Sage</a>' +
     '</div>';
   document.body.insertBefore(bar, document.body.firstChild);
+
+  // Show a "Build <hash> · <date>" line in the footer, if this page has one,
+  // so it's possible to confirm at a glance whether the page is up to date.
+  fetch("/version.json")
+    .then(r => (r.ok ? r.json() : null))
+    .then(data => {
+      if (!data) return;
+      const footer = document.querySelector(".footer-links");
+      if (!footer) return;
+      const d = new Date(data.timestamp);
+      const formatted = d.toLocaleString("en-US", {
+        month: "short", day: "numeric", year: "numeric",
+        hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "UTC"
+      }) + " UTC";
+      const span = document.createElement("span");
+      span.className = "build-info";
+      span.textContent = "Build " + data.hash + " · " + formatted;
+      footer.appendChild(span);
+    })
+    .catch(() => {});
 })();
