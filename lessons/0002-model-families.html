@@ -127,7 +127,13 @@ That's the whole reason softmax regression exists as a separate family rather th
 
 <h2 id="softmax">Softmax regression: scoring a talent show</h2>
 <p>
-Linear regression predicts one number. But MNIST digit recognition isn't "how much" — it's "which one of 10 categories." Picture a talent show with judges: each contestant (each possible digit) gets a raw score reflecting how much evidence there is for them. A high score isn't a percentage yet — it's just "more evidence than the others." <strong>Softmax</strong> is the rule that turns those raw scores into percentages that always add up to 100%, so you can compare them directly.
+First, the bridge from what you already trust. You've already met <code>β₀ + xᵀβ</code> — that's linear regression's whole formula. Softmax regression doesn't throw that away; it just runs <em>ten copies of it side by side</em>, one per digit, each with its own coefficients: <code>z<sub>k</sub>(x) = β<sub>k0</sub> + xᵀβ<sub>k</sub></code> for each digit k. Same formula, same fitting machinery — just ten of them instead of one, each producing its own raw score for its own digit.
+</p>
+<p>
+So where does the name come from? A plain <strong>max</strong> would just hand the single largest of those ten scores 100% of the vote and give everyone else 0% — a hard, all-or-nothing cutoff (that's actually what <code>argmax</code> already does, further back in lesson 1). The trouble with a hard cutoff: nudge a score slightly and the winner either doesn't move at all, or flips instantly — there's no "give" to learn from. <strong>Softmax</strong> is the <em>soft</em>, smoothed-out version of that same idea: scores still compete for a shrinking 100%, but a close second place keeps a meaningful share instead of getting zeroed out. That smoothness is exactly what training needs — the same gradual, nudge-and-check fitting process used to find linear regression's coefficients can be used here too, which a hard max would never allow.
+</p>
+<p>
+Linear regression predicts one number. But MNIST digit recognition isn't "how much" — it's "which one of 10 categories." Picture a talent show with judges: each contestant (each possible digit) gets a raw score reflecting how much evidence there is for them. A high score isn't a percentage yet — it's just "more evidence than the others." Softmax is the rule that turns those raw scores into percentages that always add up to 100%, so you can compare them directly.
 </p>
 <p>
 Below are the actual raw scores from the slides for a handwritten "7" being classified — drag them and watch the probabilities update. Notice the total always lands on 100%, no matter what you set the sliders to.
