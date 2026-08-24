@@ -45,6 +45,20 @@ The whole course splits into two phases that are easy to blur together if you do
 Here, <strong>x is a single brand-new input, arriving after training is finished</strong> — and critically, its true y is exactly what you <em>don't</em> know yet. That's the entire reason deployment needs a model at all: if you already knew y, there'd be nothing to predict.
 </p>
 
+<h3>What actually counts as an "action"?</h3>
+<p>
+"a" is easy to skim past as a formality. It helps to see it vary across problems — the action is never the score itself, it's a separate, chosen response to the score, and the same score can lead to different actions depending on who's using it.
+</p>
+<table>
+<tr><th>Problem</th><th>The score s</th><th>The action a</th></tr>
+<tr><td>House price model</td><td>"$350,000" — a predicted number</td><td>List the house at that price? Approve a loan up to that amount? Flag it as underpriced for a buyer? Nothing happens until someone picks one.</td></tr>
+<tr><td>Handwritten digit recognizer</td><td>"91% confident this is a 7"</td><td>Route this envelope to the bin for that zip code. Credit a bank deposit for that amount. Send it to a human if confidence is too low.</td></tr>
+<tr><td>Medical screening</td><td>"0.62 probability of disease"</td><td>Refer for follow-up testing, or don't.</td></tr>
+</table>
+<p>
+<strong>s is always just information</strong> — a number or a probability. Nothing changes in the world because of s alone. What changes the world is a, and a always comes from a separate rule δ, chosen by a person, not computed by the model. Two systems could see the exact same score and take completely different actions, because they're running different δ.
+</p>
+
 <div class="callout warn">
 <strong>Does s feed back into D?</strong> No — and this is easy to miss because nothing in the diagrams above rules it out. <code>s</code> is the model's <em>guess</em>, not a fact about the world. Look what's missing if you try to fold a deployment case straight back into training:
 </div>
