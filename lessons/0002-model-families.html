@@ -17,7 +17,7 @@
 
 <h2>The nervous part: choosing blind</h2>
 <p>
-Before you've seen a single row of data, STOR 323 asks you to commit to a shape — linear regression, softmax regression, kNN — and only <em>then</em> hand it real examples to fit. That should feel uncomfortable. Isn't picking the shape supposed to come <em>after</em> you've looked at the data, not before? What if you commit to the wrong one?
+Before you've seen a single row of data, STOR 323 asks you to commit to a model family — linear regression, softmax regression, kNN — and only <em>then</em> hand it real examples to fit. That should feel uncomfortable. Isn't picking the family supposed to come <em>after</em> you've looked at the data, not before? What if you commit to the wrong one?
 </p>
 <p>
 Hold onto that discomfort — it's the right instinct, and this lesson resolves it properly in a minute. For now, notice what you can already answer with zero data in hand: what shape does the <em>correct answer</em> have to take? A house price is a number. A digit is one of ten unordered categories. That's a fact about the problem itself, not about the data — and it already rules out most of the choice before you've collected a single example.
@@ -47,9 +47,9 @@ Hold onto that discomfort — it's the right instinct, and this lesson resolves 
 </div>
 <p class="shape-filter-caption">No data collected yet in either case — just the problem statement.</p>
 
-<h2>Are other model families "dependent on the data"?</h2>
+<h2>So what actually differs between model families?</h2>
 <p>
-Short answer: the <em>shape</em> you're willing to consider is a decision you make before touching any data — same as choosing "only straight lines" was for linear regression. What differs is <strong>how much of the data each family keeps around after training.</strong> That split is the one new idea this lesson is really about.
+Not the output shape — that's fixed by the problem, as you just saw, not chosen by the model family. What differs is something else entirely: <strong>how much of the training data each family keeps around after it's done training.</strong> That's a separate question from output shape, and it's the one new idea the rest of this lesson is about.
 </p>
 <div class="card-pair">
   <div class="card hidden">
