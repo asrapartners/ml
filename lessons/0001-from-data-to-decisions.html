@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8">
 <title>From Data to Decisions — Lesson 0001</title>
-<link rel="stylesheet" href="../assets/style.css?v=9">
-<script src="../assets/topbar.js?v=9" defer></script>
-<script src="../assets/quiz.js?v=9" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=10">
+<script src="../assets/topbar.js?v=10" defer></script>
+<script src="../assets/quiz.js?v=10" defer></script>
+<script src="../assets/classify.js?v=10" defer></script>
 </head>
 <body>
 <nav class="crumbs"><a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a> · STOR 323, Lecture 3</nav>
@@ -71,6 +72,60 @@ Here, <strong>x is a single brand-new input, arriving after training is finished
 <p style="margin-top:-0.6rem;">
 <code>(x, s)</code> is an input plus the model's own opinion about it. Training on that would mean training the model on its own guesses — reinforcing whatever it already believes, right or wrong, with nothing to correct it against reality. The one thing missing is <strong>y — the actual outcome, confirmed independently of the model</strong> (e.g. the patient's diagnosis, verified later by an actual test, not by asking f<sup>^</sup><sub>D</sub> again). Only <code>(x, y)</code> — never <code>(x, s)</code> — is a legitimate new training example, and turning deployment cases into future training data is always a deliberate, separate decision, never automatic.
 </p>
+
+<h3>Sharpen your pencil: sort the cases</h3>
+<p>
+Don't take the rule on faith — work it. Each case below is a real deployment moment. Decide: does it belong in D, or not? Click a verdict and see why.
+</p>
+
+<div id="classify-1"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initClassify("classify-1", {
+      yesLabel: "✓ Add to D",
+      noLabel: "✗ Reject",
+      items: [
+        {
+          scenario: "A patient scores s = 0.72. A follow-up biopsy later confirms: yes, they do have the disease.",
+          correct: true,
+          explain: "The biopsy is y — confirmed independently of the model. (x, y=1) is legitimate, even though s and y happen to agree here. It's y that makes it valid, not s."
+        },
+        {
+          scenario: "A patient scores s = 0.85. No follow-up test has been done yet.",
+          correct: false,
+          explain: "There's no y yet — only a guess. Until someone independently confirms the outcome, this case can't be added, no matter how confident the score sounds."
+        },
+        {
+          scenario: "To save time labeling, a team decides to treat the model's own score s as if it were the true label y, and adds (x, s) straight into D.",
+          correct: false,
+          explain: "This is the trap. (x, s) isn't a labeled example — it's the model's opinion about itself. Training on it teaches the model to trust its own guesses more, right or wrong. This is a real, named failure mode: a feedback loop."
+        },
+        {
+          scenario: "A patient scored low, s = 0.05 (\"probably healthy\"). An independent test later shows they were actually sick: y = 1.",
+          correct: true,
+          explain: "Yes — and this one matters more than most. The model got it wrong, and now the true answer is known. Confirmed mistakes like this are exactly what retraining needs to correct."
+        },
+        {
+          scenario: "A house is listed with a predicted price s = $350,000. The listing is later withdrawn and never sold.",
+          correct: false,
+          explain: "No sale means no confirmed y — the true price was never established. This case can't become training data, possibly ever, unless it's eventually sold for a real, recorded number."
+        }
+      ]
+    });
+  });
+</script>
+
+<h3>Spot the mistake</h3>
+<p>
+A junior engineer says: <em>"We don't have enough labeled data to retrain this quarter. But we do have a year of deployment logs — every input x, every score s the model gave it. Let's just use the model's own scores as the labels. That's a year of free training data."</em>
+</p>
+<div class="quiz" data-answer="feedback loop">
+  <div class="q">What's the two-word name for the failure mode this plan walks straight into?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
 
 <div class="big-idea">
   <span class="big-idea-icon">💡</span>

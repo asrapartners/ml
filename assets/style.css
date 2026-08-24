@@ -677,3 +677,35 @@ a { color: var(--accent); }
 .cm-rule { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.5; max-width: 42rem; }
 .cm-rule strong { color: var(--ink); }
 
+/* --- "Sort the cases" classify exercise --- */
+.classify-card {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  margin: 0.9rem 0;
+  background: var(--paper-raised);
+}
+.classify-scenario { margin: 0 0 0.8rem; }
+.classify-buttons { display: flex; gap: 0.6rem; }
+.classify-buttons button {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+.classify-card.answered .classify-buttons button { cursor: default; }
+.classify-buttons button.correct-choice { border-color: var(--good); background: var(--good-soft); color: var(--good); font-weight: 700; }
+.classify-buttons button.dim-choice { opacity: 0.45; }
+.classify-feedback {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  margin-top: 0.7rem;
+  line-height: 1.5;
+}
+.classify-feedback.right { color: var(--good); }
+.classify-feedback.wrong { color: var(--warn); }
+
