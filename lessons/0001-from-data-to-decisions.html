@@ -100,20 +100,6 @@ Here, <strong>x is a single brand-new input, arriving after training is finished
 That's why STOR 323 keeps asking "which one moved?" — mix them up and you'll retrain a model to fix what was actually a bad threshold, or leave a bad threshold in place because retraining "didn't help."
 </p>
 
-<h2>Why this matters later</h2>
-<p>
-Every later topic in this deck is really a question about one arrow in this diagram:
-</p>
-<table>
-<tr><th>Question</th><th>Which arrow</th></tr>
-<tr><td>Which functions could f<sup>^</sup><sub>D</sub> possibly be? (linear regression, softmax regression, kNN)</td><td><code>D --A--&gt; f<sup>^</sup>_D</code> — the <strong>model family</strong> constrains A</td></tr>
-<tr><td>How good is f<sup>^</sup><sub>D</sub>'s prediction s? (MSE, ROC/AUC, confusion matrix)</td><td><code>x --f<sup>^</sup>_D--&gt; s</code></td></tr>
-<tr><td>What action should a score trigger, and who bears the cost of a wrong one?</td><td><code>s --δ--&gt; a</code></td></tr>
-</table>
-<p>
-The deck's punchline (slide 21): <strong>the model is fixed; the policy is not.</strong> You can swap δ — change a threshold, change who gets referred for a test — without retraining anything. That's a deployment-time decision, not a modeling one. Future lessons will dig into model families and evaluation metrics separately; this lesson is just about being able to place any concept on this diagram without hesitation.
-</p>
-
 <h2>Check your recall</h2>
 <p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory before checking — that effort is what makes it stick.</p>
 
