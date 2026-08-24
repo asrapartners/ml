@@ -15,6 +15,14 @@
 <h1>Beyond the straight line</h1>
 <p class="subtitle">You already have a feel for linear regression — one straight line, fitted by sliding two knobs. This lesson builds a feel for two more model families the same way: play first, name it after.</p>
 
+<h2>The nervous part: choosing blind</h2>
+<p>
+Before you've seen a single row of data, STOR 323 asks you to commit to a shape — linear regression, softmax regression, kNN — and only <em>then</em> hand it real examples to fit. That should feel uncomfortable. Isn't picking the shape supposed to come <em>after</em> you've looked at the data, not before? What if you commit to the wrong one?
+</p>
+<p>
+Hold onto that discomfort — it's the right instinct, and this lesson resolves it properly in a minute. For now, notice what you can already answer with zero data in hand: what shape does the <em>correct answer</em> have to take? A house price is a number. A digit is one of ten unordered categories. That's a fact about the problem itself, not about the data — and it already rules out most of the choice before you've collected a single example.
+</p>
+
 <h2>Are other model families "dependent on the data"?</h2>
 <p>
 Short answer: the <em>shape</em> you're willing to consider is a decision you make before touching any data — same as choosing "only straight lines" was for linear regression. What differs is <strong>how much of the data each family keeps around after training.</strong> That split is the one new idea this lesson is really about.
