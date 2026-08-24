@@ -29,6 +29,9 @@ The whole course splits into two phases that are easy to blur together if you do
   <span class="node">f̂<sub>D</sub></span>
 </div>
 <p style="margin-top:-0.6rem; color:var(--ink-soft); font-size:0.9rem;">Training: a fixed learning algorithm A reads a dataset D and returns a fitted model f̂<sub>D</sub>.</p>
+<p style="margin-top:-0.4rem;">
+<strong>D is not one thing — it's a whole set of labeled pairs:</strong> D = {(x₁,y₁), …, (xₙ,yₙ)}, n examples where the true outcome y was already known at training time. That matters for what comes next.
+</p>
 
 <div class="pipeline">
   <span class="node">x</span>
@@ -38,6 +41,22 @@ The whole course splits into two phases that are easy to blur together if you do
   <span class="node">a</span>
 </div>
 <p style="margin-top:-0.6rem; color:var(--ink-soft); font-size:0.9rem;">Deployment: a new input x is <em>predicted</em> into a score s, then <em>decided</em> by a rule δ into an action a.</p>
+<p style="margin-top:-0.4rem;">
+Here, <strong>x is a single brand-new input, arriving after training is finished</strong> — and critically, its true y is exactly what you <em>don't</em> know yet. That's the entire reason deployment needs a model at all: if you already knew y, there'd be nothing to predict.
+</p>
+
+<div class="callout warn">
+<strong>Does s feed back into D?</strong> No — and this is easy to miss because nothing in the diagrams above rules it out. <code>s</code> is the model's <em>guess</em>, not a fact about the world. Look what's missing if you try to fold a deployment case straight back into training:
+</div>
+
+<div class="pipeline" style="opacity:0.75;">
+  <span class="node">(x, s)</span>
+  <span class="arrow" style="color:var(--warn); font-weight:700;">--?--&gt;</span>
+  <span class="node">D</span>
+</div>
+<p style="margin-top:-0.6rem;">
+<code>(x, s)</code> is an input plus the model's own opinion about it. Training on that would mean training the model on its own guesses — reinforcing whatever it already believes, right or wrong, with nothing to correct it against reality. The one thing missing is <strong>y — the actual outcome, confirmed independently of the model</strong> (e.g. the patient's diagnosis, verified later by an actual test, not by asking f̂<sub>D</sub> again). Only <code>(x, y)</code> — never <code>(x, s)</code> — is a legitimate new training example, and turning deployment cases into future training data is always a deliberate, separate decision, never automatic.
+</p>
 
 <div class="callout">
 <strong>The load-bearing distinction:</strong> f̂<sub>D</sub> = A(D) — the fitted model moves whenever <em>either</em> the algorithm A or the data D moves. It isn't a free-standing thing; it's derived from them. δ (the decision rule) is different in kind: it can change with <strong>zero retraining</strong> — no new data, no new algorithm, just a different action rule applied to the same score. That asymmetry is the whole reason STOR 323 keeps asking "which one moved?" — mix them up and you'll retrain a model to fix what was actually a bad threshold, or leave a bad threshold in place because retraining "didn't help."
