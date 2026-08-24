@@ -49,7 +49,8 @@
       const d = new Date(data.timestamp);
       const formatted = d.toLocaleString("en-US", {
         month: "short", day: "numeric", year: "numeric",
-        hour: "2-digit", minute: "2-digit", hour12: false, timeZoneName: "short"
+        hour: "2-digit", minute: "2-digit", hour12: false, timeZoneName: "short",
+        timeZone: "America/New_York"
       });
       const span = document.createElement("span");
       span.className = "build-info";
