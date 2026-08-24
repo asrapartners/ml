@@ -95,16 +95,15 @@ Training (forming f<sup>^</sup>_D) is one act, finished once. <strong>Deployment
 
 <h3>What actually counts as an "action"?</h3>
 <p>
-This word is easy to nod along to and still not really see. It helps to look at it across a few different problems, because the action is never the score itself — it's always a separate, chosen response to the score, and the same score can lead to different actions depending on who's using it.
+This word is easy to nod along to and still not really see. You've already got two stories that show it more precisely than any ML example could — knowledge, on its own, deciding nothing.
 </p>
 <table>
-<tr><th>Problem</th><th>The score s (what the model knows)</th><th>The action a (what actually happens next)</th></tr>
-<tr><td>House price model</td><td>"$350,000" — a predicted number</td><td>List the house at that price? Approve a loan up to that amount? Flag it as underpriced for a buyer? Nothing happens in the world until <em>someone picks one</em>.</td></tr>
-<tr><td>Handwritten digit recognizer</td><td>"91% confident this is a 7"</td><td>Route this envelope to the bin for that zip code. Credit a bank deposit for that amount. Send it to a human if confidence is too low. Never just "the digit, displayed" — always something a system <em>does</em>.</td></tr>
-<tr><td>Medical screening</td><td>"0.62 probability of disease"</td><td>Refer for follow-up testing, or don't.</td></tr>
+<tr><th>Story</th><th>The score — what was known</th><th>The action — what was actually done</th></tr>
+<tr><td>Krishna reveals the battlefield (Bhagavad Gītā, Ch. 1)</td><td>Arjuna sees the arrayed armies with total clarity: teachers, cousins, elders, on both sides.</td><td>Arjuna's own δ: he nearly lays down his bow and refuses to fight. Duryodhana, looking at the identical field, commits fully to war. Same knowledge — opposite actions.</td></tr>
+<tr><td>Vidura's warnings (Mahābhārata)</td><td>Vidura foresees, accurately and repeatedly, that the dice game and the war to follow will destroy the Kuru line.</td><td>Dhritarashtra's δ: he does nothing. Attachment to his son overrides the warning. The knowledge was perfect; the action never came.</td></tr>
 </table>
 <p>
-Notice the pattern: <strong>s is always just information</strong> — a number, a probability, a best guess. Nothing changes in the world because of s alone. What changes the world is a. And a always comes from a separate rule, δ, chosen by a person — not computed by the model, and not implied by the score itself. Two systems could see the exact same score and take completely different actions, because they're running different δ. That's not a flaw. It's the whole reason δ gets its own letter instead of being folded into the model.
+Notice the pattern: the score — Krishna's revealed battlefield, Vidura's warning — is <em>jñāna</em>, what is known. It changes nothing by itself. What changes the world is <em>karma</em>, what is done in response — or withheld. Arjuna and Duryodhana see the identical field and act in opposite directions; Dhritarashtra hears the identical warning and acts not at all. STOR 323 keeps s and a as different letters, joined only by a chosen rule δ, for exactly this reason: knowing and doing have never actually been the same thing, in a battlefield or in a model.
 </p>
 
 <h2>Check what's actually landed</h2>
