@@ -49,13 +49,19 @@ Neither is superior in the abstract — this is the same <em>upāya</em> logic a
 
 <h2>Softmax: nothing means anything alone</h2>
 <p>
-When STOR 323 needs to choose among several unordered categories — which digit, which condition — it uses softmax regression. Each category gets a raw score, and softmax converts the scores into probabilities. The mechanism is worth sitting with:
+When STOR 323 needs to choose among several unordered categories — which digit, which condition — it uses softmax regression. Each category gets a raw score, and softmax converts the scores into probabilities.
+</p>
+<p>
+First, the bridge from what you already trust. You've met <code>β₀ + xᵀβ</code> before — that's the whole of linear regression. Softmax regression doesn't discard it; it runs <em>ten copies of it side by side</em>, one per digit, each with its own coefficients. Same formula, same fitting process — just ten of them instead of one, each producing its own raw score for its own digit. The mechanism is worth sitting with:
 </p>
 <div class="parallel">
   <div class="parallel-label">Primary source — Saṃyutta Nikāya</div>
   "If this exists, that exists. If this ceases to exist, that also ceases to exist." <em>Pratītyasamutpāda</em> — dependent origination: nothing in this teaching has independent, self-standing existence. Everything arises only in relation to everything else.
   <cite><a href="https://encyclopediaofbuddhism.org/wiki/Pratityasamutpada" target="_blank" rel="noopener">Pratītyasamutpāda — Encyclopedia of Buddhism</a></cite>
 </div>
+<p>
+Even the name carries the teaching. A plain <em>max</em> would hand the single largest score everything — 100% to one, 0% to the rest, an absolute verdict with nothing relational left in it. That's actually what argmax already does — a hard, all-or-nothing cutoff with no give to it: nudge a score slightly and the winner either doesn't move, or flips instantly. <em>Soft</em>-max refuses that absoluteness — no score gets to stand alone as simply "the answer"; every score's share is settled only in relation to every other score's. The softness in the name isn't decoration. It's the same refusal of standalone, self-existing categories that dependent origination insists on, showing up directly in the mathematics — and, not incidentally, it's exactly what lets this be trained gradually, the same way linear regression's coefficients are: a hard max gives you nothing to nudge.
+</p>
 <p>
 A raw softmax score means nothing by itself — "3.4" isn't a probability, isn't even meaningfully large or small until it's placed against the other scores. Softmax's normalization (dividing by the sum of all the exponentials) is a mechanical enactment of that same insight: every category's probability is <em>defined only in relation to</em> every other category's. Push one score up, and every other probability shifts — not because anything about them changed, but because their meaning was never independent to begin with.
 </p>
