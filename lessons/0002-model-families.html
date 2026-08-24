@@ -122,7 +122,7 @@ Before picking any model family, the slides insist on one rule: <strong>figure o
   </div>
 </div>
 <p>
-That's the whole reason softmax regression exists as a separate family rather than just reusing linear regression: the output space <code>S</code> is part of what a model family even <em>is</em> (recall <code>𝓕 = {f : X → S}</code> from the notation decoder) — get <code>S</code> right first, and the choice of family follows from it, not the other way around.
+That's the whole reason softmax regression exists as its own family instead of just reusing linear regression: a model family isn't only a formula — it's a formula <em>plus a promise about what shape of answer it's allowed to produce</em>. Change the shape you need, and you've changed which family even qualifies, not just tweaked the one you already had. Get the shape right first, and the right family follows on its own — never the other way around.
 </p>
 
 <h2 id="softmax">Softmax regression: scoring a talent show</h2>
