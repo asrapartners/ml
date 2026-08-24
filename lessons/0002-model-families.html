@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>Other Model Families — Lesson 0002</title>
-<link rel="stylesheet" href="../assets/style.css?v=11">
-<script src="../assets/topbar.js?v=11" defer></script>
-<script src="../assets/quiz.js?v=11" defer></script>
-<script src="../assets/softmax.js?v=11" defer></script>
-<script src="../assets/knn.js?v=11" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=12">
+<script src="../assets/topbar.js?v=12" defer></script>
+<script src="../assets/quiz.js?v=12" defer></script>
+<script src="../assets/softmax.js?v=12" defer></script>
+<script src="../assets/knn.js?v=12" defer></script>
 </head>
 <body>
 <nav class="crumbs"><a href="0001-from-data-to-decisions.html">&larr; Lesson 0001</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
@@ -22,6 +22,30 @@ Before you've seen a single row of data, STOR 323 asks you to commit to a shape 
 <p>
 Hold onto that discomfort — it's the right instinct, and this lesson resolves it properly in a minute. For now, notice what you can already answer with zero data in hand: what shape does the <em>correct answer</em> have to take? A house price is a number. A digit is one of ten unordered categories. That's a fact about the problem itself, not about the data — and it already rules out most of the choice before you've collected a single example.
 </p>
+
+<div class="shape-filter-grid">
+  <div class="shape-filter-card">
+    <div class="shape-filter-problem">"Predict a house's price"</div>
+    <div class="shape-filter-step">needs an answer shaped like</div>
+    <div class="shape-filter-shape">a single number</div>
+    <div class="shape-filter-step">before any data, that alone says:</div>
+    <div class="shape-filter-families">
+      <span class="family-badge in">✓ Linear regression fits</span>
+      <span class="family-badge out">✗ Softmax regression doesn't</span>
+    </div>
+  </div>
+  <div class="shape-filter-card">
+    <div class="shape-filter-problem">"Recognize a handwritten digit"</div>
+    <div class="shape-filter-step">needs an answer shaped like</div>
+    <div class="shape-filter-shape">1 of 10 unordered categories</div>
+    <div class="shape-filter-step">before any data, that alone says:</div>
+    <div class="shape-filter-families">
+      <span class="family-badge out">✗ Linear regression doesn't</span>
+      <span class="family-badge in">✓ Softmax regression fits</span>
+    </div>
+  </div>
+</div>
+<p class="shape-filter-caption">No data collected yet in either case — just the problem statement.</p>
 
 <h2>Are other model families "dependent on the data"?</h2>
 <p>

@@ -737,3 +737,59 @@ a { color: var(--accent); }
 .mcq-feedback.right { color: var(--good); }
 .mcq-feedback.wrong { color: var(--warn); }
 
+/* --- Shape-known-before-data filter visual --- */
+.shape-filter-grid {
+  display: flex;
+  gap: 1.4rem;
+  flex-wrap: wrap;
+  margin: 1.4rem 0;
+}
+.shape-filter-card {
+  flex: 1;
+  min-width: 14rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 1.1rem 1.2rem;
+  background: var(--paper-raised);
+  text-align: center;
+}
+.shape-filter-problem {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+.shape-filter-step {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  margin: 0.4rem 0 0.2rem;
+}
+.shape-filter-shape {
+  display: inline-block;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 0.3rem 0.9rem;
+  margin-bottom: 0.3rem;
+}
+.shape-filter-families {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+.family-badge {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  text-align: left;
+}
+.family-badge.in { background: var(--good-soft); color: var(--good); font-weight: 700; border: 1px solid var(--good); }
+.family-badge.out { background: var(--paper); color: var(--ink-soft); border: 1px dashed var(--rule); text-decoration: line-through; }
+.shape-filter-caption { font-family: var(--sans); font-size: 0.82rem; color: var(--ink-soft); text-align: center; margin-top: -0.6rem; }
+
