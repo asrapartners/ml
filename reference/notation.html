@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <title>Notation Decoder</title>
 <meta name="description" content="The ML pipeline's math symbols, explained with real-world examples and pictures.">
-<link rel="stylesheet" href="../assets/style.css?v=6">
-<script src="../assets/topbar.js?v=6" defer></script>
-<script src="../assets/linefit.js?v=6" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=7">
+<script src="../assets/topbar.js?v=7" defer></script>
+<script src="../assets/linefit.js?v=7" defer></script>
 </head>
 <body>
 <nav class="crumbs"><a href="../lessons/0001-from-data-to-decisions.html">&larr; Lesson 0001</a> · <a href="glossary.html">Glossary</a></nav>
@@ -26,37 +26,37 @@ Imagine you're guessing a stranger's weight just by looking at them. There's the
   </div>
   <div class="card guess">
     <span class="card-icon">🎩</span>
-    <div class="card-title">f̂ — our guess</div>
+    <div class="card-title">f<sup>^</sup> — our guess</div>
     What you built by looking at examples. It's an estimate, and the hat is math's way of saying "estimate, not the real thing" out loud.
   </div>
 </div>
 <p>Same trick everywhere: <code>β</code> (the true, unknowable number) vs. <code>β̂</code> (our estimate of it).</p>
 
-<h2>Subscripts: f̂<sub>D</sub></h2>
+<h2>Subscripts: f<sup>^</sup><sub>D</sub></h2>
 <p>
-Picture two different weather forecasters. One trained their forecasting method on ten years of local rainfall data. The other used a different city's data. They'll come up with <em>different</em> guesses — different f̂'s. The little <code>D</code> underneath just labels <em>which batch of data produced this particular guess</em>, the same way you'd label two jars of homemade jam with the date they were made.
+Picture two different weather forecasters. One trained their forecasting method on ten years of local rainfall data. The other used a different city's data. They'll come up with <em>different</em> guesses — different f<sup>^</sup>'s. The little <code>D</code> underneath just labels <em>which batch of data produced this particular guess</em>, the same way you'd label two jars of homemade jam with the date they were made.
 </p>
 <div class="funnel">
   <div class="stage">Dataset D₁</div>
   <div class="arrow">→</div>
-  <div class="stage result">Guess f̂<sub>D₁</sub></div>
+  <div class="stage result">Guess f<sup>^</sup><sub>D₁</sub></div>
 </div>
 <div class="funnel">
   <div class="stage">Dataset D₂</div>
   <div class="arrow">→</div>
-  <div class="stage result">Guess f̂<sub>D₂</sub></div>
+  <div class="stage result">Guess f<sup>^</sup><sub>D₂</sub></div>
 </div>
 <p>Different data in, different guess out. The subscript just keeps track of which data made which guess.</p>
 
-<h2>Arrow notation: D --A--&gt; f̂<sub>D</sub></h2>
+<h2>Arrow notation: D --A--&gt; f<sup>^</sup><sub>D</sub></h2>
 <p>Think of baking a cake:</p>
 <div class="pipeline">
   <span class="node">🥚 Ingredients (D)</span>
   <span class="arrow">--baking process (A)--&gt;</span>
-  <span class="node">🍰 The cake (f̂_D)</span>
+  <span class="node">🍰 The cake (f<sup>^</sup>_D)</span>
 </div>
 <p>
-The arrow just means "goes through." <em>D</em> is your raw data (ingredients). <em>A</em> is the fixed process that never changes (the recipe steps — mix, pour, bake at 350°). What comes out — <em>f̂_D</em> — depends entirely on what ingredients you put in. Same recipe, different ingredients, different cake.
+The arrow just means "goes through." <em>D</em> is your raw data (ingredients). <em>A</em> is the fixed process that never changes (the recipe steps — mix, pour, bake at 350°). What comes out — <em>f<sup>^</sup>_D</em> — depends entirely on what ingredients you put in. Same recipe, different ingredients, different cake.
 </p>
 
 <h2 id="setbuilder">Set-builder notation &amp; "model family" — the big one</h2>
@@ -93,7 +93,7 @@ What you just did by hand is <em>exactly</em> what a training algorithm does aut
 </p>
 <div class="callout">
 <strong>{ every possible line : starting price and rate-of-increase can be anything }</strong><br>
-That whole set of infinitely many possible lines — every position those two sliders could ever be in — is the <strong>model family</strong>. Training doesn't invent a new kind of rule; it just searches through that family (slides the two sliders) until it finds the one line with the smallest error. That one winning line is your <code>f̂_D</code>.
+That whole set of infinitely many possible lines — every position those two sliders could ever be in — is the <strong>model family</strong>. Training doesn't invent a new kind of rule; it just searches through that family (slides the two sliders) until it finds the one line with the smallest error. That one winning line is your <code>f<sup>^</sup>_D</code>.
 </div>
 <p>
 So the "useful information" packed into the notation is: (1) what shape every candidate is allowed to have (a straight line, not a curve), (2) exactly which knobs are adjustable (here, just two: starting price and rate-of-increase), and (3) that "training" literally means searching those knobs for the setting with the least error — which is the game you just played.
@@ -177,7 +177,7 @@ That four-stage funnel, read right to left in the formula, is exactly <code>FPR_
 <ul>
 <li><code>δ_t(S) = 1</code> — "the rule flagged this person" (the thing we're asking the chance of)</li>
 <li><code>| Y = 0, G = g</code> — "given" two conditions stacked together: this person is actually healthy, <em>and</em> they're in group g. Commas inside the conditioning bar just mean "and."</li>
-<li>The subscript <code>g</code> on <code>FPR_g</code> is the same labeling trick as <code>f̂_D</code> earlier — it just says <em>which group</em> this particular rate was computed for.</li>
+<li>The subscript <code>g</code> on <code>FPR_g</code> is the same labeling trick as <code>f<sup>^</sup>_D</code> earlier — it just says <em>which group</em> this particular rate was computed for.</li>
 </ul>
 <p>
 <code>FNR_g(t)</code> is the mirror image — same funnel, but starting from "given: actually sick (Y=1)" and asking the chance the rule <em>missed</em> them (δ_t(S) = 0). That's the "missed" bar in the charts above.

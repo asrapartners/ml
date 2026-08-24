@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <title>Glossary — ML Pipeline</title>
-<link rel="stylesheet" href="../assets/style.css?v=6">
-<script src="../assets/topbar.js?v=6" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=7">
+<script src="../assets/topbar.js?v=7" defer></script>
 </head>
 <body>
 <nav class="crumbs"><a href="../lessons/0001-from-data-to-decisions.html">&larr; Lesson 0001</a></nav>
@@ -16,10 +16,10 @@
 <table>
 <tr><th>Term</th><th>Meaning</th></tr>
 <tr><td><strong>Task T / Experience E / Performance P</strong></td><td>The operational definition of "learning": performance on T improves through experience E, measured by P.</td></tr>
-<tr><td><strong>Learning algorithm A</strong></td><td>A fixed procedure. Reads a dataset D, returns a fitted map: <code>A(D) = f̂_D</code>.</td></tr>
-<tr><td><strong>Fitted model f̂_D</strong></td><td>Data-dependent state produced by training. Stores what was learned; changes when D changes.</td></tr>
-<tr><td><strong>Training</strong></td><td>Phase 1: examples → fit → reusable fitted map. <code>D --A--> f̂_D</code></td></tr>
-<tr><td><strong>Deployment</strong></td><td>Phase 2: new input becomes an action. <code>x --f̂_D--> s --δ--> a</code> (predict, then decide, then act).</td></tr>
+<tr><td><strong>Learning algorithm A</strong></td><td>A fixed procedure. Reads a dataset D, returns a fitted map: <code>A(D) = f<sup>^</sup>_D</code>.</td></tr>
+<tr><td><strong>Fitted model f<sup>^</sup>_D</strong></td><td>Data-dependent state produced by training. Stores what was learned; changes when D changes.</td></tr>
+<tr><td><strong>Training</strong></td><td>Phase 1: examples → fit → reusable fitted map. <code>D --A--> f<sup>^</sup>_D</code></td></tr>
+<tr><td><strong>Deployment</strong></td><td>Phase 2: new input becomes an action. <code>x --f<sup>^</sup>_D--> s --δ--> a</code> (predict, then decide, then act).</td></tr>
 <tr><td><strong>Decision rule δ</strong></td><td>Maps a score/probability s to an action a. Belongs to the deployed system, not the model.</td></tr>
 </table>
 

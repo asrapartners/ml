@@ -677,9 +677,7 @@ a { color: var(--accent); }
   align-items: center;
 }
 .knobs-head {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 0.78rem;
   color: var(--ink-soft);
   font-weight: 700;
 }
