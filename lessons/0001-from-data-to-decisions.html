@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <title>From Data to Decisions — Lesson 0001</title>
-<link rel="stylesheet" href="../assets/style.css?v=8">
-<script src="../assets/topbar.js?v=8" defer></script>
-<script src="../assets/quiz.js?v=8" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=9">
+<script src="../assets/topbar.js?v=9" defer></script>
+<script src="../assets/quiz.js?v=9" defer></script>
 </head>
 <body>
 <nav class="crumbs"><a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a> · STOR 323, Lecture 3</nav>
@@ -58,8 +58,12 @@ Here, <strong>x is a single brand-new input, arriving after training is finished
 <code>(x, s)</code> is an input plus the model's own opinion about it. Training on that would mean training the model on its own guesses — reinforcing whatever it already believes, right or wrong, with nothing to correct it against reality. The one thing missing is <strong>y — the actual outcome, confirmed independently of the model</strong> (e.g. the patient's diagnosis, verified later by an actual test, not by asking f<sup>^</sup><sub>D</sub> again). Only <code>(x, y)</code> — never <code>(x, s)</code> — is a legitimate new training example, and turning deployment cases into future training data is always a deliberate, separate decision, never automatic.
 </p>
 
-<div class="callout">
-<strong>The load-bearing distinction:</strong> the fitted model depends on the algorithm and the data. The decision rule depends on neither.
+<div class="big-idea">
+  <span class="big-idea-icon">💡</span>
+  <div>
+    <div class="big-idea-label">The big idea</div>
+    <p>The fitted model depends on the algorithm and the data. The decision rule depends on neither.</p>
+  </div>
 </div>
 
 <div class="pipeline">

@@ -110,6 +110,28 @@ p { margin: 0.9rem 0; }
 .callout.warn { border-left-color: var(--warn); background: var(--warn-soft); }
 .callout.good { border-left-color: var(--good); background: var(--good-soft); }
 
+.big-idea {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  padding: 1rem 1.2rem;
+  margin: 1.3rem 0;
+  border-radius: 8px;
+}
+.big-idea-icon { font-size: 1.7rem; line-height: 1; flex-shrink: 0; }
+.big-idea-label {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.big-idea p { margin: 0; }
+
 table {
   width: 100%;
   border-collapse: collapse;
