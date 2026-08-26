@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <title>The Hierarchy and Attention — Lesson 0007</title>
-<link rel="stylesheet" href="../assets/style.css?v=18">
-<script src="../assets/topbar.js?v=18" defer></script>
-<script src="../assets/quiz.js?v=18" defer></script>
-<script src="../assets/mcq.js?v=18" defer></script>
-<script src="../assets/classify.js?v=18" defer></script>
-<script src="../assets/hierarchy.js?v=18" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=27">
+<script src="../assets/topbar.js?v=27" defer></script>
+<script src="../assets/quiz.js?v=27" defer></script>
+<script src="../assets/mcq.js?v=27" defer></script>
+<script src="../assets/classify.js?v=27" defer></script>
+<script src="../assets/hierarchy.js?v=27" defer></script>
 </head>
 <body>
 <nav class="crumbs"><a href="0006-how-the-stack-learns.html">&larr; Lesson 0006</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
@@ -119,13 +119,49 @@ None of this makes the model the thing it's modeling. George Box, a statistician
 "Essentially, all models are wrong, but some are useful."
 </blockquote>
 <p>
-A perceptron is wrong about XOR. A straight line is wrong about the ring dataset from <a href="0005-shape-and-stacking.html">Lesson 0005</a>. And picking a family that doesn't match your data's structure is its own classic misstep — not a new one, an old one, back from before this lesson's models existed:
+A perceptron is wrong about XOR. A straight line is wrong about the ring dataset from <a href="0005-shape-and-stacking.html">Lesson 0005</a>. And picking a family that doesn't match your output is its own classic misstep:
 </p>
 
-<figure>
-  <img src="../WhyNotRegressDirectlyOnMNISTLabels.jpeg" alt="Slide: 'Why not regress directly on MNIST labels?' A grid of handwritten digits 0-9, next to y-hat = 6.4 and the question 'what digit is this?' Caption: squared error assumes a meaningful numeric distance.">
-  <figcaption>Digit labels 0–9 look numeric, so linear regression looks tempting. But regression's error metric assumes distance is meaningful — and "1 is closer to 2 than to 9" is not a claim about handwriting, it's an artifact of how we happened to number the digits. Wrong family, wrong error, wrong conclusions — no matter how well it's trained.</figcaption>
-</figure>
+<div class="mismatch-visual" aria-label="Why unordered categories should not be treated like positions on a number line">
+  <div class="mismatch-side">
+    <div class="mismatch-label">Real task</div>
+    <div class="ticket-card">
+      <span class="ticket-dot bug"></span>
+      <div>
+        <strong>Support ticket</strong>
+        <p>"The app crashes when I upload a file."</p>
+      </div>
+    </div>
+    <div class="category-row">
+      <span class="category-pill">billing</span>
+      <span class="category-pill active">bug</span>
+      <span class="category-pill">account</span>
+    </div>
+    <p class="mismatch-note">The answer is one category. These labels are names, not measurements.</p>
+  </div>
+  <div class="mismatch-arrow">-&gt;</div>
+  <div class="mismatch-side bad">
+    <div class="mismatch-label">Wrong move</div>
+    <svg viewBox="0 0 260 120" class="mismatch-svg" aria-hidden="true">
+      <line x1="24" y1="72" x2="232" y2="72" class="mismatch-axis"/>
+      <circle cx="42" cy="72" r="7" class="mismatch-tick"/>
+      <circle cx="128" cy="72" r="7" class="mismatch-tick"/>
+      <circle cx="214" cy="72" r="7" class="mismatch-tick"/>
+      <text x="42" y="100" text-anchor="middle" class="mismatch-text">0 billing</text>
+      <text x="128" y="100" text-anchor="middle" class="mismatch-text">1 bug</text>
+      <text x="214" y="100" text-anchor="middle" class="mismatch-text">2 account</text>
+      <path d="M172 28 L172 62" class="mismatch-pred"/>
+      <path d="M172 62 l-6 -8 h12 z" class="mismatch-pred-head"/>
+      <rect x="136" y="8" width="72" height="26" rx="6" class="mismatch-pred-box"/>
+      <text x="172" y="26" text-anchor="middle" class="mismatch-pred-text">ŷ = 1.5</text>
+    </svg>
+    <p class="mismatch-note">Regression pretends category codes live on a ruler. But 1.5 is not "half bug, half account."</p>
+  </div>
+</div>
+
+<div class="callout warn">
+The mismatch is not the data. It is the question asked of the model: "predict a number" when the real output is "choose a category."
+</div>
 
 <div id="classify-2"></div>
 <script>
@@ -137,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
       { scenario: "Predicting tomorrow's temperature (a continuous number) with linear regression.", correct: true,
         explain: "Right — continuous output, and regression's squared-error notion of \"distance\" is meaningful for temperature." },
       { scenario: "Classifying an email as spam or not (unordered categories) by training a regression to output 0 or 1 and rounding.", correct: false,
-        explain: "This is the MNIST mistake again in miniature — treating a category as if it sat on a meaningful number line." },
+        explain: "This is the category-as-number mistake — treating a label as if it sat on a meaningful number line." },
       { scenario: "Ranking which of 50 songs to recommend next, using a model built to output an ordered list.", correct: true,
         explain: "Right — the output shape (an ordering) matches the family's job (ranking)." },
       { scenario: "Reading a sentence and predicting the next word, using a family with no sense of sequence order at all.", correct: false,
@@ -146,12 +182,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
-
-<h2>ML hides in plain sight</h2>
-<p>For each item below, ask Lesson 0001's question: what's the fixed procedure, what's the fitted model, what's the deployed decision?</p>
-<figure>
-  <img src="../MLHidesInOrdinaryLife.jpeg" alt="Slide: 'Where ML hides in ordinary life' — three columns: Communication (autocorrect, spam filters, photo search, captioning), Institutions (fraud alerts, claim triage, no-show prediction, resume screening), Infrastructure (demand forecasts, grid load forecasts, predictive maintenance, call-center flags).">
-</figure>
 
 <h2>Check your recall</h2>
 <p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory first — that's the part that makes it stick.</p>

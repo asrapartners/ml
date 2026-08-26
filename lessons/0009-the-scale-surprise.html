@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <title>The Scale Surprise — Lesson 0009</title>
-<link rel="stylesheet" href="../assets/style.css?v=18">
-<script src="../assets/topbar.js?v=18" defer></script>
-<script src="../assets/mcq.js?v=18" defer></script>
-<script src="../assets/classify.js?v=18" defer></script>
-<script src="../assets/quiz.js?v=18" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=29">
+<script src="../assets/topbar.js?v=29" defer></script>
+<script src="../assets/mcq.js?v=29" defer></script>
+<script src="../assets/classify.js?v=29" defer></script>
+<script src="../assets/quiz.js?v=29" defer></script>
 </head>
 <body>
 <nav class="crumbs"><a href="0008-scale-of-data.html">&larr; Lesson 0008</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
 <p class="kicker">Lesson 0009</p>
 <h1>The scale surprise</h1>
-<p class="subtitle">Same algorithm A, same training objective, wildly bigger D — and something happens that no one explicitly asked for.</p>
+<p class="subtitle">Same training idea, wildly bigger and more varied D — and patterns become visible that no person could inspect example by example.</p>
 
 <blockquote style="margin: 1.2rem 0; padding: 1rem 1.2rem; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; font-style: italic;">
-At small scale, next-word prediction looks like autocomplete. At huge scale, the same objective begins to produce translation, coding, summarization, conversation, and reasoning-like behavior. The model did not get a new goal; scale changed what the goal could express.
+At small scale, next-word prediction looks like autocomplete. At huge scale, the same objective begins to expose structure: grammar, facts, style, code, translation, and conversation patterns. The model did not get a new goal; scale changed what the goal could express.
 </blockquote>
 
 <h2>The training objective never moved</h2>
@@ -24,28 +24,138 @@ At small scale, next-word prediction looks like autocomplete. At huge scale, the
 <a href="0007-hierarchy-and-attention.html">Lesson 0007</a>'s table already told you what GPT is: the transformer family, run through <code>D --A--> f<sup>^</sup>_D</code>, with A = predict-the-next-word. That's the whole objective — the same one whether D is a small pile of text or the trillion-plus-word piles from <a href="0008-scale-of-data.html">Lesson 0008</a>. Nobody added a "write working code" objective, or a "translate French" objective. A never changed. What changed was the size of D — and, as D grew by orders of magnitude, the fitted model's behavior stopped looking like autocomplete and started looking like something else.
 </p>
 
-<h2>Same skill, bigger context to use it in</h2>
+<h2>The internet was the timing, not the brain</h2>
 <p>
-Predicting the next word plausibly requires modeling a lot more than grammar, once the training text is varied enough. To guess the next token after "The French word for 'cat' is" well, a model has to have picked up something that functions like translation. To guess the next token in the middle of working Python, it has to have picked up something that functions like completing code. None of these were named as separate goals — they're all still "predict the next token," just applied to text varied and voluminous enough that predicting it well requires those skills as a byproduct.
+A neural network does not mathematically require the internet. It can train from books, lab data, medical scans, weather records, private documents, or anything else that has been digitized. But modern models needed <em>machine-readable data at huge scale</em>, and the internet made that practical: text, code, images, audio, video, captions, forums, manuals, translations, and reference material already sitting in digital form.
+</p>
+<p>
+So the internet was not the model's brain. It was the giant library, media archive, and loading dock. It made enough varied data available for training to stop looking like memorization and start looking like pattern extraction.
 </p>
 
-<h3>Sharpen your pencil: objective, or byproduct?</h3>
-<p>Sort each capability: was it the model's explicit training objective, or a byproduct of getting good at that one objective over huge, varied text?</p>
+<div class="data-pipeline" aria-label="Internet data is filtered before model training">
+  <div class="data-pool">
+    <div class="data-label">Digital world</div>
+    <div class="data-chip text">English text</div>
+    <div class="data-chip text">other languages</div>
+    <div class="data-chip code">code</div>
+    <div class="data-chip image">images</div>
+    <div class="data-chip audio">audio</div>
+    <div class="data-chip video">video</div>
+    <div class="data-chip science">medical scans</div>
+    <div class="data-chip blocked">private data</div>
+    <div class="data-chip blocked">undigitized books</div>
+    <div class="data-chip blocked">deleted pages</div>
+  </div>
+  <div class="data-filter">
+    <div class="filter-title">training pipeline</div>
+    <div class="filter-step">accessible</div>
+    <div class="filter-step">permitted</div>
+    <div class="filter-step">converted</div>
+    <div class="filter-step">cleaned</div>
+    <div class="filter-step">sampled</div>
+  </div>
+  <div class="data-model">
+    <div class="model-core">model</div>
+    <p>learns repeated structure, not "the internet"</p>
+  </div>
+</div>
+
+<h2>Not every word, not only words</h2>
+<p>
+Did GPT read every written word in human history? <strong>No.</strong> Training data is enormous, but it is still a sampled, filtered, licensed, scraped, cleaned, and deduplicated subset. Much writing was never digitized, never public, never included, or was removed during filtering. And modern AI is broader than English text: wherever data has repeated structure, a model may be able to learn useful internal representations.
+</p>
+
+<div class="scale-visual" aria-label="Visual scale comparison of training text">
+  <div class="scale-row">
+    <div class="scale-name">One novel</div>
+    <div class="scale-track"><span class="scale-bar novel"></span></div>
+    <div class="scale-count">~100k words</div>
+  </div>
+  <div class="scale-row">
+    <div class="scale-name">A school library shelf</div>
+    <div class="scale-track"><span class="scale-bar shelf"></span></div>
+    <div class="scale-count">millions of words</div>
+  </div>
+  <div class="scale-row">
+    <div class="scale-name">Large web-era training mix</div>
+    <div class="scale-track"><span class="scale-bar webmix"></span></div>
+    <div class="scale-count">trillions of tokens</div>
+  </div>
+  <div class="scale-row">
+    <div class="scale-name">Everything ever written</div>
+    <div class="scale-track universe"><span class="scale-gap"></span></div>
+    <div class="scale-count">unknown, not fully digitized</div>
+  </div>
+</div>
+<p class="scale-caption">
+Sticky idea: the model did not read "all human writing." It trained on giant, uneven, filtered data mixtures: huge enough to learn surprising patterns, incomplete enough to still have blind spots.
+</p>
+
+<h2>Where there is structure, there is signal</h2>
+<p>
+Predicting the next word plausibly requires modeling a lot more than grammar, once the training text is varied enough. To guess the next token after "The French word for 'cat' is" well, a model has to pick up translation-like structure. To guess the next token in working Python, it has to pick up code structure. The same broader lesson applies outside text: images have edges and objects, audio has rhythm and speech sounds, video has motion, and medical scans have visual patterns. The model is not looking for English. It is looking for repeated structure.
+</p>
+
+<div class="structure-grid" aria-label="Different data types contain different kinds of learnable structure">
+  <div class="structure-card">
+    <div class="structure-icon">Aa</div>
+    <strong>text</strong>
+    <span>grammar, facts, style</span>
+  </div>
+  <div class="structure-card">
+    <div class="structure-icon">文</div>
+    <strong>languages</strong>
+    <span>translation, shared meaning</span>
+  </div>
+  <div class="structure-card">
+    <div class="structure-icon">{ }</div>
+    <strong>code</strong>
+    <span>syntax, APIs, logic</span>
+  </div>
+  <div class="structure-card">
+    <div class="structure-icon">□</div>
+    <strong>images</strong>
+    <span>edges, shapes, objects</span>
+  </div>
+  <div class="structure-card">
+    <div class="structure-icon">~</div>
+    <strong>audio</strong>
+    <span>pitch, speech, rhythm</span>
+  </div>
+  <div class="structure-card">
+    <div class="structure-icon">t</div>
+    <strong>video</strong>
+    <span>motion, actions, scenes</span>
+  </div>
+</div>
+
+<div class="big-idea">
+  <span class="big-idea-icon">!</span>
+  <div>
+    <div class="big-idea-label">The deeper surprise</div>
+    <p>At scale, models can find patterns no human could inspect manually. That does not make them universally smarter than humans; it makes them extremely strong pattern learners when the data contains repeated structure.</p>
+  </div>
+</div>
+
+<h3>Sharpen your pencil: objective, or learned structure?</h3>
+<p>Sort each capability: was it the model's explicit training objective, or structure learned as a byproduct of training over huge, varied data?</p>
 <div id="classify-1"></div>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   initClassify("classify-1", {
     yesLabel: "✓ The explicit objective",
-    noLabel: "✗ A byproduct",
+    noLabel: "✗ Learned structure",
     items: [
       { scenario: "Predicting the next word/token in a sequence of text.", correct: true,
         explain: "Right — this is A, the one thing GPT-style training actually optimizes, no matter how small or huge D is." },
       { scenario: "Translating a sentence from French to English.", correct: false,
-        explain: "Right — nobody hand-labeled a translation dataset for this objective. It emerges because predicting the next word well, across enough bilingual text, requires something that functions like translation." },
+        explain: "Right — translation-like behavior can appear because predicting enough multilingual text requires learning cross-language structure." },
       { scenario: "Completing a partially-written Python function correctly.", correct: false,
-        explain: "Right — same story as translation. Predicting the next token in code, trained over enough code, requires something that functions like understanding the language's syntax and common patterns." },
-      { scenario: "Carrying on a multi-turn conversation that stays on topic.", correct: false,
-        explain: "Right — still next-token prediction under the hood, just applied to conversational text at a scale where staying on-topic becomes the best way to predict what comes next." }
+        explain: "Right — code has syntax, APIs, and repeated patterns. Predicting enough code forces the model to pick up some of that structure." },
+      { scenario: "Detecting edges and object parts in millions of images.", correct: false,
+        explain: "Right — image models are not learning English. They learn visual structure: edges, textures, shapes, object parts, and scenes." },
+      { scenario: "Recognizing speech sounds from audio waves.", correct: false,
+        explain: "Right — audio has structure too: pitch, timing, phonemes, voices, and rhythm." }
     ]
   });
 });
@@ -55,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
   <span class="big-idea-icon">📈</span>
   <div>
     <div class="big-idea-label">The recurring idea, again</div>
-    <p>A model can only express what its shape and its training allow (Lesson 0005's lesson, restated). Scale doesn't change the shape or the objective — it changes what satisfying that same objective, at that size, turns out to require.</p>
+    <p>A model can only express what its shape and its training allow (Lesson 0005's lesson, restated). Scale does not make magic. It makes repeated structure visible to the training process.</p>
   </div>
 </div>
 
@@ -72,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
     options: [
       { label: "The model was secretly also trained to code", correct: false,
         explain: "No secret second objective is needed. The training text included enough code that predicting it well required picking up code structure as a byproduct — same mechanism as the translation example above." },
-      { label: "Predicting the next token well, over a large enough amount of code, required something that functions like understanding code", correct: true,
+      { label: "Predicting the next token well, over a large enough amount of code, required learning code structure", correct: true,
         explain: "Right — this is the whole lesson in one sentence. One fixed objective, applied to varied and huge enough data, produces capability nobody explicitly asked for." },
       { label: "The model reasons about code the same way a human programmer does", correct: false,
         explain: "That's a stronger claim than the evidence supports — \"reasoning-like behavior\" describes the output, not a verified claim about the mechanism producing it." }
