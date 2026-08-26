@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Historical Context — Lesson 0010</title>
+<link rel="stylesheet" href="../assets/style.css?v=18">
+<script src="../assets/topbar.js?v=18" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0009-the-scale-surprise.html">&larr; Lesson 0009</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0010 · Capstone</p>
+<h1>Historical context</h1>
+<p class="subtitle">Every idea from lessons 0005–0009, in the order it actually happened — including the part where the field's funding collapsed for over a decade because of four points on a grid.</p>
+
+<p>
+Nothing here is new material. It's the same ideas — perceptron, XOR, MLP, attention, scale — with the people, dates, and accidents put back in. Read it after the technical lessons, not before: the names land differently once you already know what problem each person was actually solving.
+</p>
+
+<div class="history-strip">
+  <div class="history-card">
+    <div class="history-avatar">MP</div>
+    <div class="history-name">McCulloch &amp; Pitts</div>
+    <div class="history-year">1943, wartime Chicago</div>
+    <p>A neurophysiologist and a homeless teenage logician co-wrote the first math model of a neuron — "all-or-none" firing as a logic gate. Pitts had been sleeping in libraries when McCulloch took him in. Their model is the ancestor of every <a href="../reference/glossary.html#neural-nets">perceptron</a> in <a href="0005-shape-and-stacking.html">Lesson 0005</a>.</p>
+  </div>
+  <div class="history-card">
+    <div class="history-avatar">FR</div>
+    <div class="history-name">Frank Rosenblatt</div>
+    <div class="history-year">1958, Cornell</div>
+    <p>Built the idea into real hardware — the Mark I Perceptron, a wall of motorized potentiometers "learning" to sort punch cards. The Navy funded it; the <em>New York Times</em> called it the "embryo of an electronic computer" that would soon walk, talk, and reproduce itself.</p>
+  </div>
+  <div class="history-card">
+    <div class="history-avatar">MP</div>
+    <div class="history-name">Minsky &amp; Papert</div>
+    <div class="history-year">1969, MIT</div>
+    <p>Their book <em>Perceptrons</em> didn't just note that XOR was hard — it <em>proved</em> no single perceptron, trained any way you like, can ever solve it (the exact case from <a href="0005-shape-and-stacking.html">Lesson 0005</a>'s "sharpen your pencil" exercise). The proof was airtight enough that funding for neural-network research collapsed for over a decade — the first "AI winter." The wall wasn't a bug in Rosenblatt's training method. It was baked into the shape of the model, and it took the field ten years to back up and stack instead of walking away.</p>
+  </div>
+  <div class="history-card">
+    <div class="history-avatar">RHW</div>
+    <div class="history-name">Rumelhart, Hinton &amp; Williams</div>
+    <div class="history-year">1986</div>
+    <p>Popularized backpropagation — the answer to the question that had stalled stacking for 17 years: when a deep network is wrong, which of the thousands of <em>interior</em> weights deserves the blame? Rosenblatt's rule could only blame weights wired directly to the output. Backprop passes blame backward through the layers via the chain rule — which is also why the hard step had to give way to smooth activations, since blame flows along slopes and a step has none. The AI winter thawed because someone worked out how to train the fix (the <a href="0005-shape-and-stacking.html">multi-layer perceptron</a>), not because the idea of stacking was new — Minsky's own proof hadn't ruled out stacking, only single layers.</p>
+  </div>
+  <div class="history-card">
+    <div class="history-avatar">V+</div>
+    <div class="history-name">Vaswani et al.</div>
+    <div class="history-year">2017, Google Brain</div>
+    <p>"Attention Is All You Need" — a title borrowed straight from a Beatles lyric. It was built to speed up machine translation. Nobody on the paper claimed the <a href="0007-hierarchy-and-attention.html#attention">attention mechanism</a> it introduced would become the backbone of every major chatbot within six years.</p>
+  </div>
+  <div class="history-card">
+    <div class="history-avatar">GPT</div>
+    <div class="history-name">GPT lineage</div>
+    <div class="history-year">2018 onward</div>
+    <p>The training task is almost embarrassingly simple — guess the next word. <a href="0008-scale-of-data.html">Scaled up on enough text</a>, that simple task turned out to produce something that could write code and pass exams — the <a href="0009-the-scale-surprise.html">surprise</a> Lesson 0009 unpacks. The surprise wasn't the architecture; it was how far "just predict the next word" went once the data got big enough.</p>
+  </div>
+</div>
+
+<div class="big-idea">
+  <span class="big-idea-icon">🕰️</span>
+  <div>
+    <div class="big-idea-label">The pattern across all six</div>
+    <p>Every "sudden" breakthrough here was actually a decade-old idea meeting a missing piece — a training method, a compute budget, a dataset — that finally showed up. None of these people saw the whole arc coming from where they stood.</p>
+  </div>
+</div>
+
+<div class="ask-agent">
+Want the story of any one event in more depth — what exactly Minsky and Papert proved, or what "Attention Is All You Need" actually says? Just ask.
+</div>
+
+<div class="footer-links">
+  <a href="0009-the-scale-surprise.html">&larr; Lesson 0009</a>
+  <a href="../index.html">Back to all lessons</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>

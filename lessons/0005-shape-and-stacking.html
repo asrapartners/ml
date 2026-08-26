@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shape and Stacking — Lesson 0005</title>
+<link rel="stylesheet" href="../assets/style.css?v=24">
+<script src="../assets/topbar.js?v=24" defer></script>
+<script src="../assets/quiz.js?v=24" defer></script>
+<script src="../assets/mcq.js?v=24" defer></script>
+<script src="../assets/classify.js?v=24" defer></script>
+<script src="../assets/scatter.js?v=24" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0004-build-the-policy.html">&larr; Lesson 0004</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0005</p>
+<h1>Shape and stacking</h1>
+<p class="subtitle">One family at a time is a lie by omission — the field didn't arrive at today's models by picking the "best" model. It arrived by hitting a wall, backing up, and stacking. Here's that wall, and the stack.</p>
+
+<h2>First, hit the wall</h2>
+<p>
+Each picture has two kinds of points: <strong style="color:var(--accent);">blue</strong> and <strong style="color:var(--warn);">red</strong>. Your job is simple: could one straight line put all the blue points on one side and all the red points on the other?
+</p>
+<p style="color:var(--ink-soft); font-size:0.9rem;">
+Real-world version: each dot is one email from the training data, placed by two measurements — across: how many suspicious links it contains; up: how many of its words scream urgency. The color isn't part of the email — it's the answer tag we already know for that training example (Lesson 0001's <code>y</code>): a <strong style="color:var(--accent);">blue dot</strong> marks an email that turned out to be normal, a <strong style="color:var(--warn);">red dot</strong> one that turned out to be spam. The straight line you're trying to draw is the classifier.
+</p>
+<div id="scatter-1"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initScatter("scatter-1", {
+    yesLabel: "✓ One line can split them",
+    noLabel: "✗ No line can",
+    scenarios: [
+      { points: [
+          {x:40,y:40,label:"a"},{x:55,y:60,label:"a"},{x:35,y:90,label:"a"},{x:60,y:110,label:"a"},{x:45,y:130,label:"a"},{x:65,y:45,label:"a"},
+          {x:160,y:40,label:"b"},{x:180,y:60,label:"b"},{x:170,y:90,label:"b"},{x:190,y:110,label:"b"},{x:165,y:130,label:"b"},{x:185,y:45,label:"b"}
+        ], correct: true,
+        explain: "Right — draw a vertical line between the two clusters and every point lands on its own side." },
+      { points: [
+          {x:100,y:70,label:"a"},{x:110,y:85,label:"a"},{x:95,y:90,label:"a"},{x:105,y:75,label:"a"},{x:115,y:95,label:"a"},{x:100,y:100,label:"a"},
+          {x:165,y:85,label:"b"},{x:148.9,y:46.1,label:"b"},{x:110,y:30,label:"b"},{x:71.1,y:46.1,label:"b"},{x:55,y:85,label:"b"},{x:71.1,y:123.9,label:"b"},{x:110,y:140,label:"b"},{x:148.9,y:123.9,label:"b"}
+        ], correct: false,
+        explain: "Right — no straight line separates the center from the ring. Every line you draw has both colors on both sides." },
+      { points: [
+          {x:50,y:120,label:"a"},{x:170,y:40,label:"a"},
+          {x:50,y:40,label:"b"},{x:170,y:120,label:"b"}
+        ], correct: false,
+        explain: "Right — the matching colors sit at opposite corners. Any straight line leaves one blue and one red on both sides." }
+    ]
+  });
+});
+</script>
+
+<div class="big-idea">
+  <span class="big-idea-icon">!</span>
+  <div>
+    <div class="big-idea-label">The wall</div>
+    <p>If one straight line cannot separate the two colors, then any method limited to one straight cut will fail. More practice examples will not change that shape limit.</p>
+  </div>
+</div>
+
+<h2>The machine every family runs through</h2>
+<p>
+Now name the machinery. Every model family in this lesson enters the same pipeline from <a href="0001-from-data-to-decisions.html">Lesson 0001</a>:
+</p>
+<div class="pipeline">
+  <span class="node">model family</span>
+  <span class="arrow">--fit via D--A--&gt;f<sup>^</sup>_D--&gt;</span>
+  <span class="node">fitted model</span>
+</div>
+<p style="margin-top:-0.6rem; color:var(--ink-soft); font-size:0.9rem;">Linear regression, kNN, perceptrons, and neural networks are different fills for the left-hand box.</p>
+
+<h3>Sharpen your pencil: family, or fitted?</h3>
+<p>Sort each item: is it a <strong>model family</strong> (a shape of candidate functions, chosen before any data), or something else?</p>
+<div id="classify-3"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initClassify("classify-3", {
+    yesLabel: "✓ A model family",
+    noLabel: "✗ Something else",
+    items: [
+      { scenario: "Linear regression — y = w^Tx + b.", correct: true,
+        explain: "Right — a shape of candidate functions, chosen before any data is seen." },
+      { scenario: "kNN — classify by majority vote among the K nearest training points.", correct: true,
+        explain: "Right — a second family. Family membership has nothing to do with how simple or flexible the shape is." },
+      { scenario: "The specific line fitted to last year's house sales: price = 60 + 0.12 × sq.ft.", correct: false, category: "Fitted model",
+        explain: "This is a fitted model, f^_D — one specific member of the linear regression family, picked out by training on last year's data. A different year's D would fit a different line from the same family." },
+      { scenario: "Gradient descent — the training algorithm A that searches a family for a good fit.", correct: false, category: "Training algorithm (A)",
+        explain: "This is the algorithm A, not the family. A tells you *how* to search a family's shapes for a good fit — it isn't a shape itself. Swap the optimizer and the family doesn't change." }
+    ]
+  });
+});
+</script>
+
+<h2>The line you already know, wearing a new hat</h2>
+<p>
+Frank Rosenblatt wasn't trying to build a faster calculator. He was a psychologist, and the question underneath the formula below was stranger than anything in it: <strong>how little machinery does it take before learning appears?</strong> That question flipped the field's whole approach — not <em>can we program intelligence with explicit rules?</em>, but <em>can a machine learn its own internal connections from experience?</em>
+</p>
+<blockquote style="margin: 1.2rem 0; padding: 1rem 1.2rem; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; font-style: italic;">
+Rosenblatt's idea began as a psychologist's question: what is the simplest physical system that could learn from experience? The perceptron was his answer — not a hand-programmed rule machine, but a network whose connections changed when it made mistakes.
+</blockquote>
+<div class="perceptron-arc" aria-label="Rosenblatt's conceptual move from programmed rules to learned connections">
+  <div class="arc-panel old-way">
+    <div class="arc-label">old question</div>
+    <div class="arc-title">Can we write the rules?</div>
+    <svg viewBox="0 0 180 90" class="arc-svg" aria-hidden="true">
+      <rect x="18" y="17" width="58" height="52" rx="4" class="arc-box"/>
+      <path d="M31 31 H63 M31 43 H58 M31 55 H67" class="arc-rule-lines"/>
+      <path d="M91 29 L122 45 L91 61" class="arc-code"/>
+      <circle cx="146" cy="45" r="18" class="arc-output old"/>
+      <text x="146" y="49" text-anchor="middle" class="arc-text">0/1</text>
+    </svg>
+    <p>Intelligence as instructions supplied by the programmer.</p>
+  </div>
+  <div class="arc-turn">
+    <div class="arc-question">how little machinery before learning appears?</div>
+    <div class="arc-arrow">-&gt;</div>
+  </div>
+  <div class="arc-panel new-way">
+    <div class="arc-label">Rosenblatt's turn</div>
+    <div class="arc-title">Can the machine change itself?</div>
+    <svg viewBox="0 0 220 105" class="arc-svg" aria-hidden="true">
+      <circle cx="24" cy="24" r="8" class="arc-node input"/>
+      <circle cx="24" cy="52" r="8" class="arc-node input"/>
+      <circle cx="24" cy="80" r="8" class="arc-node input"/>
+      <circle cx="104" cy="52" r="13" class="arc-node middle"/>
+      <circle cx="184" cy="52" r="15" class="arc-node output"/>
+      <path d="M32 24 L91 52 M32 52 L91 52 M32 80 L91 52" class="arc-weight"/>
+      <path d="M117 52 L169 52" class="arc-weight strong"/>
+      <path d="M184 78 C144 104 82 101 43 78" class="arc-error"/>
+      <path d="M43 78 l9 -2 l-4 8" class="arc-error-head"/>
+      <text x="66" y="22" class="arc-small">weights</text>
+      <text x="111" y="96" text-anchor="middle" class="arc-small">mistake corrects the connections</text>
+    </svg>
+    <p>Intelligence as connections adjusted by experience.</p>
+  </div>
+</div>
+<div class="ingredient-chain">
+  <span class="ingredient">brain cells fire through connections</span>
+  <span class="ingredient-op">+</span>
+  <span class="ingredient">connection strengths can change</span>
+  <span class="ingredient-op">+</span>
+  <span class="ingredient">examples can correct mistakes</span>
+  <span class="ingredient-op">=</span>
+  <span class="ingredient result">a machine that learns by adjusting weights</span>
+</div>
+<p>
+That's the whole radical move, and it's what the formula below actually encodes: not a rule someone wrote down, but a set of weights <code>w</code> that starts wrong and gets corrected by its own mistakes. <a href="0001-from-data-to-decisions.html">Lesson 0001</a> gave you <code>y = w<sup>T</sup>x + b</code> for a number. Slap a <a href="../reference/glossary.html#neural-nets">perceptron</a>'s step function on the same score and you get a class instead: <code>ŷ = h(w<sup>T</sup>x + b)</code>. Same line underneath — just a different question asked of it.
+</p>
+
+<div class="jump-pair">
+  <div class="jump-card">
+    <div class="jump-label">Known — linear regression</div>
+    <div class="jump-formula">y = w<sup>T</sup>x + b</div>
+    <svg viewBox="0 0 120 78" class="jump-svg">
+      <line x1="10" y1="60" x2="112" y2="60" class="jump-axis"/>
+      <line x1="10" y1="8" x2="10" y2="60" class="jump-axis"/>
+      <text x="112" y="70" text-anchor="end" class="jump-axis-label">x</text>
+      <text x="6" y="14" text-anchor="end" class="jump-axis-label">y</text>
+      <path d="M10,58 L110,12" class="jump-line"/>
+    </svg>
+    <div class="jump-out">output: any real number</div>
+  </div>
+  <div class="jump-arrow"><span class="jump-arrow-glyph">&rarr;</span>+ a step, h(z)</div>
+  <div class="jump-card new-card">
+    <div class="jump-label">New — perceptron</div>
+    <div class="jump-formula">ŷ = h(w<sup>T</sup>x + b)</div>
+    <svg viewBox="0 0 170 92" class="jump-svg wide">
+      <rect x="8" y="16" width="60" height="60" rx="6" class="jump-score-box"/>
+      <text x="38" y="37" text-anchor="middle" class="jump-axis-label">score</text>
+      <text x="38" y="57" text-anchor="middle" class="jump-mono">z</text>
+      <path d="M72 46 H98" class="jump-flow"/>
+      <path d="M98 46 l-6 -5 M98 46 l-6 5" class="jump-flow"/>
+      <rect x="102" y="8" width="60" height="34" rx="6" class="jump-class-box off"/>
+      <rect x="102" y="50" width="60" height="34" rx="6" class="jump-class-box on"/>
+      <text x="132" y="28" text-anchor="middle" class="jump-axis-label">if z &lt; 0: ŷ = 0</text>
+      <text x="132" y="71" text-anchor="middle" class="jump-axis-label">if z ≥ 0: ŷ = 1</text>
+      <line x1="86" y1="46" x2="102" y2="25" class="jump-branch"/>
+      <line x1="86" y1="46" x2="102" y2="67" class="jump-branch"/>
+    </svg>
+    <div class="jump-out">threshold turns the score into a class</div>
+  </div>
+</div>
+<div class="threshold-examples" aria-label="Two perceptron threshold examples">
+  <span><code>z = -2.1</code> <strong>-&gt;</strong> <code>h(z) = 0</code></span>
+  <span><code>z = 3.4</code> <strong>-&gt;</strong> <code>h(z) = 1</code></span>
+</div>
+<p style="margin-top:-0.6rem; color:var(--ink-soft); font-size:0.9rem;">
+The perceptron still computes the same kind of weighted score, <code>z = w<sup>T</sup>x + b</code>. The new piece is the threshold function <code>h</code>: negative scores become class 0, nonnegative scores become class 1. That one addition is the whole jump from "predict a number" to "predict a class."
+</p>
+
+<h2>Where a straight line hits its wall</h2>
+<p>
+No perceptron — trained any way you like, for as long as you like — can solve the XOR case above. That's not a training failure. It's a shape limit: a single straight cut simply cannot wall off two interleaved corners from the other two.
+</p>
+
+<div class="big-idea">
+  <span class="big-idea-icon">🧱</span>
+  <div>
+    <div class="big-idea-label">The recurring idea</div>
+    <p>A model can only express the boundaries its own geometry allows. No amount of data, and no cleverer training, rescues the wrong family — you have to change the shape.</p>
+  </div>
+</div>
+
+<div id="mcq-1" class="mcq-wrap"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-1", {
+    question: "What actually fixes the XOR problem?",
+    options: [
+      { label: "Training the same perceptron for longer, on more XOR examples", correct: false,
+        explain: "More data can't rescue a family that structurally can't express the boundary — this is a shape problem, not a data problem. Stacking layers (next section) is what changes the shape." },
+      { label: "Stacking more than one perceptron, so the boundary can bend", correct: true,
+        explain: "Right — a single straight cut can't split XOR, but two lines combined can wall off the interleaved corners. That's exactly what the next section builds." },
+      { label: "Switching to a bigger threshold, like h(z) = 1{z ≥ 5} instead of 0", correct: false,
+        explain: "Sliding the threshold just moves the same line sideways — it's still one straight cut. XOR isn't a threshold problem, it's a shape problem." }
+    ]
+  });
+});
+</script>
+
+<h2>Stack them: the multi-layer perceptron</h2>
+<p>
+One straight cut fails. Stacking changes the shape: perceptrons feed their 0/1 answers into more perceptrons, so later layers can combine simple cuts into corners and curves.
+</p>
+<div class="stack-steps" aria-label="Four-step stacking idea">
+  <div class="stack-step">
+    <span class="stack-num">1</span>
+    <strong>One line fails</strong>
+    <span>XOR and rings do not split cleanly.</span>
+  </div>
+  <div class="stack-step">
+    <span class="stack-num">2</span>
+    <strong>Two cuts help</strong>
+    <span>Hidden perceptrons carve pieces.</span>
+  </div>
+  <div class="stack-step">
+    <span class="stack-num">3</span>
+    <strong>Combine the pieces</strong>
+    <span>The next layer votes on those cuts.</span>
+  </div>
+  <div class="stack-step">
+    <span class="stack-num">4</span>
+    <strong>Boundaries bend</strong>
+    <span>The family can express richer shapes.</span>
+  </div>
+</div>
+
+<div class="jump-pair">
+  <div class="jump-card">
+    <div class="jump-label">Perceptron</div>
+    <svg viewBox="0 0 120 60" class="jump-svg">
+      <line x1="26" y1="12" x2="62" y2="30" class="net-edge"/>
+      <line x1="26" y1="30" x2="62" y2="30" class="net-edge"/>
+      <line x1="26" y1="48" x2="62" y2="30" class="net-edge"/>
+      <line x1="79" y1="30" x2="103" y2="30" class="net-edge"/>
+      <circle cx="20" cy="12" r="6" class="net-node net-in"/>
+      <circle cx="20" cy="30" r="6" class="net-node net-in"/>
+      <circle cx="20" cy="48" r="6" class="net-node net-in"/>
+      <circle cx="70" cy="30" r="9" class="net-node"/>
+      <circle cx="106" cy="30" r="4" class="net-node net-out"/>
+    </svg>
+    <div class="jump-caption">Can draw: one straight cut</div>
+    <svg viewBox="0 0 120 54" class="jump-svg">
+      <rect x="2" y="2" width="116" height="50" class="bnd-frame"/>
+      <path d="M52,4 L66,50" class="bnd-line"/>
+      <circle cx="18" cy="14" r="4" class="bnd-pt-a"/>
+      <circle cx="28" cy="38" r="4" class="bnd-pt-a"/>
+      <circle cx="40" cy="12" r="4" class="bnd-pt-a"/>
+      <circle cx="80" cy="14" r="4" class="bnd-pt-b"/>
+      <circle cx="92" cy="38" r="4" class="bnd-pt-b"/>
+      <circle cx="102" cy="18" r="4" class="bnd-pt-b"/>
+    </svg>
+  </div>
+  <div class="jump-arrow"><span class="jump-arrow-glyph">&rarr;</span>feed its output into more perceptrons</div>
+  <div class="jump-card">
+    <div class="jump-label">Multi-layer perceptron</div>
+    <svg viewBox="0 0 120 60" class="jump-svg">
+      <line x1="20" y1="12" x2="60" y2="10" class="net-edge"/><line x1="20" y1="12" x2="60" y2="30" class="net-edge"/><line x1="20" y1="12" x2="60" y2="50" class="net-edge"/>
+      <line x1="20" y1="30" x2="60" y2="10" class="net-edge"/><line x1="20" y1="30" x2="60" y2="30" class="net-edge"/><line x1="20" y1="30" x2="60" y2="50" class="net-edge"/>
+      <line x1="20" y1="48" x2="60" y2="10" class="net-edge"/><line x1="20" y1="48" x2="60" y2="30" class="net-edge"/><line x1="20" y1="48" x2="60" y2="50" class="net-edge"/>
+      <line x1="60" y1="10" x2="100" y2="30" class="net-edge"/><line x1="60" y1="30" x2="100" y2="30" class="net-edge"/><line x1="60" y1="50" x2="100" y2="30" class="net-edge"/>
+      <circle cx="20" cy="12" r="5" class="net-node net-in"/>
+      <circle cx="20" cy="30" r="5" class="net-node net-in"/>
+      <circle cx="20" cy="48" r="5" class="net-node net-in"/>
+      <circle cx="60" cy="10" r="6" class="net-node"/>
+      <circle cx="60" cy="30" r="6" class="net-node"/>
+      <circle cx="60" cy="50" r="6" class="net-node"/>
+      <circle cx="100" cy="30" r="6" class="net-node net-out"/>
+    </svg>
+    <div class="jump-caption">Can draw: cuts combined into corners</div>
+    <svg viewBox="0 0 120 54" class="jump-svg">
+      <rect x="2" y="2" width="116" height="50" class="bnd-frame"/>
+      <path d="M8,46 L58,16 L112,46" class="bnd-line"/>
+      <circle cx="25" cy="12" r="4" class="bnd-pt-a"/>
+      <circle cx="60" cy="7" r="4" class="bnd-pt-a"/>
+      <circle cx="95" cy="14" r="4" class="bnd-pt-a"/>
+      <circle cx="42" cy="42" r="4" class="bnd-pt-b"/>
+      <circle cx="60" cy="36" r="4" class="bnd-pt-b"/>
+      <circle cx="80" cy="42" r="4" class="bnd-pt-b"/>
+    </svg>
+  </div>
+  <div class="jump-arrow"><span class="jump-arrow-glyph">&rarr;</span>keep stacking layers</div>
+  <div class="jump-card new-card">
+    <div class="jump-label">Neural network</div>
+    <svg viewBox="0 0 120 60" class="jump-svg">
+      <line x1="12" y1="12" x2="45" y2="10" class="net-edge"/><line x1="12" y1="12" x2="45" y2="30" class="net-edge"/><line x1="12" y1="12" x2="45" y2="50" class="net-edge"/>
+      <line x1="12" y1="30" x2="45" y2="10" class="net-edge"/><line x1="12" y1="30" x2="45" y2="30" class="net-edge"/><line x1="12" y1="30" x2="45" y2="50" class="net-edge"/>
+      <line x1="12" y1="48" x2="45" y2="10" class="net-edge"/><line x1="12" y1="48" x2="45" y2="30" class="net-edge"/><line x1="12" y1="48" x2="45" y2="50" class="net-edge"/>
+      <line x1="45" y1="10" x2="75" y2="10" class="net-edge"/><line x1="45" y1="10" x2="75" y2="30" class="net-edge"/><line x1="45" y1="10" x2="75" y2="50" class="net-edge"/>
+      <line x1="45" y1="30" x2="75" y2="10" class="net-edge"/><line x1="45" y1="30" x2="75" y2="30" class="net-edge"/><line x1="45" y1="30" x2="75" y2="50" class="net-edge"/>
+      <line x1="45" y1="50" x2="75" y2="10" class="net-edge"/><line x1="45" y1="50" x2="75" y2="30" class="net-edge"/><line x1="45" y1="50" x2="75" y2="50" class="net-edge"/>
+      <line x1="75" y1="10" x2="105" y2="30" class="net-edge"/><line x1="75" y1="30" x2="105" y2="30" class="net-edge"/><line x1="75" y1="50" x2="105" y2="30" class="net-edge"/>
+      <circle cx="12" cy="12" r="4" class="net-node net-in"/>
+      <circle cx="12" cy="30" r="4" class="net-node net-in"/>
+      <circle cx="12" cy="48" r="4" class="net-node net-in"/>
+      <circle cx="45" cy="10" r="5" class="net-node"/>
+      <circle cx="45" cy="30" r="5" class="net-node"/>
+      <circle cx="45" cy="50" r="5" class="net-node"/>
+      <circle cx="75" cy="10" r="5" class="net-node"/>
+      <circle cx="75" cy="30" r="5" class="net-node"/>
+      <circle cx="75" cy="50" r="5" class="net-node"/>
+      <circle cx="105" cy="30" r="6" class="net-node net-out"/>
+    </svg>
+    <div class="jump-caption">Can draw: much richer boundaries</div>
+    <svg viewBox="0 0 120 54" class="jump-svg">
+      <rect x="2" y="2" width="116" height="50" class="bnd-frame"/>
+      <ellipse cx="58" cy="28" rx="24" ry="14" class="bnd-line"/>
+      <circle cx="52" cy="26" r="4" class="bnd-pt-a"/>
+      <circle cx="64" cy="31" r="4" class="bnd-pt-a"/>
+      <circle cx="58" cy="23" r="4" class="bnd-pt-a"/>
+      <circle cx="16" cy="12" r="4" class="bnd-pt-b"/>
+      <circle cx="20" cy="42" r="4" class="bnd-pt-b"/>
+      <circle cx="58" cy="7" r="4" class="bnd-pt-b"/>
+      <circle cx="98" cy="12" r="4" class="bnd-pt-b"/>
+      <circle cx="102" cy="42" r="4" class="bnd-pt-b"/>
+    </svg>
+  </div>
+</div>
+<p style="margin-top:-0.6rem; color:var(--ink-soft); font-size:0.9rem;">
+Top row: the anatomy. Bottom row: the boundary that anatomy can draw. Notice the ring dataset from the exercise above — unsolvable in panel one, solved in panel three.
+</p>
+
+<div class="big-idea">
+  <span class="big-idea-icon">🔗</span>
+  <div>
+    <div class="big-idea-label">The key insight</div>
+    <p>A perceptron's output can be another perceptron's input. That's the entire trick — nothing inside any single unit changed. In notation, an MLP is <code>h<sup>(ℓ)</sup> = σ(W<sup>(ℓ)</sup>h<sup>(ℓ-1)</sup> + b<sup>(ℓ)</sup>)</code>: each layer transforms the previous layer's outputs.</p>
+  </div>
+</div>
+
+<div class="quiz" data-answer="multi-layer perceptron|mlp">
+  <div class="q">What do we call perceptrons stacked in layers, each fully connected to the next?</div>
+  <input type="text" placeholder="two or three words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+
+<h2>Neural networks join the family lineup</h2>
+<p>
+A handful of words get thrown around as if they're synonyms. They're not — they're nested, and the pipeline from the top of this lesson already gives you the vocabulary to tell them apart:
+</p>
+<table>
+<tr><th>Term</th><th>What it actually is</th></tr>
+<tr><td><strong>ML</strong></td><td>The field: improve performance on a task from experience (Lesson 0001's T/E/P).</td></tr>
+<tr><td><strong>ML pipeline</strong></td><td>The two-phase process — <code>D --A--> f<sup>^</sup>_D</code>, then <code>x --f<sup>^</sup>_D--> s --δ--> a</code> — that applies no matter which family fills in <code>f</code>.</td></tr>
+<tr><td><strong>Model</strong></td><td>Generic word for one candidate function <code>f</code>. Ambiguous on its own — always ask "family, or fitted?"</td></tr>
+<tr><td><strong>Neural network</strong></td><td>One model family among several (alongside linear/softmax regression, kNN) — stacked layers instead of one line.</td></tr>
+</table>
+<p style="color:var(--ink-soft); font-size:0.9rem;">
+Two more words belong on this list — transformer and GPT — but they need attention (literally) before they mean anything. <a href="0007-hierarchy-and-attention.html">Lesson 0007</a> picks up exactly there.
+</p>
+
+<h2>Check your recall</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory first — that's the part that makes it stick.</p>
+
+<div class="quiz" data-answer="linear separability|linearly separable">
+  <div class="q">What property of a dataset determines whether a single perceptron can solve it?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="quiz" data-answer="activation function">
+  <div class="q">What do we call the piece that turns a weighted sum into a signal — a step, sigmoid, tanh, or ReLU?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="ask-agent">
+Want the ring-dataset exercise with an actual draggable boundary to try (not just judge by eye), or the full story of why XOR ended a decade of funding? The second one's coming in <a href="0010-historical-context.html">Lesson 0010</a> — just ask for the first.
+</div>
+
+<div class="footer-links">
+  <a href="0004-build-the-policy.html">&larr; Lesson 0004</a>
+  <a href="0006-how-the-stack-learns.html">Next: how the stack learns &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>

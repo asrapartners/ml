@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>How Much Data Is "Huge"? — Lesson 0008</title>
+<link rel="stylesheet" href="../assets/style.css?v=18">
+<script src="../assets/topbar.js?v=18" defer></script>
+<script src="../assets/mcq.js?v=18" defer></script>
+<script src="../assets/quiz.js?v=18" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0007-hierarchy-and-attention.html">&larr; Lesson 0007</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0008</p>
+<h1>How much data is "huge"?</h1>
+<p class="subtitle">"Trained on a huge pile of text" is the kind of phrase that sounds precise and means nothing. Before Lesson 0008 asks what huge scale <em>does</em>, this lesson asks how huge it actually is.</p>
+
+<h2>Guess before you look</h2>
+<p>
+GPT-3 (2020) was trained on roughly <strong>1 trillion words</strong> of text — about 300–500 billion <a href="../reference/glossary.html#neural-nets">tokens</a>, depending how you count. Reading at a typical adult's silent reading speed (about 250 words per minute), 8 hours a day, every single day with no days off — how long would it take one person to read that much?
+</p>
+<div id="mcq-1" class="mcq-wrap"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-1", {
+    question: "At 250 words/minute, 8 hours a day, every day: how long to read 1 trillion words?",
+    options: [
+      { label: "About 200 years", correct: false,
+        explain: "Off by about two orders of magnitude — 200 years of reading 8 hours a day covers roughly 8.8 billion words, not a trillion." },
+      { label: "About 22,800 years", correct: true,
+        explain: "Right. 250 wpm × 60 × 8 hours = 120,000 words/day × 365 = 43.8 million words/year. 1 trillion ÷ 43.8 million ≈ 22,800 years — longer than all of recorded human history, to read what one model read once." },
+      { label: "About 2.2 million years", correct: false,
+        explain: "That's off by two orders of magnitude the other direction — it's roughly what you'd get from reading only 1 hour a day instead of 8, times a further error. The real answer, at 8 hours a day, is about 22,800 years." }
+    ]
+  });
+});
+</script>
+
+<h2>And it kept growing</h2>
+<p>
+That was 2020. By 2024, Meta's Llama 3 was trained on roughly <strong>15 trillion tokens</strong> — 7× more than its own predecessor, Llama 2, and on the order of 30–50× GPT-3's token count, just four years later. The "huge pile of text" a lesson casually gestures at isn't a fixed size. It's a number that has kept climbing by an order of magnitude every few years.
+</p>
+
+<h3>Sharpen your pencil: what's actually being measured?</h3>
+<div id="mcq-2" class="mcq-wrap"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-2", {
+    question: "In \"D --A--> f^_D\" from Lesson 0001, which object are these trillion-token counts describing?",
+    options: [
+      { label: "D — the training dataset", correct: true,
+        explain: "Right. Token counts measure the size of D, the input to training — not the fitted model's stored weights, and not the algorithm A. A bigger D doesn't automatically mean a bigger f^_D; it just means A had more to learn from." },
+      { label: "f^_D — the fitted model's stored weights", correct: false,
+        explain: "Not quite — that's the model's parameter count, a separate number from how much text it was trained on. The two often grow together in practice, but they're not the same measurement." },
+      { label: "A — the training algorithm", correct: false,
+        explain: "A is the fixed procedure (e.g. predict-the-next-word, repeated via gradient descent) — it doesn't have a size measured in tokens. Tokens count what A was given to work with, which is D." }
+    ]
+  });
+});
+</script>
+
+<h2>Check your recall</h2>
+<div class="quiz" data-answer="token|tokens">
+  <div class="q">What's the name for the small chunk of text a language model actually counts — roughly ¾ of a word on average?</div>
+  <input type="text" placeholder="one word">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Go deeper</h2>
+<p style="font-size:0.9rem; color:var(--ink-soft);">
+Figures above are sourced, not estimated from memory: GPT-3's token/word counts and training corpus composition are widely reported (Common Crawl + WebText2 + book corpora + Wikipedia, ~570GB filtered text); Llama 3's 15-trillion-token figure and its 7× jump over Llama 2 are from <a href="https://ai.meta.com/blog/meta-llama-3/" target="_blank" rel="noopener">Meta's official Llama 3 announcement</a>; the 250 wpm adult silent-reading-speed figure is from a meta-analysis of 190 studies (Brysbaert, 2019, reporting 238–260 wpm for adult English text).
+</p>
+
+<div class="ask-agent">
+Want the same comparison run against a more recent model's training set, or a breakdown of what "570GB of filtered text" actually contains? Just ask.
+</div>
+
+<div class="footer-links">
+  <a href="0007-hierarchy-and-attention.html">&larr; Lesson 0007</a>
+  <a href="0009-the-scale-surprise.html">Next: the scale surprise &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>

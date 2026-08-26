@@ -3,7 +3,10 @@
 // and an explanation — proves a rule by working examples, not by restating it.
 // Usage: initClassify("container-id", {
 //   yesLabel, noLabel,  // e.g. "Add to D", "Reject"
-//   items: [{ scenario, correct: true|false, explain }]
+//   items: [{ scenario, correct: true|false, explain, category }]
+//   // category (optional): when correct is false, what this item actually IS
+//   // (e.g. "Fitted model") — replaces the generic noLabel on that card's
+//   // button once answered, so "something else" doesn't stay vague forever.
 // })
 function initClassify(containerId, opts) {
   const el = document.getElementById(containerId);
@@ -12,7 +15,7 @@ function initClassify(containerId, opts) {
       <p class="classify-scenario">${item.scenario}</p>
       <div class="classify-buttons">
         <button data-verdict="true">${opts.yesLabel}</button>
-        <button data-verdict="false">${opts.noLabel}</button>
+        <button data-verdict="false" class="classify-no-btn">${opts.noLabel}</button>
       </div>
       <div class="classify-feedback"></div>
     </div>
@@ -29,6 +32,10 @@ function initClassify(containerId, opts) {
         card.classList.add("answered");
         const picked = btn.dataset.verdict === "true";
         const isCorrect = picked === item.correct;
+
+        if (!item.correct && item.category) {
+          card.querySelector(".classify-no-btn").textContent = "✗ " + item.category;
+        }
 
         buttons.forEach(b => {
           const bVerdict = b.dataset.verdict === "true";

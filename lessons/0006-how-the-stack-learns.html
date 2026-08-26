@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>How the Stack Learns — Lesson 0006</title>
+<link rel="stylesheet" href="../assets/style.css?v=26">
+<script src="../assets/topbar.js?v=26" defer></script>
+<script src="../assets/mcq.js?v=26" defer></script>
+<script src="../assets/classify.js?v=26" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0005-shape-and-stacking.html">&larr; Lesson 0005</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0006</p>
+<h1>How the stack learns</h1>
+<p class="subtitle">Stacking fixed what one straight line couldn't draw. It also quietly broke the way learning worked. This lesson is the fix for the fix.</p>
+
+<h2>One layer: one suspect</h2>
+<p>
+A single perceptron makes the final answer <em>itself</em>. So when it's wrong, the mistake is easy to assign: the weights that made the call are the ones that get corrected. No calculus — just nudge them toward what would have been right.
+</p>
+<p>
+Concretely: an email with four suspicious links comes in. The perceptron says <em>normal</em>; the training label says <em>spam</em>. Every weight that pushed the score toward "normal" gets nudged the other way. Next time, that email lands closer to spam.
+</p>
+
+<div class="jump-pair">
+  <div class="jump-card">
+    <div class="jump-label">One perceptron — one suspect</div>
+    <svg viewBox="0 0 360 160" class="learn-svg">
+      <rect x="14" y="48" width="82" height="64" rx="8" class="learn-card"/>
+      <text x="55" y="72" text-anchor="middle" class="learn-label">email</text>
+      <text x="55" y="94" text-anchor="middle" class="learn-small">4 links</text>
+      <path d="M101 80 H142" class="learn-forward"/>
+      <path d="M142 80 l-10 -6 v12 z" class="learn-forward-head"/>
+      <circle cx="190" cy="80" r="36" class="learn-worker"/>
+      <text x="190" y="75" text-anchor="middle" class="learn-label">one</text>
+      <text x="190" y="95" text-anchor="middle" class="learn-label">worker</text>
+      <path d="M226 80 H267" class="learn-forward"/>
+      <path d="M267 80 l-10 -6 v12 z" class="learn-forward-head"/>
+      <rect x="272" y="48" width="74" height="64" rx="8" class="learn-output wrong"/>
+      <text x="309" y="72" text-anchor="middle" class="learn-label">normal</text>
+      <text x="309" y="95" text-anchor="middle" class="learn-bad">wrong</text>
+      <path d="M292 120 C260 148 206 148 190 121" class="learn-blame"/>
+      <path d="M190 121 l11 1 l-8 8 z" class="learn-blame-head"/>
+      <text x="240" y="149" text-anchor="middle" class="learn-blame-label">blame goes straight back</text>
+    </svg>
+    <div class="jump-out">The mistake points straight back at the one worker: your fault — no mystery.</div>
+    <div class="jump-caption">Blame is obvious</div>
+  </div>
+</div>
+
+<h2>Stack layers, lose the suspect</h2>
+<p>
+Now stack. Early layers don't make the final answer — they pass <em>intermediate signals</em> forward, and later layers build on them. When the answer comes out wrong, the last layer made the call — but it made it out of parts the earlier layers handed it.
+</p>
+<p>
+So which earlier weight gets corrected, and by how much?
+</p>
+
+<div class="jump-pair">
+  <div class="jump-card">
+    <div class="jump-label">Stacked layers — suspects everywhere</div>
+    <svg viewBox="0 0 420 170" class="learn-svg">
+      <rect x="12" y="60" width="62" height="50" rx="8" class="learn-card"/>
+      <text x="43" y="90" text-anchor="middle" class="learn-label">input</text>
+      <path d="M78 85 H108" class="learn-forward"/>
+      <path d="M108 85 l-10 -6 v12 z" class="learn-forward-head"/>
+      <rect x="112" y="48" width="68" height="74" rx="8" class="learn-stage"/>
+      <text x="146" y="82" text-anchor="middle" class="learn-label">stage 1</text>
+      <circle cx="146" cy="33" r="16" class="learn-question"/>
+      <text x="146" y="39" text-anchor="middle" class="learn-question-text">?</text>
+      <path d="M184 85 H214" class="learn-forward"/>
+      <path d="M214 85 l-10 -6 v12 z" class="learn-forward-head"/>
+      <rect x="218" y="48" width="68" height="74" rx="8" class="learn-stage"/>
+      <text x="252" y="82" text-anchor="middle" class="learn-label">stage 2</text>
+      <circle cx="252" cy="33" r="16" class="learn-question"/>
+      <text x="252" y="39" text-anchor="middle" class="learn-question-text">?</text>
+      <path d="M290 85 H320" class="learn-forward"/>
+      <path d="M320 85 l-10 -6 v12 z" class="learn-forward-head"/>
+      <rect x="324" y="48" width="68" height="74" rx="8" class="learn-stage"/>
+      <text x="358" y="82" text-anchor="middle" class="learn-label">final</text>
+      <circle cx="358" cy="33" r="16" class="learn-question"/>
+      <text x="358" y="39" text-anchor="middle" class="learn-question-text">?</text>
+      <rect x="330" y="130" width="56" height="28" rx="6" class="learn-output wrong"/>
+      <text x="358" y="149" text-anchor="middle" class="learn-bad">wrong</text>
+      <text x="214" y="150" text-anchor="middle" class="learn-small">forward signals are clear; blame is not</text>
+    </svg>
+    <div class="jump-out">Wrong answer at the end — but which stage caused it?</div>
+    <div class="jump-caption">The new problem stacking created</div>
+  </div>
+</div>
+
+<div class="callout">
+<strong>Credit assignment</strong> means figuring out which earlier weights deserve how much blame for the final error.
+</div>
+
+<h3>Sharpen your pencil: can the simple nudge rule handle it alone?</h3>
+<div id="classify-1"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initClassify("classify-1", {
+    yesLabel: "✓ Simple rule is enough",
+    noLabel: "✗ Not enough",
+    items: [
+      { scenario: "A single-perceptron spam filter calls a spam email normal.", correct: true,
+        explain: "Right — one layer, so every weight touched the answer directly. Nudge the ones that pushed toward \"normal\" and you're done." },
+      { scenario: "A three-layer network is wrong, and the weight in question sits in the first layer — two layers away from the answer.", correct: false, category: "Needs credit assignment",
+        explain: "That weight never touched the final answer directly — it shaped an intermediate signal that later layers transformed twice. The simple rule has no way to know how much of the miss was its doing." },
+      { scenario: "A three-layer network is wrong. Someone proposes correcting only the final layer's weights, since those made the call.", correct: false, category: "Needs credit assignment",
+        explain: "The final layer built its answer out of parts the earlier layers handed it. Correct only the last stage and faulty parts keep flowing in forever — the early layers never improve." }
+    ]
+  });
+});
+</script>
+
+<h2>Backpropagation: send the error backward</h2>
+<p>
+The fix needs one idea from math. A <strong>derivative</strong> answers a simple question: <em>if I nudge this a little, how much does the output move?</em> The <strong>chain rule</strong> strings derivatives together through chained steps, so a nudge at the start can be traced through everything downstream.
+</p>
+<p>
+<a href="../reference/glossary.html#neural-nets">Backpropagation</a> uses exactly that: it sends the error backward through the network and uses the chain rule to estimate each weight's share of responsibility. Every weight — even one buried layers away from the answer — gets a number: <em>this much of the miss was yours.</em> Then every weight adjusts by its share.
+</p>
+
+<div class="jump-pair">
+  <div class="jump-card new-card">
+    <div class="jump-label">Backpropagation — blame shared out</div>
+    <svg viewBox="0 0 420 190" class="learn-svg">
+      <rect x="12" y="58" width="62" height="50" rx="8" class="learn-card"/>
+      <text x="43" y="88" text-anchor="middle" class="learn-label">input</text>
+      <path d="M78 83 H108" class="learn-forward soft"/>
+      <path d="M108 83 l-10 -6 v12 z" class="learn-forward-head soft"/>
+      <rect x="112" y="46" width="68" height="74" rx="8" class="learn-stage"/>
+      <text x="146" y="80" text-anchor="middle" class="learn-label">stage 1</text>
+      <path d="M184 83 H214" class="learn-forward soft"/>
+      <path d="M214 83 l-10 -6 v12 z" class="learn-forward-head soft"/>
+      <rect x="218" y="46" width="68" height="74" rx="8" class="learn-stage"/>
+      <text x="252" y="80" text-anchor="middle" class="learn-label">stage 2</text>
+      <path d="M290 83 H320" class="learn-forward soft"/>
+      <path d="M320 83 l-10 -6 v12 z" class="learn-forward-head soft"/>
+      <rect x="324" y="46" width="68" height="74" rx="8" class="learn-stage"/>
+      <text x="358" y="80" text-anchor="middle" class="learn-label">final</text>
+      <rect x="330" y="130" width="56" height="28" rx="6" class="learn-output wrong"/>
+      <text x="358" y="149" text-anchor="middle" class="learn-bad">wrong</text>
+      <path d="M358 130 C350 160 318 168 276 142" class="learn-back"/>
+      <path d="M276 142 l12 -1 l-6 10 z" class="learn-back-head"/>
+      <path d="M252 128 C238 160 198 166 170 136" class="learn-back"/>
+      <path d="M170 136 l12 1 l-8 9 z" class="learn-back-head"/>
+      <path d="M146 128 C128 158 88 160 62 126" class="learn-back"/>
+      <path d="M62 126 l12 2 l-9 8 z" class="learn-back-head"/>
+      <rect x="324" y="12" width="68" height="24" rx="12" class="learn-percent"/>
+      <text x="358" y="29" text-anchor="middle" class="learn-percent-text">50%</text>
+      <rect x="218" y="12" width="68" height="24" rx="12" class="learn-percent"/>
+      <text x="252" y="29" text-anchor="middle" class="learn-percent-text">30%</text>
+      <rect x="112" y="12" width="68" height="24" rx="12" class="learn-percent"/>
+      <text x="146" y="29" text-anchor="middle" class="learn-percent-text">20%</text>
+      <text x="210" y="181" text-anchor="middle" class="learn-blame-label">error travels backward; each stage gets a share</text>
+    </svg>
+    <div class="jump-out">The error flows backward, and every stage learns its own share of the blame.</div>
+    <div class="jump-caption">Each weight gets its share</div>
+  </div>
+</div>
+<p style="margin-top:-0.6rem; color:var(--ink-soft); font-size:0.9rem;">
+The percentages are the chain rule's output: each stage's estimated share of the miss, so even the weights far from the answer know how much to adjust.
+</p>
+
+<h2>Why the hard step had to go</h2>
+<p>
+One catch: blame travels along slopes. The perceptron's hard step has none — flat, flat, flat, then one instant jump. Nudge a weight and the output usually doesn't move at all… then suddenly flips. Ask "how much did the output move?" and the answer is <em>zero, almost everywhere</em>. Zero signal, nothing to learn from.
+</p>
+<p>
+A smooth <a href="../reference/glossary.html#neural-nets">activation</a> — sigmoid, tanh, ReLU — behaves like a dimmer knob instead: tiny turn, tiny change. Now every nudge answers "did that help or hurt?", and blame can flow backward through every layer. Smooth activations aren't a stylistic upgrade. They're what makes deep stacks trainable at all.
+</p>
+
+<div class="jump-pair">
+  <div class="jump-card new-card">
+    <div class="jump-label">Dimmer knob — smooth activation</div>
+    <svg viewBox="0 0 220 150" class="activation-svg">
+      <line x1="28" y1="122" x2="196" y2="122" class="act-axis"/>
+      <line x1="28" y1="122" x2="28" y2="24" class="act-axis"/>
+      <path d="M36 113 C70 112 82 96 101 72 C124 43 154 36 188 35" class="act-smooth"/>
+      <circle cx="105" cy="67" r="5" class="act-dot"/>
+      <path d="M105 67 l26 -18" class="act-tangent"/>
+      <path d="M105 67 l18 2 l-8 10 z" class="act-nudge"/>
+      <text x="112" y="18" text-anchor="middle" class="act-title">small nudge changes output</text>
+      <text x="30" y="140" class="act-label">input</text>
+      <text x="5" y="30" class="act-label">output</text>
+      <text x="148" y="64" class="act-good">useful slope</text>
+    </svg>
+    <div class="jump-out">Tiny turn → tiny change. Every nudge answers: warmer or colder?</div>
+    <div class="jump-caption">Signal flows back — trainable</div>
+  </div>
+  <div class="jump-card">
+    <div class="jump-label">Light switch — hard step</div>
+    <svg viewBox="0 0 220 150" class="activation-svg">
+      <line x1="28" y1="122" x2="196" y2="122" class="act-axis"/>
+      <line x1="28" y1="122" x2="28" y2="24" class="act-axis"/>
+      <path d="M36 112 H108 V38 H188" class="act-step"/>
+      <path d="M62 112 h34" class="act-flat"/>
+      <path d="M132 38 h34" class="act-flat"/>
+      <text x="112" y="18" text-anchor="middle" class="act-title">flat, flat, then flip</text>
+      <text x="30" y="140" class="act-label">input</text>
+      <text x="5" y="30" class="act-label">output</text>
+      <text x="58" y="99" class="act-bad">slope 0</text>
+      <text x="132" y="31" class="act-bad">slope 0</text>
+      <text x="116" y="79" class="act-bad">jump</text>
+    </svg>
+    <div class="jump-out">Nothing… nothing… FLIP. No warmer/colder signal at all.</div>
+    <div class="jump-caption">Zero signal — blame can't pass through</div>
+  </div>
+</div>
+
+<div id="mcq-1" class="mcq-wrap"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-1", {
+    question: "Why did smooth activations have to replace the perceptron's hard step before deep stacks could be trained?",
+    options: [
+      { label: "Smooth functions are faster to compute than a step", correct: false,
+        explain: "Speed isn't the issue — a step is about as cheap as functions get. The problem is that backpropagation assigns blame along slopes, and the step is flat everywhere, so it passes back zero signal." },
+      { label: "Backpropagation passes blame backward along slopes, and the step function has none", correct: true,
+        explain: "Right — the step is flat except for one instant jump, so the chain rule gets nothing to work with. Smooth activations give every weight a usable share of the blame. Without them, stacking was an architecture with no training algorithm." },
+      { label: "The step function can't output values between 0 and 1", correct: false,
+        explain: "True but not the reason — a single perceptron trains fine with a hard step. The step only becomes fatal when blame has to flow backward through it to reach interior layers." }
+    ]
+  });
+});
+</script>
+
+<h2>Side by side</h2>
+<table>
+<tr><th></th><th>Perceptron rule</th><th>Backpropagation</th></tr>
+<tr><td><strong>Trains</strong></td><td>one layer</td><td>many layers</td></tr>
+<tr><td><strong>Calculus</strong></td><td>none</td><td>the chain rule</td></tr>
+<tr><td><strong>Activation</strong></td><td>hard step is fine</td><td>needs smooth</td></tr>
+<tr><td><strong>Blame</strong></td><td>direct — every weight touched the answer</td><td>passed backward, layer by layer</td></tr>
+</table>
+
+<h2>Check for understanding</h2>
+<div id="mcq-2" class="mcq-wrap"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-2", {
+    question: "In a stacked network, why can't the final layer simply take all the blame for every mistake?",
+    options: [
+      { label: "Its answer was built from signals the earlier layers handed it — if those parts are faulty, correcting only the last layer never fixes them", correct: true,
+        explain: "Right — the last layer made the call, but out of intermediate parts it didn't make. Blame has to reach the weights that shaped those parts, which is the entire reason credit assignment (and backpropagation) exists." },
+      { label: "Because the final layer has no weights of its own to adjust", correct: false,
+        explain: "It does have weights — and they're the easiest ones to blame, since they touched the answer directly. The problem is everyone upstream: the layers whose intermediate signals the final layer depended on." },
+      { label: "It could — training only the final layer works just as well", correct: false,
+        explain: "Then the early layers never improve, and the network is stuck with whatever intermediate signals its untrained layers happen to produce. The power of depth comes from the early layers learning too." }
+    ]
+  });
+});
+</script>
+
+<div class="ask-agent">
+Want to walk one concrete backpropagation step with actual numbers — one weight, one derivative, one nudge? Just ask.
+</div>
+
+<div class="footer-links">
+  <a href="0005-shape-and-stacking.html">&larr; Lesson 0005</a>
+  <a href="0007-hierarchy-and-attention.html">Next: the hierarchy, and where transformers fit &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>

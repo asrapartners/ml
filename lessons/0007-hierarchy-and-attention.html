@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Hierarchy and Attention — Lesson 0007</title>
+<link rel="stylesheet" href="../assets/style.css?v=18">
+<script src="../assets/topbar.js?v=18" defer></script>
+<script src="../assets/quiz.js?v=18" defer></script>
+<script src="../assets/mcq.js?v=18" defer></script>
+<script src="../assets/classify.js?v=18" defer></script>
+<script src="../assets/hierarchy.js?v=18" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0006-how-the-stack-learns.html">&larr; Lesson 0006</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0007</p>
+<h1>The hierarchy, and where transformers fit</h1>
+<p class="subtitle">Two more words belong on <a href="0005-shape-and-stacking.html">Lesson 0005</a>'s vocabulary table: transformer and GPT. Before either means anything, build the shape they sit inside.</p>
+
+<h2>Two more rungs on the ladder</h2>
+<table>
+<tr><th>Term</th><th>What it actually is</th></tr>
+<tr><td><strong>Transformer</strong></td><td>A neural network family shaped for sequences. Still unfitted — still just <code>{f_θ}</code> until trained.</td></tr>
+<tr><td><strong>GPT</strong></td><td>A specific <code>f<sup>^</sup>_D</code> — the transformer family, run through the same <code>D --A--> f<sup>^</sup>_D</code> pipeline, with D = a huge pile of text and A = predict-the-next-word, repeated at enormous scale.</td></tr>
+</table>
+
+<h2>See the forest first</h2>
+<p>
+Before the details — attention, disambiguation, why a transformer counts as a neural network at all — build the shape they all sit inside. Click the terms below, broadest first. <code>GPT</code> won't unlock until the family it belongs to is placed: that's deliberate, not a bug.
+</p>
+<div id="hierarchy-1"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initHierarchy("hierarchy-1", {
+    levels: [
+      { key: "ai", label: "AI", blurb: "Build systems that behave intelligently." },
+      { key: "ml", label: "Machine learning", blurb: "Learn patterns from data instead of hand-coding rules." },
+      { key: "nn", label: "Neural network", blurb: "One ML model family: layers of weighted computations." },
+      { key: "transformer", label: "Transformer", blurb: "A neural network shaped for sequences, built around attention." }
+    ],
+    fitted: { key: "gpt", label: "GPT", blurb: "A specific transformer that's been trained — a fitted instance, not another box." }
+  });
+});
+</script>
+<p style="color:var(--ink-soft); font-size:0.9rem;">
+Notice what just happened: <code>GPT</code> never became a fifth box. It landed <em>inside</em> the last one — because it isn't a narrower category, it's one trained instance of the category above it. Keep that distinction in view for everything below.
+</p>
+
+<div id="mcq-2" class="mcq-wrap"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-2", {
+    question: "Is GPT a model family, or a fitted model?",
+    options: [
+      { label: "A model family — like linear regression or kNN", correct: false,
+        explain: "The transformer is the family. GPT is what training produced from it — one specific f^_D, the same category of object as \"the fitted line\" from Lesson 0001, not the category of object linear regression itself is." },
+      { label: "A fitted model — a specific f^_D produced by training", correct: true,
+        explain: "Right. \"Transformer\" answers \"what shape was allowed before training.\" \"GPT\" answers \"what came out after training on D.\" Confusing the two is like confusing \"linear regression\" with \"the specific line fitted to last year's house sales.\"" }
+    ]
+  });
+});
+</script>
+
+<h2 id="attention">Attention: what makes a transformer a transformer</h2>
+<p>
+Stack layers and you get a neural network — that alone doesn't make it a transformer. Shape those layers around sequences, and let each word's meaning get computed by weighing <em>every other word</em> in the input, not just its neighbor, and you get <a href="../reference/glossary.html#neural-nets">attention</a> — the mechanism a transformer is built around.
+</p>
+<p>
+"The bank raised interest rates." Read "bank" alone and it's ambiguous — a riverbank, or a financial one. Attention lets "interest rates," several words away, pull hard on how "bank" gets interpreted here — locking in the financial reading before the sentence is even finished. A plain MLP, fed the words with no such weighing, has no built-in way to let a distant word settle a nearby word's meaning.
+</p>
+
+<h3>Sharpen your pencil: which word is doing the disambiguating?</h3>
+<div id="classify-4"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initClassify("classify-4", {
+    yesLabel: "✓ Points to the financial bank",
+    noLabel: "✗ Doesn't (or points elsewhere)",
+    items: [
+      { scenario: "\"The bank raised interest rates.\" — does interest rates fix the meaning of bank?", correct: true,
+        explain: "Right — that's the phrase attention would weigh heavily. Nothing about word order alone does this; it's specifically that phrase's content pulling on \"bank.\"" },
+      { scenario: "\"We sat by the bank and fished.\" — does fished fix bank as the financial meaning?", correct: false,
+        explain: "Right — fished pulls the other way, toward the riverbank reading. Same word \"bank,\" opposite meaning, because attention is weighing a different neighbor this time." },
+      { scenario: "\"She applied for a loan at the bank downtown.\" — does loan fix the meaning of bank?", correct: true,
+        explain: "Right — loan is a strong financial cue, same role interest rates played above." },
+      { scenario: "\"The muddy bank flooded after the storm.\" — does muddy fix bank as the financial meaning?", correct: false,
+        explain: "Right — muddy points to a riverbank. This is the whole reason attention has to be learned from data, not hand-coded: which word matters depends entirely on what else is in the sentence." }
+    ]
+  });
+});
+</script>
+
+<h3>Check it against the exercise above</h3>
+<p>
+Same nest you already built: ML is the field. A neural network is one model family inside it. A transformer is one architecture inside <em>that</em> family — built specifically for sequences, via attention. GPT sat inside the narrowest box, not beside it — the output of training that box, not a box of its own.
+</p>
+
+<div id="mcq-3" class="mcq-wrap"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-3", {
+    question: "Which best describes how a transformer relates to a neural network?",
+    options: [
+      { label: "They're separate categories — a transformer isn't a neural network", correct: false,
+        explain: "Not separate. A transformer is built the same way every neural network is — stacked, learned layers — it just adds attention on top, shaped for sequences." },
+      { label: "A transformer is a special kind of neural network, built for sequences via attention", correct: true,
+        explain: "Right — same relationship as \"a square is a special kind of rectangle.\" Every transformer is a neural network; not every neural network is a transformer." },
+      { label: "A neural network is a special kind of transformer", correct: false,
+        explain: "Backwards — this reverses which one is the broader category. Neural network is the umbrella; transformer is one shape underneath it." }
+    ]
+  });
+});
+</script>
+
+<h2>Where the model still breaks</h2>
+<p>
+None of this makes the model the thing it's modeling. George Box, a statistician, put the whole lesson in one line:
+</p>
+<blockquote style="margin: 1.2rem 0; padding-left: 1rem; border-left: 3px solid var(--rule); color: var(--ink-soft); font-style: italic;">
+"Essentially, all models are wrong, but some are useful."
+</blockquote>
+<p>
+A perceptron is wrong about XOR. A straight line is wrong about the ring dataset from <a href="0005-shape-and-stacking.html">Lesson 0005</a>. And picking a family that doesn't match your data's structure is its own classic misstep — not a new one, an old one, back from before this lesson's models existed:
+</p>
+
+<figure>
+  <img src="../WhyNotRegressDirectlyOnMNISTLabels.jpeg" alt="Slide: 'Why not regress directly on MNIST labels?' A grid of handwritten digits 0-9, next to y-hat = 6.4 and the question 'what digit is this?' Caption: squared error assumes a meaningful numeric distance.">
+  <figcaption>Digit labels 0–9 look numeric, so linear regression looks tempting. But regression's error metric assumes distance is meaningful — and "1 is closer to 2 than to 9" is not a claim about handwriting, it's an artifact of how we happened to number the digits. Wrong family, wrong error, wrong conclusions — no matter how well it's trained.</figcaption>
+</figure>
+
+<div id="classify-2"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initClassify("classify-2", {
+    yesLabel: "✓ Right family for the job",
+    noLabel: "✗ Mismatched",
+    items: [
+      { scenario: "Predicting tomorrow's temperature (a continuous number) with linear regression.", correct: true,
+        explain: "Right — continuous output, and regression's squared-error notion of \"distance\" is meaningful for temperature." },
+      { scenario: "Classifying an email as spam or not (unordered categories) by training a regression to output 0 or 1 and rounding.", correct: false,
+        explain: "This is the MNIST mistake again in miniature — treating a category as if it sat on a meaningful number line." },
+      { scenario: "Ranking which of 50 songs to recommend next, using a model built to output an ordered list.", correct: true,
+        explain: "Right — the output shape (an ordering) matches the family's job (ranking)." },
+      { scenario: "Reading a sentence and predicting the next word, using a family with no sense of sequence order at all.", correct: false,
+        explain: "Text is a sequence — word order carries the meaning. A family blind to order (like plain linear regression on a bag of words) throws that structure away before training even starts." }
+    ]
+  });
+});
+</script>
+
+<h2>ML hides in plain sight</h2>
+<p>For each item below, ask Lesson 0001's question: what's the fixed procedure, what's the fitted model, what's the deployed decision?</p>
+<figure>
+  <img src="../MLHidesInOrdinaryLife.jpeg" alt="Slide: 'Where ML hides in ordinary life' — three columns: Communication (autocorrect, spam filters, photo search, captioning), Institutions (fraud alerts, claim triage, no-show prediction, resume screening), Infrastructure (demand forecasts, grid load forecasts, predictive maintenance, call-center flags).">
+</figure>
+
+<h2>Check your recall</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory first — that's the part that makes it stick.</p>
+
+<div class="quiz" data-answer="fitted model">
+  <div class="q">GPT is a transformer that has been trained on data D. In this course's vocabulary, what category of object is GPT?</div>
+  <input type="text" placeholder="two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="ask-agent">
+Want a deeper walk through what "weighing every other word" actually computes, or a visual attention diagram instead of the click-sort above? Just ask.
+</div>
+
+<div class="footer-links">
+  <a href="0006-how-the-stack-learns.html">&larr; Lesson 0006</a>
+  <a href="0008-scale-of-data.html">Next: how much data is "huge"? &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>

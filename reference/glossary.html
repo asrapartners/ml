@@ -47,6 +47,22 @@
 <tr><td><strong>Group fairness gap</strong></td><td>The same threshold t applied to the same model can produce very different FPR/FNR across subgroups G = g. "Equal rule ≠ equal burden."</td></tr>
 </table>
 
+<h2 id="neural-nets">Neural networks &amp; beyond (Lecture 4)</h2>
+<table>
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td><strong>Linear separability</strong></td><td>Whether one straight boundary can split two classes perfectly. If not, no perceptron — however trained — can solve the task.</td></tr>
+<tr><td><strong>Perceptron</strong></td><td>Linear regression's classification cousin: <code>z = w<sup>T</sup>x + b</code>, then a step function <code>h(z) = 1{z ≥ 0}</code> turns the score into a class.</td></tr>
+<tr><td><strong>Activation function</strong></td><td>Turns a weighted sum into a signal — a step (perceptron), or something smoother (sigmoid, tanh, ReLU) in a neural network.</td></tr>
+<tr><td><strong>Multi-layer perceptron (MLP)</strong></td><td>Perceptrons stacked in layers, each fully connected to the next: <code>h<sup>(ℓ)</sup> = σ(W<sup>(ℓ)</sup>h<sup>(ℓ-1)</sup> + b<sup>(ℓ)</sup>)</code>. Bends the boundary a single perceptron can't.</td></tr>
+<tr><td><strong>Neural network</strong></td><td>The broader model family that MLPs belong to — stacked, learned layers, of which many architectures exist.</td></tr>
+<tr><td><strong>Credit assignment</strong></td><td>The problem stacking creates: the output was wrong, but which interior weight — layers upstream, not wired to the answer — deserves the blame? The single-layer perceptron rule can't answer it.</td></tr>
+<tr><td><strong>Backpropagation</strong></td><td>The training algorithm that solved credit assignment: use the chain rule to compute each weight's share of the blame, passing the error backward through the layers. Needs smooth activations — it flows along slopes, and a hard step has none.</td></tr>
+<tr><td><strong>Attention</strong></td><td>Inside a transformer, the mechanism that decides which other positions in the input should influence a given position's meaning — not just its immediate neighbor.</td></tr>
+<tr><td><strong>Transformer</strong></td><td>A neural network architecture built for sequences (text, etc.), stacking attention and feed-forward blocks. Still just a model family: <code>{f_θ}</code>, unfitted until trained.</td></tr>
+<tr><td><strong>GPT (Generative Pre-trained Transformer)</strong></td><td>Not a family — a specific <em>fitted model</em>, <code>f<sup>^</sup>_D</code>, produced by training the transformer family on a huge text dataset D via next-word prediction.</td></tr>
+<tr><td><strong>Token</strong></td><td>The small chunk of text a language model actually counts — roughly ¾ of a word on average, not a whole word. Training-set size and cost are usually measured in tokens, not words.</td></tr>
+</table>
+
 <div class="ask-agent">Something here unclear, or you spot an error? Ask your teaching agent — that's what it's for.</div>
 
 </body>

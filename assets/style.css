@@ -326,6 +326,40 @@ a { color: var(--accent); }
 .card.hidden { background: var(--warn-soft); border-color: var(--warn); }
 .card.guess { background: var(--good-soft); border-color: var(--good); }
 
+/* --- History vignettes: no real portraits on file, so a labeled avatar
+   stands in for a photo. Being upfront about that beats a fake picture. --- */
+.history-strip { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1.2rem 0; }
+.history-card {
+  flex: 1;
+  min-width: 14rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+  background: var(--paper-raised);
+}
+.history-avatar {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+.history-name { font-family: var(--sans); font-weight: 700; }
+.history-year { font-family: var(--sans); font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 0.4rem; }
+.history-card p { margin: 0.4rem 0 0; font-size: 0.92rem; }
+
+figure { margin: 1.3rem 0; }
+figure img { max-width: 100%; border: 1px solid var(--rule); border-radius: 8px; display: block; }
+figcaption { font-family: var(--sans); font-size: 0.82rem; color: var(--ink-soft); margin-top: 0.5rem; }
+
 /* --- Bar chart (argmax) --- */
 .barchart {
   display: flex;
@@ -709,6 +743,456 @@ a { color: var(--accent); }
 .classify-feedback.right { color: var(--good); }
 .classify-feedback.wrong { color: var(--warn); }
 
+/* --- "Build the hierarchy" exercise --- */
+.hierarchy-bank { display: flex; gap: 0.6rem; flex-wrap: wrap; margin: 1rem 0 0.4rem; }
+.hierarchy-chip {
+  font-family: var(--sans); font-size: 0.92rem; font-weight: 600;
+  padding: 0.55rem 1rem; border: 1px solid var(--rule); border-radius: 999px;
+  background: var(--paper); color: var(--ink); cursor: pointer;
+}
+.hierarchy-chip:hover { border-color: var(--accent); }
+.hierarchy-chip:disabled { opacity: 0.35; cursor: default; }
+.hierarchy-chip.wrong-shake { animation: hierarchy-shake 0.3s; border-color: var(--warn); }
+@keyframes hierarchy-shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.hierarchy-hint { font-family: var(--sans); font-size: 0.85rem; color: var(--warn); min-height: 1.4em; margin: 0.5rem 0 0; }
+.hierarchy-nest { margin-top: 1.2rem; }
+.hierarchy-box {
+  border: 1.5px solid var(--accent); border-radius: 10px;
+  padding: 1rem 1.1rem; background: var(--accent-soft);
+}
+.hierarchy-box .hierarchy-box { margin-top: 0.7rem; }
+.hierarchy-box-label { font-family: var(--sans); font-weight: 700; }
+.hierarchy-box-blurb { font-size: 0.88rem; color: var(--ink-soft); margin: 0.2rem 0 0; }
+.hierarchy-fitted-tag {
+  margin-top: 0.7rem; padding: 0.5rem 0.7rem;
+  border: 1.5px dashed var(--good); border-radius: 8px;
+  background: var(--good-soft); font-size: 0.85rem;
+}
+.hierarchy-fitted-tag strong { color: var(--good); }
+
+/* --- "Can one line split this?" scatterplot exercise --- */
+.scatter-card {
+  display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start;
+  border: 1px solid var(--rule); border-radius: 8px;
+  padding: 1rem 1.2rem; margin: 0.9rem 0; background: var(--paper-raised);
+}
+.scatter-svg {
+  width: 220px; max-width: 100%; flex: 0 0 220px;
+  border: 1px solid var(--rule); border-radius: 6px;
+}
+.scatter-bg { fill: var(--paper); }
+.scatter-pt.a { fill: var(--accent); }
+.scatter-pt.b { fill: var(--warn); }
+.scatter-buttons { display: flex; flex-direction: column; gap: 0.5rem; flex: 1 1 10rem; }
+.scatter-buttons button {
+  font-family: var(--sans); font-size: 0.85rem; padding: 0.5rem 1rem;
+  border: 1px solid var(--rule); border-radius: 6px;
+  background: var(--paper); color: var(--ink); cursor: pointer;
+}
+.scatter-card.answered .scatter-buttons button { cursor: default; }
+.scatter-buttons button.correct-choice { border-color: var(--good); background: var(--good-soft); color: var(--good); font-weight: 700; }
+.scatter-buttons button.dim-choice { opacity: 0.45; }
+.scatter-feedback { font-family: var(--sans); font-size: 0.85rem; line-height: 1.5; flex-basis: 100%; }
+.scatter-feedback.right { color: var(--good); }
+.scatter-feedback.wrong { color: var(--warn); }
+
+/* --- "known model -> new model" jump diagram (e.g. linear regression -> perceptron) --- */
+.jump-pair { display: flex; align-items: center; gap: 1rem; margin: 1.3rem 0; flex-wrap: wrap; }
+.jump-card {
+  flex: 1; min-width: 12rem; border: 1px solid var(--rule); border-radius: 8px;
+  padding: 1rem 1.1rem; background: var(--paper-raised); text-align: center;
+}
+.jump-card.new-card { border-color: var(--accent); background: var(--accent-soft); }
+.jump-card .jump-label {
+  font-family: var(--sans); font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--ink-soft); margin-bottom: 0.4rem;
+}
+.jump-card .jump-formula { font-family: var(--mono); font-size: 0.95rem; margin-bottom: 0.7rem; }
+.jump-svg { width: 100%; max-width: 140px; }
+.jump-svg.wide { max-width: 190px; }
+.jump-svg .jump-line { fill: none; stroke: var(--ink-soft); stroke-width: 2.5; stroke-linecap: round; }
+.jump-card.new-card .jump-svg .jump-line { stroke: var(--accent); }
+.jump-svg .jump-axis { stroke: var(--rule); stroke-width: 1; }
+.jump-svg .jump-ghost { fill: none; stroke: var(--ink-soft); stroke-width: 1.5; stroke-dasharray: 3 3; opacity: 0.5; }
+.jump-svg .jump-guide { stroke: var(--warn); stroke-width: 1; stroke-dasharray: 2 2; }
+.jump-svg .jump-axis-label { font-family: var(--sans); font-size: 7px; fill: var(--ink-soft); }
+.jump-svg .jump-guide-label { font-family: var(--sans); font-size: 6.5px; fill: var(--warn); }
+.jump-svg .jump-mono { font-family: var(--mono); font-size: 17px; fill: var(--ink); font-weight: 700; }
+.jump-score-box { fill: var(--paper); stroke: var(--rule); stroke-width: 1.5; }
+.jump-class-box { stroke-width: 1.5; }
+.jump-class-box.off { fill: var(--paper); stroke: var(--rule); }
+.jump-class-box.on { fill: var(--paper); stroke: var(--accent); }
+.jump-flow, .jump-branch {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.jump-branch { stroke-width: 1.1; opacity: 0.75; }
+.jump-card .jump-out { font-family: var(--sans); font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.4rem; }
+.jump-arrow {
+  flex: 0 0 auto; font-family: var(--sans); font-size: 0.85rem; font-weight: 700;
+  color: var(--accent); text-align: center; padding: 0 0.3rem;
+}
+.jump-arrow .jump-arrow-glyph { font-size: 1.6rem; display: block; line-height: 1; }
+.jump-arrow { max-width: 7.5rem; }
+
+.threshold-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+  margin: -0.2rem 0 1rem;
+  font-family: var(--sans);
+  font-size: 0.86rem;
+}
+.threshold-examples span {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper-raised);
+  padding: 0.42rem 0.65rem;
+}
+.threshold-examples strong { color: var(--accent); }
+
+.stack-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin: 1.2rem 0;
+  font-family: var(--sans);
+}
+.stack-step {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper-raised);
+  padding: 0.75rem;
+}
+.stack-step strong,
+.stack-step span:last-child {
+  display: block;
+}
+.stack-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--paper);
+  font-weight: 700;
+  font-size: 0.78rem;
+  margin-bottom: 0.45rem;
+}
+.stack-step strong {
+  font-size: 0.86rem;
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
+}
+.stack-step span:last-child {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+@media (max-width: 720px) {
+  .stack-steps { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 460px) {
+  .stack-steps { grid-template-columns: 1fr; }
+}
+
+/* network-anatomy mini diagrams inside jump cards */
+.jump-svg .net-edge { stroke: var(--rule); stroke-width: 1.2; }
+.jump-svg .net-node { fill: var(--paper); stroke: var(--accent); stroke-width: 1.8; }
+.jump-svg .net-node.net-in { stroke: var(--ink-soft); }
+.jump-svg .net-node.net-out { fill: var(--accent-soft); }
+/* boundary-it-can-draw mini plots */
+.jump-svg .bnd-frame { fill: var(--paper); stroke: var(--rule); stroke-width: 1; }
+.jump-svg .bnd-line { fill: none; stroke: var(--good); stroke-width: 2; stroke-linecap: round; }
+.jump-svg .bnd-pt-a { fill: var(--accent); }
+.jump-svg .bnd-pt-b { fill: var(--warn); }
+.jump-card .jump-caption {
+  font-family: var(--sans); font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--ink-soft); margin: 0.5rem 0 0.2rem;
+}
+
+/* blame-factory diagrams (credit assignment story) */
+.jump-svg .st-box { fill: var(--paper); stroke: var(--accent); stroke-width: 1.8; rx: 4; }
+.jump-svg .st-io { fill: var(--paper-raised); stroke: var(--ink-soft); stroke-width: 1.5; }
+.jump-svg .st-flow { stroke: var(--rule); stroke-width: 1.6; fill: none; }
+.jump-svg .st-blame { stroke: var(--warn); stroke-width: 1.8; stroke-dasharray: 4 3; fill: none; }
+.jump-svg .st-blame-head { fill: var(--warn); stroke: none; }
+.jump-svg .st-label { font-family: var(--sans); font-size: 10px; fill: var(--ink-soft); }
+.jump-svg .st-blame-label { font-family: var(--sans); font-size: 11px; font-weight: 700; fill: var(--warn); }
+.jump-svg .st-q { font-family: var(--sans); font-size: 15px; font-weight: 700; fill: var(--warn); }
+.jump-svg .st-bad { font-family: var(--sans); font-size: 13px; font-weight: 700; fill: var(--warn); }
+
+/* --- Lesson 0006: larger learning-flow diagrams --- */
+.learn-svg,
+.activation-svg {
+  width: 100%;
+  max-width: 430px;
+  display: block;
+  margin: 0.35rem auto 0.6rem;
+}
+.activation-svg { max-width: 270px; }
+.learn-card,
+.learn-stage,
+.learn-worker,
+.learn-output,
+.learn-percent {
+  stroke-width: 2;
+}
+.learn-card {
+  fill: var(--paper);
+  stroke: var(--rule);
+}
+.learn-stage {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+}
+.learn-worker {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+.learn-output.wrong {
+  fill: var(--warn-soft);
+  stroke: var(--warn);
+}
+.learn-forward,
+.learn-forward-head {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.learn-forward-head { fill: var(--accent); stroke: none; }
+.learn-forward.soft { opacity: 0.35; }
+.learn-forward-head.soft { opacity: 0.35; }
+.learn-blame,
+.learn-back {
+  fill: none;
+  stroke: var(--warn);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.learn-back {
+  stroke-width: 5;
+  filter: drop-shadow(0 2px 2px rgba(179, 80, 47, 0.22));
+}
+.learn-blame-head,
+.learn-back-head {
+  fill: var(--warn);
+  stroke: none;
+}
+.learn-question {
+  fill: var(--warn-soft);
+  stroke: var(--warn);
+  stroke-width: 2;
+}
+.learn-question-text,
+.learn-bad,
+.learn-blame-label,
+.learn-percent-text {
+  font-family: var(--sans);
+  font-weight: 700;
+}
+.learn-question-text,
+.learn-bad,
+.learn-blame-label {
+  fill: var(--warn);
+}
+.learn-label,
+.learn-small {
+  font-family: var(--sans);
+  fill: var(--ink-soft);
+}
+.learn-label {
+  font-size: 16px;
+  font-weight: 700;
+}
+.learn-small {
+  font-size: 12px;
+}
+.learn-bad {
+  font-size: 14px;
+}
+.learn-blame-label {
+  font-size: 13px;
+}
+.learn-percent {
+  fill: var(--warn-soft);
+  stroke: var(--warn);
+}
+.learn-percent-text {
+  fill: var(--warn);
+  font-size: 14px;
+}
+
+.act-axis {
+  stroke: var(--rule);
+  stroke-width: 2;
+}
+.act-smooth,
+.act-step {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.act-smooth { stroke: var(--accent); }
+.act-step { stroke: var(--warn); }
+.act-tangent {
+  stroke: var(--good);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.act-dot,
+.act-nudge {
+  fill: var(--good);
+}
+.act-flat {
+  stroke: var(--warn);
+  stroke-width: 3;
+  stroke-dasharray: 4 4;
+}
+.act-title,
+.act-label,
+.act-good,
+.act-bad {
+  font-family: var(--sans);
+}
+.act-title {
+  fill: var(--ink);
+  font-weight: 700;
+  font-size: 12px;
+}
+.act-label {
+  fill: var(--ink-soft);
+  font-size: 10px;
+}
+.act-good,
+.act-bad {
+  font-size: 11px;
+  font-weight: 700;
+}
+.act-good { fill: var(--good); }
+.act-bad { fill: var(--warn); }
+
+/* --- "ingredients combine into" chain (origin-story equations) --- */
+.ingredient-chain {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem;
+  margin: 1.2rem 0; font-family: var(--sans); font-size: 0.85rem;
+}
+.ingredient {
+  border: 1px solid var(--rule); border-radius: 8px; padding: 0.6rem 0.9rem;
+  background: var(--paper-raised);
+}
+.ingredient.result { border-color: var(--good); background: var(--good-soft); color: var(--good); font-weight: 700; }
+.ingredient-op { font-size: 1.1rem; font-weight: 700; color: var(--ink-soft); flex: 0 0 auto; }
+
+/* --- Rosenblatt origin-story arc: rules -> learned connections --- */
+.perceptron-arc {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: stretch;
+  margin: 1.4rem 0;
+}
+.arc-panel {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper-raised);
+  padding: 1rem;
+}
+.arc-panel.new-way { border-color: var(--accent); background: var(--accent-soft); }
+.arc-label {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+.arc-title {
+  font-family: var(--sans);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0.25rem 0 0.5rem;
+}
+.arc-panel p {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin: 0.45rem 0 0;
+}
+.arc-turn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 6.5rem;
+  text-align: center;
+  color: var(--accent);
+  font-family: var(--sans);
+  font-weight: 700;
+}
+.arc-question {
+  font-size: 0.78rem;
+  line-height: 1.25;
+  max-width: 8rem;
+}
+.arc-arrow {
+  font-family: var(--mono);
+  font-size: 1.3rem;
+}
+.arc-svg { width: 100%; height: auto; display: block; margin: 0.5rem 0; }
+.arc-box { fill: var(--paper); stroke: var(--rule); stroke-width: 2; }
+.arc-rule-lines, .arc-code {
+  fill: none;
+  stroke: var(--ink-soft);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.arc-output.old { fill: var(--paper); stroke: var(--warn); stroke-width: 2.5; }
+.arc-text, .arc-small {
+  font-family: var(--sans);
+  fill: var(--ink-soft);
+}
+.arc-text { font-size: 14px; font-weight: 700; }
+.arc-small { font-size: 10px; }
+.arc-node { fill: var(--paper); stroke-width: 2.5; }
+.arc-node.input { stroke: var(--ink-soft); }
+.arc-node.middle { stroke: var(--accent); fill: var(--paper); }
+.arc-node.output { stroke: var(--good); fill: var(--good-soft); }
+.arc-weight {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.arc-weight.strong { stroke-width: 4; }
+.arc-error, .arc-error-head {
+  fill: none;
+  stroke: var(--warn);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 5 4;
+}
+@media (max-width: 720px) {
+  .perceptron-arc { grid-template-columns: 1fr; }
+  .arc-turn { min-width: 0; }
+  .arc-arrow { transform: rotate(90deg); }
+}
+
 /* --- Single multiple-choice question --- */
 .mcq-wrap {
   border: 1px solid var(--rule);
@@ -823,4 +1307,3 @@ a { color: var(--accent); }
   opacity: 0.7;
   font-family: var(--mono);
 }
-

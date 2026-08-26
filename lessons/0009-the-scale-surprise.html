@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The Scale Surprise — Lesson 0009</title>
+<link rel="stylesheet" href="../assets/style.css?v=18">
+<script src="../assets/topbar.js?v=18" defer></script>
+<script src="../assets/mcq.js?v=18" defer></script>
+<script src="../assets/classify.js?v=18" defer></script>
+<script src="../assets/quiz.js?v=18" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0008-scale-of-data.html">&larr; Lesson 0008</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0009</p>
+<h1>The scale surprise</h1>
+<p class="subtitle">Same algorithm A, same training objective, wildly bigger D — and something happens that no one explicitly asked for.</p>
+
+<blockquote style="margin: 1.2rem 0; padding: 1rem 1.2rem; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 8px 8px 0; font-style: italic;">
+At small scale, next-word prediction looks like autocomplete. At huge scale, the same objective begins to produce translation, coding, summarization, conversation, and reasoning-like behavior. The model did not get a new goal; scale changed what the goal could express.
+</blockquote>
+
+<h2>The training objective never moved</h2>
+<p>
+<a href="0007-hierarchy-and-attention.html">Lesson 0007</a>'s table already told you what GPT is: the transformer family, run through <code>D --A--> f<sup>^</sup>_D</code>, with A = predict-the-next-word. That's the whole objective — the same one whether D is a small pile of text or the trillion-plus-word piles from <a href="0008-scale-of-data.html">Lesson 0008</a>. Nobody added a "write working code" objective, or a "translate French" objective. A never changed. What changed was the size of D — and, as D grew by orders of magnitude, the fitted model's behavior stopped looking like autocomplete and started looking like something else.
+</p>
+
+<h2>Same skill, bigger context to use it in</h2>
+<p>
+Predicting the next word plausibly requires modeling a lot more than grammar, once the training text is varied enough. To guess the next token after "The French word for 'cat' is" well, a model has to have picked up something that functions like translation. To guess the next token in the middle of working Python, it has to have picked up something that functions like completing code. None of these were named as separate goals — they're all still "predict the next token," just applied to text varied and voluminous enough that predicting it well requires those skills as a byproduct.
+</p>
+
+<h3>Sharpen your pencil: objective, or byproduct?</h3>
+<p>Sort each capability: was it the model's explicit training objective, or a byproduct of getting good at that one objective over huge, varied text?</p>
+<div id="classify-1"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initClassify("classify-1", {
+    yesLabel: "✓ The explicit objective",
+    noLabel: "✗ A byproduct",
+    items: [
+      { scenario: "Predicting the next word/token in a sequence of text.", correct: true,
+        explain: "Right — this is A, the one thing GPT-style training actually optimizes, no matter how small or huge D is." },
+      { scenario: "Translating a sentence from French to English.", correct: false,
+        explain: "Right — nobody hand-labeled a translation dataset for this objective. It emerges because predicting the next word well, across enough bilingual text, requires something that functions like translation." },
+      { scenario: "Completing a partially-written Python function correctly.", correct: false,
+        explain: "Right — same story as translation. Predicting the next token in code, trained over enough code, requires something that functions like understanding the language's syntax and common patterns." },
+      { scenario: "Carrying on a multi-turn conversation that stays on topic.", correct: false,
+        explain: "Right — still next-token prediction under the hood, just applied to conversational text at a scale where staying on-topic becomes the best way to predict what comes next." }
+    ]
+  });
+});
+</script>
+
+<div class="big-idea">
+  <span class="big-idea-icon">📈</span>
+  <div>
+    <div class="big-idea-label">The recurring idea, again</div>
+    <p>A model can only express what its shape and its training allow (Lesson 0005's lesson, restated). Scale doesn't change the shape or the objective — it changes what satisfying that same objective, at that size, turns out to require.</p>
+  </div>
+</div>
+
+<h2>This isn't magic, and it isn't reliable</h2>
+<p>
+"Reasoning-like behavior" is a careful phrase, not a claim that the model reasons the way a person does. <a href="0007-hierarchy-and-attention.html#attention">Lesson 0007</a>'s Box quote still applies at any scale: the model is still wrong in specific, sometimes surprising ways — confidently wrong, not just occasionally wrong — because nothing about scaling up next-word prediction gives the model a way to check its guesses against reality. Bigger D changes what the model can produce. It doesn't change what kind of thing the model is.
+</p>
+
+<div id="mcq-1" class="mcq-wrap"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-1", {
+    question: "A model trained only on next-word prediction writes a passing solution to a coding problem. What's the most accurate way to describe what happened?",
+    options: [
+      { label: "The model was secretly also trained to code", correct: false,
+        explain: "No secret second objective is needed. The training text included enough code that predicting it well required picking up code structure as a byproduct — same mechanism as the translation example above." },
+      { label: "Predicting the next token well, over a large enough amount of code, required something that functions like understanding code", correct: true,
+        explain: "Right — this is the whole lesson in one sentence. One fixed objective, applied to varied and huge enough data, produces capability nobody explicitly asked for." },
+      { label: "The model reasons about code the same way a human programmer does", correct: false,
+        explain: "That's a stronger claim than the evidence supports — \"reasoning-like behavior\" describes the output, not a verified claim about the mechanism producing it." }
+    ]
+  });
+});
+</script>
+
+<h2>Check your recall</h2>
+<div class="quiz" data-answer="d|the dataset|training data">
+  <div class="q">In "the model did not get a new goal; scale changed what the goal could express" — which object in D --A--> f^_D actually grew to cause the surprise?</div>
+  <input type="text" placeholder="one letter or a few words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<div class="ask-agent">
+Want a worked example of one specific emergent capability (in-context learning, chain-of-thought) traced back to next-token prediction in more detail? Just ask.
+</div>
+
+<div class="footer-links">
+  <a href="0008-scale-of-data.html">&larr; Lesson 0008</a>
+  <a href="0010-historical-context.html">Next: historical context &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>
