@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Log loss and gradient descent — Lesson 0013</title>
+<link rel="stylesheet" href="../assets/style.css?v=16">
+<script src="../assets/topbar.js?v=16" defer></script>
+<script src="../assets/quiz.js?v=16" defer></script>
+<script src="../assets/mcq.js?v=16" defer></script>
+<script src="../assets/gdstep.js?v=16" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0011-homework-1-map.html">&larr; Homework 1 map</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0013 · Homework 1, Problem 2</p>
+<h1>Log loss and one gradient descent step</h1>
+<p class="subtitle">Lesson 0006 promised "want to walk one concrete gradient step with actual numbers? Just ask." This is that walk — with a different four points than Homework 1 uses, so the arithmetic itself stays yours to do.</p>
+
+<h2>The sigmoid: squashing a score into (0,1)</h2>
+<p>
+Logistic regression scores a point x by <code>βx</code> — same linear form as linear regression — then squashes that raw number through the sigmoid, <code>σ(z) = 1/(1+e<sup>−z</sup>)</code>, so it always lands strictly between 0 and 1 and can be read as a probability. <code>σ(0) = 0.5</code> always: a raw score of exactly zero means "no lean either way," regardless of what the data looks like.
+</p>
+
+<h2>Log loss: how wrong is the current guess?</h2>
+<p>
+For a point with true label y and predicted probability p, log loss is <code>−[y·log p + (1−y)·log(1−p)]</code>. Only one of the two terms is ever "active": if y = 1, it's <code>−log p</code> (penalizes low p); if y = 0, it's <code>−log(1−p)</code> (penalizes high p). Average that over all n points and you get <code>L(β)</code> — the same "how wrong, on average" role that mean squared error plays for numeric predictions, just built for probabilities instead.
+</p>
+
+<h2>Try it: one gradient step, live</h2>
+<p>
+Four points, separated cleanly by the sign of x: (−3, 0), (−1, 0), (1, 1), (3, 1). Start at β = 0, read off the loss, then hit the button to take one step with learning rate η = 1.
+</p>
+<div id="gd-demo"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initGDStep("gd-demo", {
+    points: [[-3, 0], [-1, 0], [1, 1], [3, 1]],
+    xRange: [-3.5, 3.5],
+    betaInit: 0, betaMax: 3, eta: 1
+  });
+});
+</script>
+<p>
+At β = 0, every point gets p = σ(0) = 0.5 — the curve is flat and uncommitted, and <code>L(0) = ln 2 ≈ 0.693</code> for <em>any</em> dataset shaped like this, since −log(0.5) is the same number no matter what x is. That's worth noticing on its own: β = 0 always gives the same starting loss, regardless of the data — the interesting part only starts once you compute the gradient.
+</p>
+<p>
+The gradient <code>L′(β) = (1/n)Σ(p<sub>i</sub> − y<sub>i</sub>)x<sub>i</sub></code> is an average of "(how wrong) × (which direction x pointed)." At β = 0 here it comes out negative — because the negative-labeled points sit at negative x and the positive-labeled points sit at positive x, so their error-times-x products all point the same way. A negative gradient means "increasing β would reduce the loss," which is exactly why the update <code>β<sup>(1)</sup> = β<sup>(0)</sup> − η·L′(β<sup>(0)</sup>)</code> subtracts a negative number and pushes β up.
+</p>
+
+<div class="callout">
+<strong>For Homework 1(a)–(b):</strong> the homework's four points are (−2,0), (−1,0), (1,1), (2,1) — different spacing than the demo above. Redo the same three computations by hand: p<sub>i</sub> at β<sup>(0)</sup>=0, L(β<sup>(0)</sup>), and L′(β<sup>(0)</sup>). The structure is identical; the numbers won't match this page.
+</div>
+
+<h2>After the step: lower loss, but not proof of anything yet</h2>
+<p>
+Take the step in the demo above and watch the curve steepen — probabilities move away from 0.5 toward the correct side for each point, and the average loss drops. Homework 1(c) points out something important here: once every point crosses the t = 0.50 threshold on the correct side, <strong>all four training points classify correctly</strong>. That fact does not mean training should stop, and it does not say anything about new data.
+</p>
+<div id="mcq-stop"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-stop", {
+    question: "All 4 training points are now classified correctly at t = 0.50. What does that tell you?",
+    options: [
+      { label: "Log-loss optimization should stop — nothing left to fix", correct: false, explain: "Classification correctness (a 0/1 count at one threshold) and log loss (a continuous, probability-sensitive number) are different objectives. Loss can still be reduced further even with zero classification errors — e.g. by pushing already-correct probabilities even closer to 0 or 1." },
+      { label: "The model will generalize well to new data", correct: false, explain: "This is entirely a statement about the 4 training points the model has already seen. It says nothing about points it hasn't — that requires held-out evaluation, not a re-check of the training set." },
+      { label: "Neither — it's a fact about training performance at one threshold only", correct: true, explain: "Exactly. Zero training-set classification errors is compatible with an optimizer that keeps running, and compatible with either good or bad performance on new data. It settles neither question." }
+    ]
+  });
+});
+</script>
+
+<h2>Why unbounded β is a problem, and what λβ² does about it</h2>
+<p>
+These four points are <strong>completely separated by the sign of x</strong> — every negative x is labeled 0, every positive x is labeled 1. That means increasing |β| without limit keeps squashing p<sub>i</sub> closer to the correct extreme (0 or 1) for every point, so log loss keeps falling — it never bottoms out at a finite β. Left alone, gradient descent on separated data drives β toward infinity.
+</p>
+<p>
+Adding <code>λβ²</code> to the objective changes the shape of what's being minimized: past some point, any further increase in |β| costs more in penalty than it saves in loss, so the combined objective <code>L(β) + λβ²</code> has a genuine finite minimum instead of chasing β to infinity.
+</p>
+<div class="callout">
+<code>λ</code> is a <strong>hyperparameter</strong> — a knob you set before training, not something gradient descent fits from the data (that's what β is). Hyperparameters like λ get chosen using a <strong>validation split</strong> — try a few values, see which does best on data the model wasn't fit on — and the <strong>test split</strong> is reserved untouched, so the final reported number isn't itself the result of tuning choices made against it.
+</div>
+
+<h2>Check your recall</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory before checking.</p>
+<div class="quiz" data-answer="0.5|0.50">
+  <div class="q">At β = 0, what probability does σ(βx) output, for any x?</div>
+  <input type="text" placeholder="a number">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+<div class="quiz" data-answer="hyperparameter">
+  <div class="q">Is λ in L(β) + λβ² a fitted parameter or a hyperparameter?</div>
+  <input type="text" placeholder="one word">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+<div class="quiz" data-answer="validation|validation split|validation set">
+  <div class="q">Which data split is used to choose the value of λ itself?</div>
+  <input type="text" placeholder="one or two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Go deeper</h2>
+<p>
+Primary source: An Introduction to Statistical Learning, Ch. 4 (logistic regression) for the model and loss, Ch. 6 (regularization) for the λβ² penalty and hyperparameter tuning by validation. <a href="https://www.youtube.com/@statquest/videos" target="_blank" rel="noopener">StatQuest</a> has short visual walkthroughs of both if the equations alone don't land yet. See <a href="../RESOURCES.md">RESOURCES.md</a>.
+</p>
+
+<div class="ask-agent">
+Want to trace the chain rule behind L′(β) step by step, the way Lesson 0006 does for a perceptron? Just ask your teaching agent.
+</div>
+
+<div class="footer-links">
+  <a href="0012-thresholds-and-policy.html">&larr; Problem 1</a>
+  <a href="0014-softmax-and-deployment.html">Next: Problem 3 &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The V-shaped gate — Lesson 0016</title>
+<link rel="stylesheet" href="../assets/style.css?v=16">
+<script src="../assets/topbar.js?v=16" defer></script>
+<script src="../assets/quiz.js?v=16" defer></script>
+<script src="../assets/relugate.js?v=16" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0011-homework-1-map.html">&larr; Homework 1 map</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0016 · Homework 1, Bonus</p>
+<h1>The V-shaped gate</h1>
+<p class="subtitle">Two ReLU units — the same activation function from <a href="0005-shape-and-stacking.html">Lesson 0005</a> — combine into a shape neither one can make alone.</p>
+
+<h2>ReLU, briefly</h2>
+<p>
+<code>ReLU(z) = max(0, z)</code>: pass positive input through unchanged, clip anything negative to zero. Lesson 0005 introduced it as one of the smooth-enough activations that made stacked layers trainable; here, two of them get wired together in the simplest possible way — just added.
+</p>
+
+<h2>Try it: two gates, one output</h2>
+<p>
+<code>h₁(x) = ReLU(x)</code> fires only for positive x. <code>h₂(x) = ReLU(−x)</code> fires only for negative x — it's the same gate, just fed the negated input. Their sum, <code>s(x) = h₁(x) + h₂(x)</code>, is active on both sides.
+</p>
+<div id="relu-demo"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initReluGate("relu-demo", { xRange: [-4, 4], xInit: 1.5, threshold: 2.5 });
+});
+</script>
+<p>
+Slide x negative and h₁ goes to 0 while h₂ takes over; slide it positive and the roles swap. Exactly one of the two is ever nonzero (except right at x = 0, where both are 0) — so their sum always equals <strong>whichever one is active</strong>, which is just the distance from zero: <code>s(x) = |x|</code>.
+</p>
+
+<div class="callout">
+<strong>For the actual bonus (a):</strong> the homework asks for s(x) and the resulting action (s(x) ≥ 2) at x ∈ {−3, −1, 0, 1, 3} — read those five values straight off <code>s(x) = |x|</code>, the same relationship the demo above shows live for any x.
+</div>
+
+<h2>Why one straight line can't do this, but two can</h2>
+<p>
+An affine score <code>ax + b</code> is a single straight line — its slope is fixed, one number, everywhere. <code>|x|</code> needs slope −1 for x &lt; 0 and slope +1 for x &gt; 0: two different slopes, meeting at a sharp corner at x = 0. No single a can be both −1 and +1 at once, so no affine function reproduces a V over the whole real line.
+</p>
+<p>
+Each ReLU unit contributes a flat-then-sloped piece — h₁ is flat at 0 for x &lt; 0, then slope 1 for x &gt; 0; h₂ is the mirror image. Adding two piecewise-linear pieces with <em>different breakpoints and slopes</em> is exactly how a stack of simple units builds a shape no single one of them has — the same "shape and stacking" idea Lesson 0005 introduces with the XOR problem, just in one dimension instead of two.
+</p>
+
+<h2>Check your recall</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory before checking.</p>
+<div class="quiz" data-answer="absolute value|abs|abs(x)|absolute value of x">
+  <div class="q">s(x) = ReLU(x) + ReLU(−x) simplifies to what function of x?</div>
+  <input type="text" placeholder="a short phrase">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+<div class="quiz" data-answer="corner|sharp corner|kink">
+  <div class="q">What does a V-shape have at x=0 that a single straight line's graph never does?</div>
+  <input type="text" placeholder="one or two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Part (c): open-ended, on purpose</h2>
+<p>
+The homework's last part asks you to invent your own plausible campus quantity, centered so x = 0 is "ordinary," where unusually large values in <em>either</em> direction might trigger the same follow-up action — and to name one ethical or operational judgment the network's equations alone can't settle. That's a reasoning question the syllabus wants in your own words; this lesson deliberately doesn't supply an example to swap in. If it helps to think out loud about what "centered at zero" even means here, or what "the equations can't settle X" is getting at, ask your teaching agent — just don't take a ready-made answer from it into the write-up.
+</p>
+
+<h2>Go deeper</h2>
+<p>
+Lesson 0005's XOR section is the direct prerequisite here — same "one unit can't, two can" logic, worked out for a 2D boundary instead of a 1D absolute value. See <a href="../RESOURCES.md">RESOURCES.md</a> for general neural-network intuition sources.
+</p>
+
+<div class="ask-agent">
+Want to see why three or more ReLUs can build shapes even a V can't — piecewise-linear functions with more than one bend? Just ask your teaching agent.
+</div>
+
+<div class="footer-links">
+  <a href="0015-regularization-geometry.html">&larr; Problem 4</a>
+  <a href="0011-homework-1-map.html">Back to Homework 1 map</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+</div>
+
+</body>
+</html>

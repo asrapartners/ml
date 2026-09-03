@@ -19,5 +19,8 @@ You're taking STOR 323 at UNC Chapel Hill (Fall 2026) and working through the le
 - Sessions are likely short and spaced across the semester (not a cram).
 
 ## Out of scope
-- Deep learning / neural network internals (not yet covered in this course sequence).
 - Implementation-heavy coding exercises, unless STOR 323 assignments require them — this course reads as theory/stats-first (see the LaTeX-heavy, proof-adjacent slide style).
+- Producing an assignment's actual answers for graded work (e.g. Homework 1). Lessons teach technique on analogous data; the user applies it themselves to the graded numbers — see NOTES.md.
+
+## Note (2026-09-03): neural-network internals are now in scope
+The "out of scope" line above originally excluded deep learning entirely — since superseded. Lessons 0005–0010 cover perceptrons, MLPs, backpropagation, and transformers, and Homework 1's lessons (0011–0016) extend that with ReLU composition. Treat neural-network internals as in scope going forward.

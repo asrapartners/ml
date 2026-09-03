@@ -63,6 +63,23 @@
 <tr><td><strong>Token</strong></td><td>The small chunk of text a language model actually counts — roughly ¾ of a word on average, not a whole word. Training-set size and cost are usually measured in tokens, not words.</td></tr>
 </table>
 
+<h2 id="homework-1">Homework 1</h2>
+<table>
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td><strong>Sigmoid σ(z)</strong></td><td><code>1/(1+e<sup>−z</sup>)</code> — squashes any real number into (0,1). σ(0) = 0.5 always, regardless of the data.</td></tr>
+<tr><td><strong>Log loss L(β)</strong></td><td>Average of <code>−[y·log p + (1−y)·log(1−p)]</code> over all training points — "how wrong, on average" for probability predictions, the same role MSE plays for numeric ones.</td></tr>
+<tr><td><strong>Gradient L′(β)</strong></td><td>Which way, and how strongly, to move β to reduce L(β). Zero at a minimum; its sign tells gradient descent which direction to step.</td></tr>
+<tr><td><strong>Gradient descent step</strong></td><td><code>β<sup>(1)</sup> = β<sup>(0)</sup> − η·L′(β<sup>(0)</sup>)</code> — subtract the gradient, scaled by a learning rate η, from the current parameter.</td></tr>
+<tr><td><strong>Learning rate η</strong></td><td>A hyperparameter controlling step size in gradient descent — not fitted from data.</td></tr>
+<tr><td><strong>Separation (separability)</strong></td><td>When a single feature (or line) perfectly divides the classes. Under separation, unregularized logistic regression drives |β| toward infinity chasing ever-lower loss.</td></tr>
+<tr><td><strong>L2 regularization / ridge penalty</strong></td><td><code>λ‖β‖₂²</code> added to the loss. Favors many small coefficients over a few large ones ("distributed shrinkage") — geometrically, a round constraint region.</td></tr>
+<tr><td><strong>L1 regularization / lasso penalty</strong></td><td><code>λ‖β‖₁</code> added to the loss. More readily produces exact zeros — geometrically, a cornered (diamond) constraint region whose corners sit on the axes.</td></tr>
+<tr><td><strong>Hyperparameter</strong></td><td>A value set before training (e.g. λ, η) rather than fit from data. Chosen via a validation split; the test split stays untouched for final evaluation.</td></tr>
+<tr><td><strong>Multiclass log loss</strong></td><td><code>−log p<sub>y</sub>(x)</code> — penalizes low probability on the true class only. Can disagree with classification error, since error only checks whether argmax was correct.</td></tr>
+<tr><td><strong>Capacity constraint</strong></td><td>A limit on how many flagged cases can actually be acted on, independent of the model or threshold — handled by ranking and acting on the top-k, not by retraining.</td></tr>
+<tr><td><strong>Grouped (by-entity) split</strong></td><td>A held-out split where every row belonging to one entity (a student, a writer) goes entirely into training or entirely into holdout — never both — so evaluation doesn't leak "I've seen this one before."</td></tr>
+</table>
+
 <div class="ask-agent">Something here unclear, or you spot an error? Ask your teaching agent — that's what it's for.</div>
 
 </body>

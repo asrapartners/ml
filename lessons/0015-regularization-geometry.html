@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>L1 vs. L2 geometry — Lesson 0015</title>
+<link rel="stylesheet" href="../assets/style.css?v=16">
+<script src="../assets/topbar.js?v=16" defer></script>
+<script src="../assets/quiz.js?v=16" defer></script>
+<script src="../assets/mcq.js?v=16" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0011-homework-1-map.html">&larr; Homework 1 map</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0015 · Homework 1, Problem 4</p>
+<h1>Regularization can prefer a shortcut</h1>
+<p class="subtitle">Same penalty idea as Lesson 0013's λβ², now compared two ways — L1 vs. L2 — with two candidate models that trade off fit against how their coefficients are shaped.</p>
+
+<h2>Two candidates, two norms</h2>
+<p>
+Two fitted logistic-regression candidates for the same task, four features each:
+</p>
+<table>
+<tr><th>Candidate</th><th>Training log loss</th><th>Coefficients β</th></tr>
+<tr><td><strong>C</strong></td><td>0.26</td><td>(1.8, 0, 1.0, 0)</td></tr>
+<tr><td><strong>D</strong></td><td>0.30</td><td>(0.7, 0.7, 0.7, 0.7)</td></tr>
+</table>
+<p>
+<code>‖β‖₁ = Σ|β<sub>j</sub>|</code> is just "add up the sizes, ignore sign." <code>‖β‖₂² = Σβ<sub>j</sub>²</code> squares first, so a single large coefficient contributes disproportionately more than several small ones.
+</p>
+<table>
+<tr><th>Candidate</th><th>‖β‖₁</th><th>‖β‖₂²</th></tr>
+<tr><td>C</td><td>1.8+1.0 = <strong>2.8</strong></td><td>1.8²+1.0² = 3.24+1.0 = <strong>4.24</strong></td></tr>
+<tr><td>D</td><td>4×0.7 = <strong>2.8</strong></td><td>4×0.7² = <strong>1.96</strong></td></tr>
+</table>
+<p>
+Notice: <strong>the two candidates tie exactly on ‖β‖₁</strong> (both 2.8) but not on ‖β‖₂² (4.24 vs 1.96). C is sparser — two of its four coefficients are exactly zero. D has the smaller squared-L2 penalty, because spreading the same total size across four small numbers costs much less once you square each of them.
+</p>
+
+<h2>The tie matters: it flips which candidate wins</h2>
+<p>
+With λ = 0.1, compare <code>L<sub>n</sub>(β) + λ‖β‖₂²</code> and <code>L<sub>n</sub>(β) + λ‖β‖₁</code> for both candidates:
+</p>
+<div class="compare-grid">
+  <div class="compare-col">
+    <div class="compare-title">L2 objective: L<sub>n</sub>(β) + 0.1‖β‖₂²</div>
+    <div class="barchart" style="height:110px;">
+      <div class="bar" style="height:98%"><span class="bar-val">0.684</span></div>
+      <div class="bar winner" style="height:71%"><span class="bar-val">0.496</span></div>
+    </div>
+    <div class="barchart-labels"><span>C</span><span>D</span></div>
+    <p style="font-size:0.85rem;">C: 0.26 + 0.1×4.24 = 0.684<br>D: 0.30 + 0.1×1.96 = 0.496 — <strong>D wins</strong></p>
+  </div>
+  <div class="compare-col">
+    <div class="compare-title">L1 objective: L<sub>n</sub>(β) + 0.1‖β‖₁</div>
+    <div class="barchart" style="height:110px;">
+      <div class="bar winner" style="height:77%"><span class="bar-val">0.540</span></div>
+      <div class="bar" style="height:83%"><span class="bar-val">0.580</span></div>
+    </div>
+    <div class="barchart-labels"><span>C</span><span>D</span></div>
+    <p style="font-size:0.85rem;">C: 0.26 + 0.1×2.8 = 0.540<br>D: 0.30 + 0.1×2.8 = 0.580 — <strong>C wins</strong></p>
+  </div>
+</div>
+<p>
+Because the L1 penalty is identical for both (2.8 = 2.8), the L1-regularized objective is decided entirely by which had the better raw fit — C. The L2 penalty is <em>not</em> tied, and it punishes C's concentration into two larger coefficients heavily enough to flip the winner to D, despite D's worse raw fit. Same two candidates, same λ — different regularizer, different answer.
+</p>
+<div class="callout">
+<strong>For Homework 1(a)–(b):</strong> the actual candidates are A = (1.50, 0, 1.50, 0) with loss 0.30, and B = (0.75, 0.75, 0.75, 0.75) with loss 0.34, at λ = 0.05. Same tie-then-flip structure — redo the arithmetic with those numbers.
+</div>
+
+<h2>Round vs. cornered: why L1 zeroes things out and L2 doesn't</h2>
+<p>
+Picture the penalty as a boundary around the origin that the optimizer isn't allowed to cross while chasing lower loss. <code>‖β‖₂² ≤ c</code> is a smooth <strong>circle</strong> (or sphere, in more dimensions) — the loss function's contours, sliding inward, tend to first touch that boundary somewhere round, rarely exactly on an axis, so L2 solutions usually end up with every coefficient shrunk a little, few landing at exactly zero. <code>‖β‖₁ ≤ c</code> is a <strong>diamond</strong> with sharp corners sitting exactly on the axes — and it's disproportionately likely that the loss contour first touches the diamond at one of those corners, where one or more coordinates are exactly zero. That's the geometric reason L1 produces sparsity and L2 produces distributed shrinkage instead.
+</p>
+<div id="mcq-zero"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-zero", {
+    question: "L1 regularization drives a feature's coefficient to exactly zero. Does that prove the feature is substantively irrelevant?",
+    options: [
+      { label: "Yes — a zero coefficient means the model found no relationship at all", correct: false, explain: "A coefficient can be zeroed out for reasons that have nothing to do with true irrelevance — e.g. it's correlated with another feature that 'absorbed' its signal, or the penalty strength λ was simply large enough to zero out anything below a certain size." },
+      { label: "No — sparsity is a property of this fit under this penalty, not a claim about the real world", correct: true, explain: "A zero coefficient says 'under this λ, with these correlated features, the optimizer didn't need this one to reduce the penalized objective.' That's a statement about the optimization, not a substantive, causal claim that the feature carries no real information." }
+    ]
+  });
+});
+</script>
+
+<h2>When a coefficient is zero for the wrong reason</h2>
+<p>
+Homework 1(d) makes this concrete: a camera-border feature became correlated with blocked walkways only because that camera happened to be used mostly after storms — a spurious pattern from how the data was collected, not a real cause of accessibility problems.
+</p>
+<table>
+<tr><th>Proposed fix</th><th>Assumption required to preserve the label</th></tr>
+<tr><td>Modest brightness adjustment</td><td>Whether a walkway needs review doesn't depend on lighting — the ground truth (obstructed or not) is unaffected by how bright the photo looks.</td></tr>
+<tr><td>Crop away every image border</td><td>No genuinely useful signal about the walkway itself lives in the border region being cropped — only the confound does. If real obstruction cues sometimes appear near the edge of frame, cropping would also destroy real information.</td></tr>
+</table>
+<p>
+Two checks worth running: a <strong>holdout check</strong> — evaluate separately on images from the storm-camera vs. other cameras, and see if performance (or the feature's importance) differs sharply between them, which would expose the shortcut; and an <strong>intervention</strong> on the suspected feature directly — e.g. swap or blank out the border pattern across otherwise-identical images and see whether the model's prediction changes, which would reveal it was leaning on the border rather than the obstruction itself.
+</p>
+
+<h2>Check your recall</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory before checking.</p>
+<div class="quiz" data-answer="diamond">
+  <div class="q">The L1 penalty's constraint boundary has what shape, in coefficient space?</div>
+  <input type="text" placeholder="one word">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+<div class="quiz" data-answer="hyperparameter">
+  <div class="q">Like λ in Lesson 0013, what category of value is λ in Lₙ(β)+λ‖β‖₁ — parameter or hyperparameter?</div>
+  <input type="text" placeholder="one word">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Go deeper</h2>
+<p>
+An Introduction to Statistical Learning, Ch. 6 (ridge = L2, lasso = L1) has the standard treatment, including the diamond/circle contour figure this lesson describes in words. See <a href="../RESOURCES.md">RESOURCES.md</a>.
+</p>
+
+<div class="ask-agent">
+Want to see the actual diamond/circle contour diagram drawn out, or walk the homework's own A/B numbers together? Just ask your teaching agent.
+</div>
+
+<div class="footer-links">
+  <a href="0014-softmax-and-deployment.html">&larr; Problem 3</a>
+  <a href="0016-relu-gate.html">Next: Bonus &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+</div>
+
+</body>
+</html>

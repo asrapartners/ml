@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Thresholds and policy — Lesson 0012</title>
+<link rel="stylesheet" href="../assets/style.css?v=16">
+<script src="../assets/topbar.js?v=16" defer></script>
+<script src="../assets/quiz.js?v=16" defer></script>
+<script src="../assets/mcq.js?v=16" defer></script>
+<script src="../assets/threshold.js?v=16" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0011-homework-1-map.html">&larr; Homework 1 map</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0012 · Homework 1, Problem 1</p>
+<h1>Thresholds and policy</h1>
+<p class="subtitle">A fitted score becomes a real action only once someone picks a cutoff. This lesson builds the skill with a library-alerts example — a different dataset from Homework 1's — so you can bring the same moves to the actual problem.</p>
+
+<h2>The pipeline, filled in</h2>
+<p>
+Homework 1, Problem 1(a) asks you to write the deployed pipeline as <code>x<sub>i</sub> → s<sub>i</sub> → a<sub>i</sub></code>. That's exactly <a href="0001-from-data-to-decisions.html">Lesson 0001</a>'s deployment half, with names attached:
+</p>
+<div class="pipeline">
+  <span class="node">x<sub>i</sub></span>
+  <span class="arrow">--f<sup>^</sup><sub>D</sub>--&gt;</span>
+  <span class="node">s<sub>i</sub></span>
+  <span class="arrow">--δ<sub>t</sub>--&gt;</span>
+  <span class="node">a<sub>i</sub></span>
+</div>
+<p style="margin-top:-0.6rem; color:var(--ink-soft); font-size:0.9rem;">x<sub>i</sub>: one student's features. f<sup>^</sup><sub>D</sub>: the fitted model — produces s<sub>i</sub>, a probability. δ<sub>t</sub>: "flag if s<sub>i</sub> ≥ t" — the decision rule. a<sub>i</sub>: contact the student, or don't.</p>
+<p>
+The question underneath — "if the university changes t without retraining, what changes and what remains fixed?" — is the same "which one moved?" test from Lesson 0001. Changing <code>t</code> only touches δ. It never touches A, D, or f<sup>^</sup><sub>D</sub> — the scores s<sub>i</sub> themselves are identical before and after. What changes is which students end up on which side of the cutoff.
+</p>
+
+<h2>Confusion matrix at a threshold</h2>
+<p>
+Here's a parallel setup: a library sends a reminder call to any patron whose "will return this book late" score is at least t. Drag the threshold and watch the confusion matrix and TPR/FPR update live.
+</p>
+<div id="th-demo" class="threshold-wrap"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initThreshold("th-demo", {
+    positives: [0.88, 0.78, 0.60, 0.30],
+    negatives: [0.70, 0.50, 0.40, 0.12],
+    posName: "returned late", negName: "returned on time",
+    tInit: 0.5
+  });
+});
+</script>
+<p>
+Notice what a lower threshold buys and costs: drag from t = 0.50 down toward t = 0.30. TPR goes up (fewer late-returners slip through uncalled) but so does FPR (more on-time patrons get an unnecessary call). There's no free lunch here — the tradeoff is baked into the ranking the model already produced; the threshold just decides where to cut it.
+</p>
+
+<div class="callout">
+<strong>For Homework 1(b) and (c):</strong> build the same table by hand for t = 0.50 and t = 0.30 using the homework's own 8 scores and labels. Count TP/FP/FN/TN directly from the table — don't estimate off a chart. Then state the tradeoff in words: what's the practical benefit of the lower threshold, and what's the practical cost?
+</div>
+
+<h2>A capacity constraint is a second, independent decision</h2>
+<p>
+Homework 1(c) adds a wrinkle: the advising office can only contact four students a week. This is a different kind of constraint than the threshold — it doesn't come from the model or from TPR/FPR at all. It comes from downstream capacity.
+</p>
+<div id="mcq-capacity"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-capacity", {
+    question: "If lowering t to 0.30 would flag 6 students but the office can only contact 4, what's the honest fix?",
+    options: [
+      { label: "Retrain the model so it only ever flags 4 students", correct: false, explain: "Retraining changes f^_D and the scores themselves — that's solving a capacity problem by touching a piece of the pipeline that has nothing to do with capacity." },
+      { label: "Keep the threshold's ranking, but only act on the top 4 flagged scores", correct: true, explain: "This keeps δ tied to capacity directly — e.g. contact the 4 highest-scoring flagged students — without retraining anything. The fitted scores s_i never change; only how many of the flagged ones actually get an action does." },
+      { label: "Ignore the constraint and contact all 6 anyway", correct: false, explain: "That's just not respecting a real operational limit — the office genuinely can't act on 6 the same week." }
+    ]
+  });
+});
+</script>
+<p>
+The general lesson: <strong>a decision rule can depend on more than the score</strong>. "Flag if s ≥ t" is the simplest δ, but δ can also say "flag if s ≥ t, then act on at most k, ranked by s" — still a function of the score, still leaves f<sup>^</sup><sub>D</sub> untouched, but now shaped by a real-world resource limit instead of a probability cutoff alone.
+</p>
+
+<h2>Why a random row split can lie to you</h2>
+<p>
+Homework 1(d) is about validation design, not thresholds — but it's testing the same instinct: <em>does this procedure represent the situation you'll actually deploy into?</em> Here, the twist is that the training data has <strong>multiple rows per student</strong> (weekly records), and the model will be deployed on students it has never seen a single row of before.
+</p>
+<div class="compare-grid">
+  <div class="compare-col">
+    <div class="compare-title">Random row split</div>
+    <p style="font-size:0.88rem;">Some of student A's weekly rows land in training, others in the held-out set. The model can partly "recognize" student A's own pattern — that's information it will never have for a genuinely new student.</p>
+  </div>
+  <div class="compare-col">
+    <div class="compare-title">Grouped (by-student) split</div>
+    <p style="font-size:0.88rem;">Every row for a given student goes entirely into training <em>or</em> entirely into the held-out set — never split across both. The held-out students are ones the model has literally never seen, which is exactly next year's entering class.</p>
+  </div>
+</div>
+<p>
+This is the same idea as Lesson 0001's D → A → f<sup>^</sup>_D: the held-out evaluation is only honest if it mimics the real deployment gap. A random-row split quietly leaks a bit of "I've seen this exact person before" into the evaluation, which can make accuracy look better on paper than it will look on a genuinely new student next fall.
+</p>
+
+<h2>Check your recall</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory before checking.</p>
+<div class="quiz" data-answer="decision rule|delta|δ">
+  <div class="q">Changing the threshold t changes which part of the pipeline?</div>
+  <input type="text" placeholder="one or two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+<div class="quiz" data-answer="grouped split|group split|by-student split|by student split">
+  <div class="q">When rows are grouped by an entity (like a student), what kind of split avoids leaking that entity's own pattern into evaluation?</div>
+  <input type="text" placeholder="two or three words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Go deeper</h2>
+<p>
+For confusion matrices and TPR/FPR: <a href="https://www.youtube.com/@statquest/videos" target="_blank" rel="noopener">StatQuest</a>, search "ROC and AUC" or "confusion matrix". For grouped/leakage-aware splitting: An Introduction to Statistical Learning, Ch. 5 (resampling methods) covers cross-validation design; the grouped-split idea extends the same "held-out must mimic deployment" logic. See <a href="../RESOURCES.md">RESOURCES.md</a>.
+</p>
+
+<div class="ask-agent">
+Stuck on anything above, or want to walk the homework's actual 8-row table together? Just ask your teaching agent.
+</div>
+
+<div class="footer-links">
+  <a href="0011-homework-1-map.html">&larr; Homework 1 map</a>
+  <a href="0013-log-loss-and-gradient-descent.html">Next: Problem 2 &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+</div>
+
+</body>
+</html>

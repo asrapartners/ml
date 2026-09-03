@@ -186,6 +186,31 @@ That four-stage funnel, read right to left in the formula, is exactly <code>FPR_
 <strong>Equal rule ≠ equal burden.</strong> The formula's whole point is that you can't tell whether a rule is fair by looking at one overall number — you have to compute it separately <em>within</em> each group, which is exactly why the group shows up as a condition inside the ℙ(...), not as an afterthought.
 </div>
 
+<h2 id="sigmoid">The sigmoid: σ(z)</h2>
+<p>
+Picture a dimmer switch that can only sit strictly between fully off and fully on, never quite touching either end. <code>σ(z) = 1/(1+e<sup>−z</sup>)</code> takes any real number — however extreme — and squashes it into that range, (0, 1), so it can be read as a probability. Feed it 0 and it always lands exactly in the middle: <code>σ(0) = 0.5</code>, "no lean either way," no matter what the underlying data looks like.
+</p>
+
+<h2 id="loss-gradient">L(β) vs. L′(β) — how wrong, and which way to fix it</h2>
+<div class="card-pair">
+  <div class="card hidden">
+    <span class="card-icon">📏</span>
+    <div class="card-title">L(β) — the loss</div>
+    A single number: how wrong the current β is, averaged over every training point. Lower is better; it has no direction, just a size.
+  </div>
+  <div class="card guess">
+    <span class="card-icon">🧭</span>
+    <div class="card-title">L′(β) — the gradient</div>
+    A different number: if β nudged up a tiny bit, would the loss go up or down, and how fast? Its <em>sign</em> tells gradient descent which direction to step.
+  </div>
+</div>
+<p>The step itself, <code>β<sup>(1)</sup> = β<sup>(0)</sup> − η·L′(β<sup>(0)</sup>)</code>, is just "current value, minus a nudge in the direction the gradient says makes things worse." Subtracting a negative gradient means adding — that's why a negative L′(β) pushes β up, not down.</p>
+
+<h2 id="norms">‖β‖₁ and ‖β‖₂² — two different ways to total up "how big"</h2>
+<p>
+Both take a list of coefficients and return one number describing their overall size — but they disagree on what "size" means. <code>‖β‖₁ = Σ|β<sub>j</sub>|</code> just adds up the magnitudes, treating a single big coefficient and several small ones that add to the same total as equally "big." <code>‖β‖₂² = Σβ<sub>j</sub>²</code> squares each one first — so one coefficient of 2 (contributing 4) costs far more than four coefficients of 0.5 each (contributing 4×0.25 = 1 in total). That's the whole reason L1 and L2 regularization, built from these two norms, push coefficients toward different shapes: L1 doesn't mind concentrating size in one spot, L2 actively prefers spreading it out.
+</p>
+
 <div class="ask-agent">Any of this still fuzzy, or want a different real-world example? Just ask — that's what your teaching agent is for.</div>
 
 <div class="footer-links">

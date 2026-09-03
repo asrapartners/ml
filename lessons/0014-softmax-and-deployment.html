@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Softmax and deployment — Lesson 0014</title>
+<link rel="stylesheet" href="../assets/style.css?v=16">
+<script src="../assets/topbar.js?v=16" defer></script>
+<script src="../assets/quiz.js?v=16" defer></script>
+<script src="../assets/mcq.js?v=16" defer></script>
+<script src="../assets/softmax.js?v=16" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="0011-homework-1-map.html">&larr; Homework 1 map</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a></nav>
+<p class="kicker">Lesson 0014 · Homework 1, Problem 3</p>
+<h1>Softmax, log loss, and the action after prediction</h1>
+<p class="subtitle">Softmax itself is already familiar from Lesson 0002. What's new here is doing the arithmetic by hand for one image, and reasoning about what the resulting probability vector should — and shouldn't — trigger downstream.</p>
+
+<h2>Why not just regress on the digit codes?</h2>
+<p>
+MNIST labels are the codes 0–9, but they're <strong>categories, not measurements</strong> — "7" isn't 7 units more of something than "0" the way $70 is more than $0. Fitting one scalar output directly to those codes with squared error would silently assume a false thing: that predicting 6 when the truth is 7 is a "small" error, and predicting 0 when the truth is 7 is a "big" one — as if the digits sat on a meaningful number line. They don't; digit 6 is not "closer" to digit 7 in any sense a squared-error loss should care about.
+</p>
+<p>
+Softmax regression sidesteps this by giving each class its own logit and never comparing digits as numbers at all — see <a href="0002-model-families.html">Lesson 0002</a> for the full softmax setup, and the glossary's <a href="../reference/glossary.html#neural-nets">logit / argmax</a> entries.
+</p>
+
+<h2>Try it: from logits to probabilities</h2>
+<p>
+A parallel setup — four categories instead of ten, two of them with elevated logits, the rest flat at zero. Same shape as Homework 1's setup, different numbers.
+</p>
+<div id="sm-demo"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initSoftmax("sm-demo", {
+    categories: [
+      { label: "A", init: 1.0986, min: -1, max: 3 },  // log 3
+      { label: "B", init: 0, min: -1, max: 3 },
+      { label: "C", init: 1.6094, min: -1, max: 3 },  // log 5
+      { label: "D", init: 0, min: -1, max: 3 }
+    ]
+  });
+});
+</script>
+<p>
+With those starting sliders, the denominator is <code>e<sup>log3</sup> + e<sup>0</sup> + e<sup>log5</sup> + e<sup>0</sup> = 3+1+5+1 = 10</code>, giving probabilities 0.3, 0.1, 0.5, 0.1 — they sum to 1 (they always do, that's what normalizing means), and argmax picks class C.
+</p>
+<div class="callout">
+<strong>For Homework 1(b):</strong> the actual logits are z<sub>1</sub> = log 2, z<sub>3</sub> = log 4, and zero for the other 8 classes — ten classes total, not four. Same denominator-then-divide procedure; different numbers and a different count of "flat" classes to fold together.
+</div>
+
+<h2>Log loss punishes low confidence in the truth — not wrongness in general</h2>
+<p>
+Suppose the true label is A here (probability 0.3), but the model's argmax pick was C. The model is <strong>wrong</strong> by the usual arg max rule. Its multiclass log loss on this image is <code>−log(0.3) ≈ 1.204</code>. Compare that to a uniform predictor that has no opinion at all and assigns 0.25 to every one of the 4 classes: <code>−log(0.25) ≈ 1.386</code>.
+</p>
+<div id="mcq-loss"></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  initMCQ("mcq-loss", {
+    question: "The model misclassified the image, yet its log loss (1.204) is lower than the uniform predictor's (1.386). What does this show?",
+    options: [
+      { label: "Log loss must be broken, since the model was still wrong", correct: false, explain: "Log loss isn't measuring 'did you pick the winning class' — it's measuring how much probability mass you put on the true class. The model put more weight on A (0.3) than a clueless model would (0.25), even though it ranked C higher overall." },
+      { label: "Classification error and log loss can disagree, because they score different things", correct: true, explain: "Classification error only asks 'was the argmax correct?' — a hard yes/no. Log loss asks 'how much probability did you assign to the truth?' — a continuous, calibration-sensitive number. A model can lose on one axis and still beat a baseline on the other." },
+      { label: "This proves the model will generalize well", correct: false, explain: "One image's loss comparison to a uniform baseline says nothing about performance on new, unseen handwriting — that needs held-out evaluation, not a single-example comparison." }
+    ]
+  });
+});
+</script>
+
+<h2>The probability vector is not the decision rule</h2>
+<p>
+Homework 1(d) adds a policy on top of the model: auto-enter a digit only when <code>max<sub>c</sub> p<sub>c</sub>(x) ≥ 0.80</code>; otherwise route to a person. In the demo's numbers, max probability is 0.5 (class C) — below a threshold like 0.75, so this image would be sent for human review, not auto-entered, even though the model does have a definite argmax opinion.
+</p>
+<p>
+This is the same distinction Lesson 0012 draws for the advising threshold: <strong>f<sup>^</sup><sub>D</sub></strong> produces the probability vector; <strong>δ</strong> is a separate, chosen rule layered on top that decides what to actually do with it. Two systems can use the identical fitted model and produce completely different real-world behavior just by setting the confidence threshold differently.
+</p>
+
+<h2>Evaluating for new writers — the same idea as Lesson 0012, again</h2>
+<p>
+"Represents new writers" is the same held-out design question as Problem 1(d): if your held-out images include handwriting from the <em>same person</em> who also contributed training images, you're not testing what happens on a genuinely new writer — you're testing partial recognition of a writer's own style. A held-out split should hold out entire <strong>writers</strong>, not just individual images, mirroring the grouped-by-student split from <a href="0012-thresholds-and-policy.html">Lesson 0012</a>.
+</p>
+<p>
+And accuracy alone won't tell the deployed system's whole story — with a human-review threshold in the loop, useful additional numbers include the <strong>fraction of images routed to a human</strong> (too high, and the "automation" isn't automating much) and <strong>accuracy restricted to the auto-entered subset</strong> (the number that actually matters, since those are the ones nobody double-checks).
+</p>
+
+<h2>Check your recall</h2>
+<p style="color:var(--ink-soft); font-size:0.9rem;">Answer from memory before checking.</p>
+<div class="quiz" data-answer="categories|unordered categories">
+  <div class="q">MNIST digit labels 0–9 are best treated as what kind of variable?</div>
+  <input type="text" placeholder="one or two words">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+<div class="quiz" data-answer="argmax">
+  <div class="q">What rule converts a probability vector into a single predicted class?</div>
+  <input type="text" placeholder="one word">
+  <button onclick="checkQuiz(this)">Check</button>
+  <button class="reveal-btn" onclick="revealQuiz(this)">Show answer</button>
+  <div class="feedback"></div>
+</div>
+
+<h2>Go deeper</h2>
+<p>
+An Introduction to Statistical Learning, Ch. 4 covers multiclass classification and softmax formally. <a href="https://www.youtube.com/@statquest/videos" target="_blank" rel="noopener">StatQuest</a> "Softmax" and "cross entropy" videos build the intuition visually first. See <a href="../RESOURCES.md">RESOURCES.md</a>.
+</p>
+
+<div class="ask-agent">
+Want to compute the actual 10-class version with the homework's z₁ = log 2, z₃ = log 4 together, step by step? Just ask your teaching agent.
+</div>
+
+<div class="footer-links">
+  <a href="0013-log-loss-and-gradient-descent.html">&larr; Problem 2</a>
+  <a href="0015-regularization-geometry.html">Next: Problem 4 &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+</div>
+
+</body>
+</html>

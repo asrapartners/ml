@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Homework 1: the map — Lesson 0011</title>
+<link rel="stylesheet" href="../assets/style.css?v=16">
+<script src="../assets/topbar.js?v=16" defer></script>
+</head>
+<body>
+<nav class="crumbs"><a href="../reference/glossary.html">Glossary</a> · <a href="../reference/notation.html">Notation decoder</a> · STOR 323, Homework 1</nav>
+<p class="kicker">Lesson 0011 · Homework 1 overview</p>
+<h1>Homework 1: the map</h1>
+<p class="subtitle">Four required problems, one optional bonus, all built from pieces you've already met. This lesson is the map — it doesn't teach anything new by itself, it shows you where each problem sits relative to lessons 0001–0010, so nothing on the page feels unfamiliar before you open it.</p>
+
+<div class="big-idea">
+  <span class="big-idea-icon">🧭</span>
+  <div>
+    <div class="big-idea-label">The pattern across all five problems</div>
+    <p>Every problem hands you a <strong>fitted score</strong> and asks two things: compute a small quantity from it, then explain what that quantity does — and does not — establish about the real-world decision. That's the <code>x → f<sup>^</sup>_D → s → δ → a</code> pipeline from <a href="0001-from-data-to-decisions.html">Lesson 0001</a>, wearing different clothes each time.</p>
+  </div>
+</div>
+
+<h2>Where each problem lives</h2>
+<table>
+<tr><th>Problem</th><th>New skill</th><th>Already known from</th><th>Lesson</th></tr>
+<tr><td><strong>1</strong> — thresholds &amp; capacity</td><td>Confusion matrix, TPR/FPR at a chosen threshold; a capacity constraint changing δ without retraining; validation splits that respect grouped data</td><td>0001 (pipeline, δ), 0003 (confusion matrix, TPR/FPR)</td><td><a href="0012-thresholds-and-policy.html">0012</a></td></tr>
+<tr><td><strong>2</strong> — logistic regression by hand</td><td>Log loss, its gradient, one gradient-descent update, L2 regularization</td><td>0002 (softmax family), 0006 (gradient descent teased, not yet computed)</td><td><a href="0013-log-loss-and-gradient-descent.html">0013</a></td></tr>
+<tr><td><strong>3</strong> — softmax &amp; deployment</td><td>Multiclass log loss vs. classification error; a confidence threshold that routes to a human</td><td>0002 (softmax, argmax), 0003 (evaluation), 0001 (δ)</td><td><a href="0014-softmax-and-deployment.html">0014</a></td></tr>
+<tr><td><strong>4</strong> — regularization geometry</td><td>L1 vs. L2 penalty arithmetic and geometry; shortcut features and audits</td><td>0003 (group fairness / spurious patterns), 0006 (weights, blame)</td><td><a href="0015-regularization-geometry.html">0015</a></td></tr>
+<tr><td><strong>Bonus</strong> — ReLU gate</td><td>Two ReLUs composing into <code>|x|</code></td><td>0005 (ReLU as an activation), 0006 (why smoothness matters)</td><td><a href="0016-relu-gate.html">0016</a></td></tr>
+</table>
+
+<h2>The math notation you'll actually see</h2>
+<p>
+Homework 1 introduces a small batch of new symbols on top of the ones in the <a href="../reference/notation.html">notation decoder</a>. None of them are conceptually new — they're the same "estimate vs. truth," "which batch of data," and "map a raw score to something usable" ideas, just written for this specific setting.
+</p>
+<table>
+<tr><th>Symbol</th><th>Read it as</th><th>You've essentially seen this as...</th></tr>
+<tr><td><code>t</code></td><td>"the cutoff on the score" — same <code>t</code> as Lesson 0003's threshold</td><td>δ_t(s), Lesson 0003</td></tr>
+<tr><td><code>σ(z) = 1/(1+e<sup>−z</sup>)</code></td><td>"squash any real number into (0,1)" — the sigmoid</td><td>Same job as softmax's normalization, but for two classes instead of many</td></tr>
+<tr><td><code>L(β)</code>, <code>L′(β)</code></td><td>"how wrong the current guess is" and "which way to move β to reduce that"</td><td>Lesson 0006's "nudge" and "blame," made numeric</td></tr>
+<tr><td><code>β<sup>(0)</sup></code>, <code>β<sup>(1)</sup></code></td><td>the parenthesized superscript is a <em>step count</em>, not a power — "β after step 0," "after step 1"</td><td>Same labeling trick as <code>f<sup>^</sup>_D</code>'s subscript D — it just says <em>which version</em></td></tr>
+<tr><td><code>λ</code></td><td>"how hard to punish big coefficients" — a knob you set, not something the data fits</td><td>New this homework — see <a href="0013-log-loss-and-gradient-descent.html">Lesson 0013</a></td></tr>
+<tr><td><code>‖β‖₁</code>, <code>‖β‖₂²</code></td><td>"total size of the coefficients," two different ways of measuring "total"</td><td>New this homework — see <a href="0015-regularization-geometry.html">Lesson 0015</a></td></tr>
+</table>
+
+<div class="callout">
+Full worked definitions for each symbol live inside the problem-specific lessons, next to the diagram that makes them concrete — this table is just so nothing looks alien when you get there.
+</div>
+
+<h2>How to use these lessons</h2>
+<p>
+Every interactive widget in lessons 0012–0016 uses <strong>different numbers than the actual homework</strong> — same structure, different data. That's deliberate: the syllabus says GenAI tools can't do the assignment's central reasoning for you, so these lessons build the skill on a parallel example, and you apply it yourself to Homework 1's actual tables. If a widget's mechanics feel automatic, that's the point — the only thing left for the real homework is plugging in its numbers and writing the explanation in your own words.
+</p>
+
+<div class="ask-agent">
+Want to skip straight to one problem, or start at 0012 and go in order? Either works — just ask your teaching agent.
+</div>
+
+<div class="footer-links">
+  <a href="0012-thresholds-and-policy.html">Start: Problem 1 &rarr;</a>
+  <a href="../reference/glossary.html">Glossary</a>
+  <a href="../reference/notation.html">Notation decoder</a>
+  <a href="../MISSION.md">Mission</a>
+  <a href="../RESOURCES.md">Resources</a>
+</div>
+
+</body>
+</html>
